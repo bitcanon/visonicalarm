@@ -11,7 +11,7 @@ $ sudo pip3 install visonicalarm
 
 ## Code examples
 ### Current status
-Getting the current alarm status. Returned values are 'armed', 'partialarmed' or 'disarmed'.
+Getting the current alarm status. Available states are 'armed_away', 'armed_home', 'arming_exit_delay_away', 'arming_exit_delay_home' or 'disarmed'.
 ```python
 #!/usr/bin/env python3
 import visonicalarm
