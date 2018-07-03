@@ -31,5 +31,13 @@ if current_status:
 ```
 Example output:
 ```
-{'state': 'disarmed', 'ready_status': False, 'partition': 'ALL', 'is_connected': True, 'is_active': True, 'exit_delay': 30, 'session_token': '1a45ae0d-2d5e-4b19-9cec-f56612fa45de'}
+{
+   'state': 'disarmed',
+   'ready_status': False,
+   'partition': 'ALL',
+   'is_connected': True,
+   'is_active': True,
+   'exit_delay': 30,
+   'session_token': '1a45ae0d-2d5e-4b19-9cec-f56612fa45de'
+}
 ```
