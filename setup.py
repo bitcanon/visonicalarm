@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="visonic",
-    version="1.0.0",
+    version="1.0.3",
     author="Mikael Schultz",
     author_email="mikael@dofiloop.com",
     description="A simple library for the Visonic Alarm API.",
