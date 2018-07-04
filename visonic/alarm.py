@@ -73,9 +73,10 @@ class Connect(object):
 
         # Connect to the API and try to get a session token
         response = requests.post(self.__login_url, headers=api_headers, data=login_json)
+        response.raise_for_status()
 
         # Check HTTP response code
-        if self.__status_code_ok(response):
+        if response.status_code == requests.codes.ok:
             data = json.loads(response.content.decode('utf-8'))
             session_token = data['session_token']
             return session_token
@@ -121,12 +122,12 @@ class Connect(object):
         # Poll the API and wait for the is_connected variable to be True so the
         # Visonic Alarm System is connected to the central servers.
         while conn_retries < self.__max_connection_attempts and is_connected is False:
-            response = requests.get(self.__status_url, headers=status_headers)
             conn_retries += 1
 
-#            print(response.json())
+            response = requests.get(self.__status_url, headers=status_headers)
+            response.raise_for_status()
 
-            if self.__status_code_ok(response):
+            if response.status_code == requests.codes.ok:
                 data = json.loads(response.content.decode('utf-8'))
                 is_connected = data['is_connected']
                 exit_delay = data['exit_delay']
@@ -188,38 +189,6 @@ class Connect(object):
                 }
 
                 return alarm_status
-
-    def __status_code_ok(self, response):
-        """ Check the status code of the HTTP response """
-
-        if response.status_code >= 500:
-            print('[{0}] Server Error'.format(response.status_code))
-            return False
-        elif response.status_code == 404:
-            print('[{0}] URL not found: [{1}]'.format(response.status_code, response.url))
-            return False
-        elif response.status_code == 401:
-            print('[{0}] Authentication Failed'.format(response.status_code))
-            return False
-        elif response.status_code == 400:
-            print('[{0}] Bad Request: {1} ({2})'.format(
-                response.status_code,
-                response.json()['error_message'],
-                response.json()['error_reason_code'])
-            )
-            return False
-        elif response.status_code >= 300:
-            print('[{0}] Unexpected Redirect: {1} ({2})'.format(
-                response.status_code,
-                response.json()['error_message'],
-                response.json()['error_reason_code'])
-            )
-            return False
-        elif response.status_code == 200:
-            return True
-        else:
-            print('[?] Unexpected Error: [HTTP {0}]: Content: {1}'.format(response.status_code, response.content))
-            return False
 
     def login(self):
         """ Try to login and get a session token """
