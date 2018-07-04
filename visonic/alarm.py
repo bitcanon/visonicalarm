@@ -129,8 +129,8 @@ class Connect(object):
             if self.__status_code_ok(response):
                 data = json.loads(response.content.decode('utf-8'))
                 is_connected = data['is_connected']
-                exit_delay   = data['exit_delay']
-                partitions   = data['partitions']
+                exit_delay = data['exit_delay']
+                partitions = data['partitions']
 
                 if is_connected:
                     print('Connected to your Visonic Alarm system! :)')
