@@ -14,7 +14,7 @@ $ sudo pip3 install visonicalarm
 Getting the current alarm status. Available states are 'armed_away', 'armed_home', 'arming_exit_delay_away', 'arming_exit_delay_home' or 'disarmed'.
 ```python
 #!/usr/bin/env python3
-import visonicalarm
+from visonic import alarm
 
 hostname  = 'visonic.tycomonitor.com'
 user_code = '1234'
@@ -22,12 +22,9 @@ user_id   = '2d978962-daa6-4e18-a5e5-b4a99100bd3b'
 panel_id  = '123456'
 partition = 'P1'
 
-visonic_alarm = visonicalarm.connect(hostname, user_code, user_id, panel_id, partition)
+alarm = alarm.Connect(hostname, user_code, user_id, panel_id, partition)
 
-current_status = visonic_alarm.status()
-
-if current_status:
-    print(current_status)
+print(alarm.status())
 ```
 Example output:
 ```
