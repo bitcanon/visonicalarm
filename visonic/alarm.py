@@ -45,7 +45,7 @@ class API(object):
     __session_token = None
 
     def __init__(self, hostname, user_code, user_id, panel_id, partition):
-        """ Class constructor """
+        """ Class constructor initializes all URL variables. """
 
         # Set connection specific details
         self.__hostname = hostname
@@ -80,9 +80,9 @@ class API(object):
         self.__url_allow_switch_to_programming_mode = self.__url_base + '/allow_switch_to_programming_mode'
 
     def __send_get_request(self, url, with_session_token):
-        """ Send a GET request to the server. Include the Session-Token only of with_session_token is True. """
+        """ Send a GET request to the server. Includes the Session-Token only of with_session_token is True. """
 
-        # Prepare the header to be sent
+        # Prepare the headers to be sent
         headers = {
             'Host': self.__hostname,
             'Connection': 'keep-alive',
@@ -92,9 +92,11 @@ class API(object):
             'Accept-Encoding': 'br, gzip, deflate'
         }
 
+        # Include the session token in the header
         if with_session_token:
             headers['Session-Token'] = self.__session_token
 
+        # Perform the request and raise an exception if the response is not OK (HTML 200)
         response = requests.get(url, headers=headers)
         response.raise_for_status()
 
@@ -103,9 +105,9 @@ class API(object):
             return value
 
     def __send_post_request(self, url, data_json, with_session_token):
-        """ Send a POST request to the server. Include the Session-Token only of with_session_token is True. """
+        """ Send a POST request to the server. Includes the Session-Token only of with_session_token is True. """
 
-        # Prepare the header to be sent
+        # Prepare the headers to be sent
         headers = {
             'Host': self.__hostname,
             'Content-Type': 'application/json',
@@ -117,9 +119,11 @@ class API(object):
             'Accept-Encoding': 'br, gzip, deflate'
         }
 
+        # Include the session token in the header
         if with_session_token:
             headers['Session-Token'] = self.__session_token
 
+        # Perform the request and raise an exception if the response is not OK (HTML 200)
         response = requests.post(url, headers=headers, data=data_json)
         response.raise_for_status()
 
@@ -129,8 +133,13 @@ class API(object):
         else:
             return None
 
+    ######################
+    # Public API methods #
+    ######################
+
     @property
     def session_token(self):
+        """ Property to keep track of the session token """
         return self.__session_token
 
     def get_version_info(self):
@@ -152,16 +161,71 @@ class API(object):
         }
 
         login_json = json.dumps(login_info, separators=(',', ':'))
+        res = self.__send_post_request(self.__url_login, login_json, with_session_token=False)
+        self.__session_token = res['session_token']
 
-        dict = self.__send_post_request(self.__url_login, login_json, with_session_token=False)
-
-        # Check HTTP response code
-        if dict:
-            self.__session_token = dict['session_token']
+    def is_logged_in(self):
+        """ Check if the session token is still valid """
+        try:
+            self.get_status()
             return True
-        else:
-            self.__session_token = None
+        except requests.HTTPError:
             return False
+
+    def get_status(self):
+        """ Get the current status of the alarm system """
+        return self.__send_get_request(self.__url_status, with_session_token=True)
+
+    def get_alarms(self):
+        """ Get the current alarms """
+        return self.__send_get_request(self.__url_alarms, with_session_token=True)
+
+    def get_alerts(self):
+        """ Get the current alerts """
+        return self.__send_get_request(self.__url_alerts, with_session_token=True)
+
+    def get_troubles(self):
+        """ Get the current troubles """
+        return self.__send_get_request(self.__url_troubles, with_session_token=True)
+
+    def is_master_user(self):
+        """ Check if the current user is a master user """
+        ret = self.__send_get_request(self.__url_is_master_user, with_session_token=True)
+        return ret['is_master_user']
+
+    def get_general_panel_info(self):
+        """ Get the general panel information """
+        return self.__send_get_request(self.__url_general_panel_info, with_session_token=True)
+
+    def get_events(self):
+        """ Get the alarm panel events """
+        return self.__send_get_request(self.__url_events, with_session_token=True)
+
+    def get_wakeup_sms(self):
+        """ Get the information needed to send a wakeup SMS to the alarm system """
+        return self.__send_get_request(self.__url_wakeup_sms, with_session_token=True)
+
+    def get_all_devices(self):
+        """ Get the device specific information """
+        return self.__send_get_request(self.__url_all_devices, with_session_token=True)
+
+    def arm_home(self, partition):
+        """ Arm in Home mode and with Exit Delay """
+        arm_info = {'partition': partition}
+        arm_json = json.dumps(arm_info, separators=(',', ':'))
+        return self.__send_post_request(self.__url_arm_home, arm_json, with_session_token=True)
+
+    def arm_home_instant(self, partition):
+        """ Arm in Home mode and instantly (without Exit Delay) """
+        arm_info = {'partition': partition}
+        arm_json = json.dumps(arm_info, separators=(',', ':'))
+        return self.__send_post_request(self.__url_arm_home_instant, arm_json, with_session_token=True)
+
+    def disarm(self, partition):
+        """ Disarm the alarm system """
+        disarm_info = {'partition': partition}
+        disarm_json = json.dumps(disarm_info, separators=(',', ':'))
+        return self.__send_post_request(self.__url_disarm, disarm_json, with_session_token=True)
 
 
 class Connect(object):
