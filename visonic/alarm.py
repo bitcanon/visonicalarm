@@ -80,7 +80,7 @@ class API(object):
         self.__url_allow_switch_to_programming_mode = self.__url_base + '/allow_switch_to_programming_mode'
 
     def __send_get_request(self, url, with_session_token):
-        """ Send a GET request to the server. Includes the Session-Token only of with_session_token is True. """
+        """ Send a GET request to the server. Includes the Session-Token only if with_session_token is True. """
 
         # Prepare the headers to be sent
         headers = {
@@ -105,7 +105,7 @@ class API(object):
             return value
 
     def __send_post_request(self, url, data_json, with_session_token):
-        """ Send a POST request to the server. Includes the Session-Token only of with_session_token is True. """
+        """ Send a POST request to the server. Includes the Session-Token only if with_session_token is True. """
 
         # Prepare the headers to be sent
         headers = {
@@ -148,7 +148,7 @@ class API(object):
 
     def get_panel_exists(self):
         """ Check if our panel exists on the server """
-        return self.__send_get_request(self.__url_version, with_session_token=False)
+        return self.__send_get_request(self.__url_is_panel_exists, with_session_token=False)
 
     def login(self):
         """ Try to login and get a session token """
