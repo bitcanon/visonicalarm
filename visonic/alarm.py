@@ -57,6 +57,7 @@ class API(object):
         # Visonic API URLs that should be used
         self.__url_base = 'https://' + self.__hostname + '/rest_api/' + self.__rest_version
 
+        self.__url_version = 'https://' + self.__hostname + '/rest_api/version'
         self.__url_is_panel_exists = self.__url_base + '/is_panel_exists?panel_web_name=' + self.__panel_id
         self.__url_login = self.__url_base + '/login'
         self.__url_status = self.__url_base + '/status'
@@ -81,7 +82,7 @@ class API(object):
     def __send_get_request(self, url, with_session_token):
         """ Send a GET request to the server. Include the Session-Token only of with_session_token is True. """
 
-        # Prepare the header to be send
+        # Prepare the header to be sent
         headers = {
             'Host': self.__hostname,
             'Connection': 'keep-alive',
@@ -101,11 +102,67 @@ class API(object):
             value = json.loads(response.content.decode('utf-8'))
             return value
 
-    def __send_post_request(self, url, data, with_session_token):
-        return
+    def __send_post_request(self, url, data_json, with_session_token):
+        """ Send a POST request to the server. Include the Session-Token only of with_session_token is True. """
 
-    def __get_version_info(self):
-        """ Connect to the API and find out which versions are supported """
+        # Prepare the header to be sent
+        headers = {
+            'Host': self.__hostname,
+            'Content-Type': 'application/json',
+            'Connection': 'keep-alive',
+            'Accept': '*/*',
+            'User-Agent': self.__user_agent,
+            'Content-Length': str(len(data_json)),
+            'Accept-Language': 'en-us',
+            'Accept-Encoding': 'br, gzip, deflate'
+        }
+
+        if with_session_token:
+            headers['Session-Token'] = self.__session_token
+
+        response = requests.post(url, headers=headers, data=data_json)
+        response.raise_for_status()
+
+        # Check HTTP response code
+        if response.status_code == requests.codes.ok:
+            return json.loads(response.content.decode('utf-8'))
+        else:
+            return None
+
+    @property
+    def session_token(self):
+        return self.__session_token
+
+    def get_version_info(self):
+        """ Find out which REST API versions are supported """
+        return self.__send_get_request(self.__url_version, with_session_token=False)
+
+    def get_panel_exists(self):
+        """ Check if our panel exists on the server """
+        return self.__send_get_request(self.__url_version, with_session_token=False)
+
+    def login(self):
+        """ Try to login and get a session token """
+        # Setup authentication information
+        login_info = {
+            'user_code': self.__user_code,
+            'app_type': self.__app_type,
+            'user_id': self.__user_id,
+            'panel_web_name': self.__panel_id
+        }
+
+        login_json = json.dumps(login_info, separators=(',', ':'))
+
+        dict = self.__send_post_request(self.__url_login, login_json, with_session_token=False)
+
+        # Check HTTP response code
+        if dict:
+            self.__session_token = dict['session_token']
+            return True
+        else:
+            self.__session_token = None
+            return False
+
 
 class Connect(object):
     """ The class that is operating against the Visonic API """
