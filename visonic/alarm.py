@@ -55,9 +55,6 @@ class API(object):
         self.__partition = partition
 
         # Visonic API URLs that should be used
-        self.__url_version = 'https://' + self.__hostname + '/rest_api/version'
-
-        self.__initialize()
         self.__url_base = 'https://' + self.__hostname + '/rest_api/' + self.__rest_version
 
         self.__url_is_panel_exists = self.__url_base + '/is_panel_exists?panel_web_name=' + self.__panel_id
@@ -80,16 +77,6 @@ class API(object):
         self.__url_active_users_info = self.__url_base + '/active_users_info'
         self.__url_set_date_time = self.__url_base + '/set_date_time'
         self.__url_allow_switch_to_programming_mode = self.__url_base + '/allow_switch_to_programming_mode'
-
-    def __initialize(self):
-        """ Find the lastest version of the API to use and setup the URLs """
-
-        try:
-            data = self.__send_get_request(self.__url_version, with_session_token=False)
-            version_count = len(data['rest_versions'])
-            self.__rest_version = data['rest_versions'][version_count-1]
-        except IndexError:
-            self.__rest_version = '4.0'
 
     def __send_get_request(self, url, with_session_token):
         """ Send a GET request to the server. Include the Session-Token only of with_session_token is True. """
