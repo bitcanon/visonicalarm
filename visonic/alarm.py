@@ -4,6 +4,122 @@ import requests
 from time import sleep
 
 
+class API(object):
+    """ Class used for communication with the Visonic API """
+
+    # Client configuration
+    __app_type = 'com.visonic.PowerMaxApp'
+    __user_agent = 'Visonic%20GO/2.8.62.91 CFNetwork/901.1 Darwin/17.6.0'
+    __rest_version = '4.0'
+    __hostname = 'visonic.tycomonitor.com'
+    __user_code = '1234'
+    __user_id = '00000000-0000-0000-0000-000000000000'
+    __panel_id = '123456'
+    __partition = 'ALL'
+
+    # The Visonic API URLs used
+    __url_base = None
+    __url_version = None
+    __url_is_panel_exists = None
+    __url_login = None
+    __url_status = None
+    __url_alarms = None
+    __url_alerts = None
+    __url_troubles = None
+    __url_is_master_user = None
+    __url_general_panel_info = None
+    __url_events = None
+    __url_wakeup_sms = None
+    __url_all_devices = None
+    __url_arm_home = None
+    __url_arm_home_instant = None
+    __url_arm_away = None
+    __url_arm_away_instant = None
+    __url_disarm = None
+    __url_locations = None
+    __url_active_users_info = None
+    __url_set_date_time = None
+    __url_allow_switch_to_programming_mode = None
+
+    # API session token
+    __session_token = None
+
+    def __init__(self, hostname, user_code, user_id, panel_id, partition):
+        """ Class constructor """
+
+        # Set connection specific details
+        self.__hostname = hostname
+        self.__user_code = user_code
+        self.__user_id = user_id
+        self.__panel_id = panel_id
+        self.__partition = partition
+
+        # Visonic API URLs that should be used
+        self.__url_version = 'https://' + self.__hostname + '/rest_api/version'
+
+        self.__initialize()
+        self.__url_base = 'https://' + self.__hostname + '/rest_api/' + self.__rest_version
+
+        self.__url_is_panel_exists = self.__url_base + '/is_panel_exists?panel_web_name=' + self.__panel_id
+        self.__url_login = self.__url_base + '/login'
+        self.__url_status = self.__url_base + '/status'
+        self.__url_alarms = self.__url_base + '/alarms'
+        self.__url_alerts = self.__url_base + '/alerts'
+        self.__url_troubles = self.__url_base + '/troubles'
+        self.__url_is_master_user = self.__url_base + '/is_master_user'
+        self.__url_general_panel_info = self.__url_base + '/general_panel_info'
+        self.__url_events = self.__url_base + '/events'
+        self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'
+        self.__url_all_devices = self.__url_base + '/all_devices'
+        self.__url_arm_home = self.__url_base + '/arm_home'
+        self.__url_arm_home_instant = self.__url_base + '/arm_home_instant'
+        self.__url_arm_away = self.__url_base + '/arm_away'
+        self.__url_arm_away_instant = self.__url_base + '/arm_away_instant'
+        self.__url_disarm = self.__url_base + '/disarm'
+        self.__url_locations = self.__url_base + '/locations'
+        self.__url_active_users_info = self.__url_base + '/active_users_info'
+        self.__url_set_date_time = self.__url_base + '/set_date_time'
+        self.__url_allow_switch_to_programming_mode = self.__url_base + '/allow_switch_to_programming_mode'
+
+    def __initialize(self):
+        """ Find the lastest version of the API to use and setup the URLs """
+
+        try:
+            data = self.__send_get_request(self.__url_version, with_session_token=False)
+            version_count = len(data['rest_versions'])
+            self.__rest_version = data['rest_versions'][version_count-1]
+        except IndexError:
+            self.__rest_version = '4.0'
+
+    def __send_get_request(self, url, with_session_token):
+        """ Send a GET request to the server. Include the Session-Token only of with_session_token is True. """
+
+        # Prepare the header to be send
+        headers = {
+            'Host': self.__hostname,
+            'Connection': 'keep-alive',
+            'Accept': '*/*',
+            'User-Agent': self.__user_agent,
+            'Accept-Language': 'en-us',
+            'Accept-Encoding': 'br, gzip, deflate'
+        }
+
+        if with_session_token:
+            headers['Session-Token'] = self.__session_token
+
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+
+        if response.status_code == requests.codes.ok:
+            value = json.loads(response.content.decode('utf-8'))
+            return value
+
+    def __send_post_request(self, url, data, with_session_token):
+        return
+
+    def __get_version_info(self):
+        """ Connect to the API and find out which versions are supported """
+
 class Connect(object):
     """ The class that is operating against the Visonic API """
 
@@ -14,7 +130,7 @@ class Connect(object):
     __user_code = '1234'
     __user_id = '00000000-0000-0000-0000-000000000000'
     __panel_id = '123456'
-    __partition = 'P1'
+    __partition = 'ALL'
 
     # Connection settings
     __max_connection_attempts = 20
@@ -45,6 +161,9 @@ class Connect(object):
         self.__arm_away_url = 'https://' + self.__hostname + '/rest_api/3.0/arm_away'
         self.__arm_home_url = 'https://' + self.__hostname + '/rest_api/3.0/arm_home'
         self.__disarm_url = 'https://' + self.__hostname + '/rest_api/3.0/disarm'
+
+    def set_faulty_session_token(self):
+        self.__session_token = '9559d855-d57d-4650-8ffc-15a6e3721b81'
 
     def __get_session_token(self):
         """ Retrieve a session token to be used by the other API requests """
@@ -134,7 +253,7 @@ class Connect(object):
                 partitions = data['partitions']
 
                 if is_connected:
-                    print('Connected to your Visonic Alarm system! :)')
+                    #print('Connected to your Visonic Alarm system! :)')
 
                     # Current state of the alarm
                     state = partitions[0]['state']
@@ -202,8 +321,4 @@ class Connect(object):
     def status(self):
         """ Get the status of the alarm """
 
-        # If login is successful we can return the status
-        if self.login():
-            return self.__get_status()
-        else:
-            return None
+        return self.__get_status()
