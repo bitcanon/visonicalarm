@@ -22,19 +22,29 @@ user_id   = '2d978962-daa6-4e18-a5e5-b4a99100bd3b'
 panel_id  = '123456'
 partition = 'P1'
 
-alarm = alarm.Connect(hostname, user_code, user_id, panel_id, partition)
+api = alarm.API(hostname, user_code, user_id, panel_id, partition)
 
-print(alarm.status())
+res = api.login()
+
+if api.is_logged_in():
+    print('Logged in')
+else:
+    print('Not logged in')
+
+print(api.get_status())
 ```
 Example output:
 ```
 {
-   'state': 'disarmed',
-   'ready_status': False,
-   'partition': 'ALL',
    'is_connected': True,
-   'is_active': True,
    'exit_delay': 30,
-   'session_token': '1a45ae0d-2d5e-4b19-9cec-f56612fa45de'
+   'partitions': [
+      {
+         'partition': 'ALL',
+         'active': True,
+         'state': 'Disarm',
+         'ready_status': True
+      }
+   ]
 }
 ```
