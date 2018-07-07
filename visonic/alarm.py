@@ -5,6 +5,74 @@ from time import sleep
 from datetime import datetime
 
 
+class System(object):
+    """  """
+
+    # API Connection
+    __api = None
+
+    # Property variables
+    __system_serial = None
+    __system_name = None
+    __system_model = None
+    __system_ready = False
+    __system_state = None
+    __system_active = False
+    __system_connected = False
+    __system_devices = []
+
+    def __init__(self, hostname, user_code, user_id, panel_id, partition):
+        """ Initiate the connection to the Visonic API """
+        self.__api = API(hostname, user_code, user_id, panel_id, partition)
+
+    # System properties
+    @property
+    def serial_number(self):
+        """ Serial number of the system. """
+        return self.__system_serial
+
+    @property
+    def name(self):
+        """ Name of the system. """
+        return self.__system_name
+
+    @property
+    def model(self):
+        """ Model of the system. """
+        return self.__system_model
+
+    @property
+    def ready(self):
+        """ If the system is ready to be armed. If doors or windows are open the system can't be armed. """
+        return self.__system_ready
+
+    @property
+    def state(self):
+        """ Current state of the alarm system (different flavors of armed or disarmed). """
+        return self.__system_state
+
+    @property
+    def active(self):
+        """ If the alarm system is active or not. """
+        return self.__system_active
+
+    @property
+    def connected(self):
+        """ If the alarm system is connected to the API server or not. """
+        return self.__system_connected
+
+    @property
+    def devices(self):
+        """ A list of devices connected to the alarm system and their current state. """
+        return self.__system_devices
+
+    def connect(self):
+        """ Connect to the alarm system and get the static system information. """
+
+    def update_status(self):
+        """ Update all variables that are populated by the call to the status() API method. """
+
+
 class API(object):
     """ Class used for communication with the Visonic API """
 
@@ -140,19 +208,19 @@ class API(object):
 
     @property
     def session_token(self):
-        """ Property to keep track of the session token """
+        """ Property to keep track of the session token. """
         return self.__session_token
 
     def get_version_info(self):
-        """ Find out which REST API versions are supported """
+        """ Find out which REST API versions are supported. """
         return self.__send_get_request(self.__url_version, with_session_token=False)
 
     def get_panel_exists(self):
-        """ Check if our panel exists on the server """
+        """ Check if our panel exists on the server. """
         return self.__send_get_request(self.__url_is_panel_exists, with_session_token=False)
 
     def login(self):
-        """ Try to login and get a session token """
+        """ Try to login and get a session token. """
         # Setup authentication information
         login_info = {
             'user_code': self.__user_code,
@@ -166,7 +234,7 @@ class API(object):
         self.__session_token = res['session_token']
 
     def is_logged_in(self):
-        """ Check if the session token is still valid """
+        """ Check if the session token is still valid. """
         try:
             self.get_status()
             return True
@@ -174,44 +242,44 @@ class API(object):
             return False
 
     def get_status(self):
-        """ Get the current status of the alarm system """
+        """ Get the current status of the alarm system. """
         return self.__send_get_request(self.__url_status, with_session_token=True)
 
     def get_alarms(self):
-        """ Get the current alarms """
+        """ Get the current alarms. """
         return self.__send_get_request(self.__url_alarms, with_session_token=True)
 
     def get_alerts(self):
-        """ Get the current alerts """
+        """ Get the current alerts. """
         return self.__send_get_request(self.__url_alerts, with_session_token=True)
 
     def get_troubles(self):
-        """ Get the current troubles """
+        """ Get the current troubles. """
         return self.__send_get_request(self.__url_troubles, with_session_token=True)
 
     def is_master_user(self):
-        """ Check if the current user is a master user """
+        """ Check if the current user is a master user. """
         ret = self.__send_get_request(self.__url_is_master_user, with_session_token=True)
         return ret['is_master_user']
 
     def get_general_panel_info(self):
-        """ Get the general panel information """
+        """ Get the general panel information. """
         return self.__send_get_request(self.__url_general_panel_info, with_session_token=True)
 
     def get_events(self):
-        """ Get the alarm panel events """
+        """ Get the alarm panel events. """
         return self.__send_get_request(self.__url_events, with_session_token=True)
 
     def get_wakeup_sms(self):
-        """ Get the information needed to send a wakeup SMS to the alarm system """
+        """ Get the information needed to send a wakeup SMS to the alarm system. """
         return self.__send_get_request(self.__url_wakeup_sms, with_session_token=True)
 
     def get_all_devices(self):
-        """ Get the device specific information """
+        """ Get the device specific information. """
         return self.__send_get_request(self.__url_all_devices, with_session_token=True)
 
     def get_locations(self):
-        """ Get all locations in the alarm system """
+        """ Get all locations in the alarm system. """
         return self.__send_get_request(self.__url_locations, with_session_token=True)
 
     def get_active_user_info(self):
@@ -229,31 +297,31 @@ class API(object):
         return self.__send_post_request(self.__url_set_date_time, time_json, with_session_token=True)
 
     def arm_home(self, partition):
-        """ Arm in Home mode and with Exit Delay """
+        """ Arm in Home mode and with Exit Delay. """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
         return self.__send_post_request(self.__url_arm_home, arm_json, with_session_token=True)
 
     def arm_home_instant(self, partition):
-        """ Arm in Home mode instantly (without Exit Delay) """
+        """ Arm in Home mode instantly (without Exit Delay). """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
         return self.__send_post_request(self.__url_arm_home_instant, arm_json, with_session_token=True)
 
     def arm_away(self, partition):
-        """ Arm in Away mode and with Exit Delay """
+        """ Arm in Away mode and with Exit Delay. """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
         return self.__send_post_request(self.__url_arm_away, arm_json, with_session_token=True)
 
     def arm_away_instant(self, partition):
-        """ Arm in Away mode instantly (without Exit Delay) """
+        """ Arm in Away mode instantly (without Exit Delay). """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
         return self.__send_post_request(self.__url_arm_away_instant, arm_json, with_session_token=True)
 
     def disarm(self, partition):
-        """ Disarm the alarm system """
+        """ Disarm the alarm system. """
         disarm_info = {'partition': partition}
         disarm_json = json.dumps(disarm_info, separators=(',', ':'))
         return self.__send_post_request(self.__url_disarm, disarm_json, with_session_token=True)
