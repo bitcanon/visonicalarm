@@ -5,21 +5,146 @@ from time import sleep
 from datetime import datetime
 
 
+class Device(object):
+    """ Class definition of a device in the alarm system. """
+
+    # Property variables
+    __id = None
+    __zone = None
+    __location = None
+    __device_type = None
+    __type = None
+    __subtype = None
+    __pre_enroll = None
+    __soak = None
+    __bypass = None
+    __alarms = None
+    __alerts = None
+    __troubles = None
+    __bypass_availability = None
+    __partitions = None
+
+    def __init__(self, id, zone, location, device_type, type, subtype, pre_enroll, soak, bypass, alarms, alerts, troubles, bypass_availability, partitions):
+        """ Set the private variable values on instantiation. """
+
+        self.__id = id
+        self.__zone = zone
+        self.__location = location
+        self.__device_type = device_type
+        self.__type = type
+        self.__subtype = subtype
+        self.__pre_enroll = pre_enroll
+        self.__soak = soak
+        self.__bypass = bypass
+        self.__alarms = alarms
+        self.__alerts = alerts
+        self.__troubles = troubles
+        self.__bypass_availability = bypass_availability
+        self.__partitions = partitions
+
+    # Device properties
+    @property
+    def id(self):
+        """ Device ID. """
+        return self.__id
+
+    @property
+    def zone(self):
+        """ Device zone. """
+        return self.__zone
+
+    @property
+    def location(self):
+        """ Device location. """
+        return self.__location
+
+    @property
+    def device_type(self):
+        """ Device: device type. """
+        return self.__device_type
+
+    @property
+    def type(self):
+        """ Device type. """
+        return self.__type
+
+    @property
+    def subtype(self):
+        """ Device subtype. """
+        return self.__subtype
+
+    @property
+    def pre_enroll(self):
+        """ Device pre_enroll. """
+        return self.__pre_enroll
+
+    @property
+    def soak(self):
+        """ Device soak. """
+        return self.__soak
+
+    @property
+    def bypass(self):
+        """ Device bypassed. """
+        return self.__bypass
+
+    @property
+    def alarms(self):
+        """ Device alarm count. """
+        return self.__alarms
+
+    @property
+    def alerts(self):
+        """ Device alert count. """
+        return self.__alerts
+
+    @property
+    def troubles(self):
+        """ Device trouble count. """
+        return self.__troubles
+
+    @property
+    def bypass_availability(self):
+        """ Device bypass_availability. """
+        return self.__bypass_availability
+
+    @property
+    def partitions(self):
+        """ Device partitions. """
+        return self.__partitions
+
+    # CONTACT: Properties specific to devices of subtype contact.
+    @property
+    def contact_state(self):
+        """ Returns the current state of the contact. If not a contact, 'undefined' is returned. """
+
+        # If device is not a contact
+        if self.__subtype == 'CONTACT':
+            if self.__troubles:
+                if 'OPENED' in self.__troubles:
+                    return 'opened'
+            else:
+                return 'closed'
+        else:
+            return 'undefined'
+
+
 class System(object):
-    """  """
+    """ Class definition of the main alarm system. """
 
     # API Connection
     __api = None
 
     # Property variables
-    __system_serial = None
     __system_name = None
+    __system_serial = None
     __system_model = None
     __system_ready = False
     __system_state = None
     __system_active = False
     __system_connected = False
     __system_devices = []
+    __is_master_user = False
 
     def __init__(self, hostname, user_code, user_id, panel_id, partition):
         """ Initiate the connection to the Visonic API """
@@ -69,8 +194,121 @@ class System(object):
     def connect(self):
         """ Connect to the alarm system and get the static system information. """
 
+        # Check that the server support API version 4.0.
+        rest_versions = self.__api.get_version_info()['rest_versions']
+        if '4.0' in rest_versions:
+            print('Rest API version 4.0 is supported.')
+        else:
+            raise Exception('Rest API version 4.0 is not supported by server.')
+
+        # Check that the panel ID of your device is registered with the API server.
+        if self.__api.get_panel_exists():
+            print('Panel ID {0} is registered with the API server.'.format(self.__api.panel_id))
+        else:
+            raise Exception('The Panel ID could not be found on the server. Please check your configuration.')
+
+        # Try to login and get a session token. This will raise an exception on failure.
+        self.__api.login()
+        print('Login successful.')
+
+        # Check if logged in user is a Master User.
+        self.__is_master_user = self.__api.is_master_user()
+
+        # Get general panel information
+        gpi = self.__api.get_general_panel_info()
+        self.__system_name = gpi['name']
+        self.__system_serial = gpi['serial']
+        self.__system_model = gpi['model']
+
+        self.update_status()
+
+    def print_system_information(self):
+        """ Print system information. """
+
+        print()
+        print('---------------------------------')
+        print(' Connection specific information ')
+        print('---------------------------------')
+        print('Host:          {0}'.format(self.__api.hostname))
+        print('User Code:     {0}'.format(self.__api.user_code))
+        print('User ID:       {0}'.format(self.__api.user_id))
+        print('Panel ID:      {0}'.format(self.__api.panel_id))
+        print('Partition:     {0}'.format(self.__api.partition))
+        print('Session-Token: {0}'.format(self.__api.session_token))
+        print()
+        print('----------------------------')
+        print(' General system information ')
+        print('----------------------------')
+        print('Name:         {0}'.format(self.__system_name))
+        print('Serial:       {0}'.format(self.__system_serial))
+        print('Model:        {0}'.format(self.__system_model))
+        print('Ready:        {0}'.format(self.__system_ready))
+        print('State:        {0}'.format(self.__system_state))
+        print('Active:       {0}'.format(self.__system_active))
+        print('Connected:    {0}'.format(self.__system_connected))
+        print('Master User:  {0}'.format(self.__is_master_user))
+
+    def print_system_devices(self, detailed=False):
+        """ Print information about the devices in the alarm system. """
+
+        for index, device in enumerate(self.__system_devices):
+            print()
+            print('--------------')
+            print(' Device #{0} '.format(index+1))
+            print('--------------')
+            print('ID:             {0}'.format(device.id))
+            print('Zone:           {0}'.format(device.zone))
+            print('Location:       {0}'.format(device.location))
+            print('Device Type:    {0}'.format(device.device_type))
+            print('Type:           {0}'.format(device.type))
+            print('Subtype:        {0}'.format(device.subtype))
+            print('Alarms:         {0}'.format(device.alarms))
+            print('Alerts:         {0}'.format(device.alerts))
+            print('Troubles:       {0}'.format(device.troubles))
+            print('Contact state:  {0}'.format(device.contact_state))
+            if detailed:
+                print('Preenroll:      {0}'.format(device.pre_enroll))
+                print('Soak:           {0}'.format(device.soak))
+                print('Bypass:         {0}'.format(device.bypass))
+                print('Bypass Avail.:  {0}'.format(device.bypass_availability))
+                print('Partitions:     {0}'.format(device.partitions))
+
     def update_status(self):
         """ Update all variables that are populated by the call to the status() API method. """
+
+        status = self.__api.get_status()
+        partition = status['partitions'][0]
+        self.__system_ready = partition['ready_status']
+        self.__system_state = partition['state']
+        self.__system_active = partition['active']
+        self.__system_connected = status['is_connected']
+
+    def update_devices(self):
+        """ Update all devices in the system with fresh information. """
+
+        devices = self.__api.get_all_devices()
+
+        # Clear the list since there is no way to uniquely identify the devices.
+        self.__system_devices.clear()
+
+        for d in devices:
+            device = Device(
+                id=d['device_id'],
+                zone=d['zone'],
+                location=d['location'],
+                device_type=d['device_type'],
+                type=d['type'],
+                subtype=d['subtype'],
+                pre_enroll=d['preenroll'],
+                soak=d['soak'],
+                bypass=d['bypass'],
+                alarms=d['alarms'],
+                alerts=d['alerts'],
+                troubles=d['troubles'],
+                bypass_availability=d['bypass_availability'],
+                partitions=d['partitions']
+            )
+            self.__system_devices.append(device)
 
 
 class API(object):
@@ -210,6 +448,31 @@ class API(object):
     def session_token(self):
         """ Property to keep track of the session token. """
         return self.__session_token
+
+    @property
+    def hostname(self):
+        """ Property to keep track of the API servers hostname. """
+        return self.__hostname
+
+    @property
+    def user_code(self):
+        """ Property to keep track of the user code beeing used. """
+        return self.__user_code
+
+    @property
+    def user_id(self):
+        """ Property to keep track of the user id (UUID) beeing used. """
+        return self.__user_id
+
+    @property
+    def panel_id(self):
+        """ Property to keep track of the panel id (panel web name). """
+        return self.__panel_id
+
+    @property
+    def partition(self):
+        """ Property to keep track of the partition. """
+        return self.__partition
 
     def get_version_info(self):
         """ Find out which REST API versions are supported. """
