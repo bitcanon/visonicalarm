@@ -15,7 +15,7 @@ class Device(object):
     __device_type = None
     __type = None
     __subtype = None
-    __pre_enroll = None
+    __preenroll = None
     __soak = None
     __bypass = None
     __alarms = None
@@ -24,7 +24,7 @@ class Device(object):
     __bypass_availability = None
     __partitions = None
 
-    def __init__(self, id, zone, location, device_type, type, subtype, pre_enroll, soak, bypass, alarms, alerts, troubles, bypass_availability, partitions):
+    def __init__(self, id, zone, location, device_type, type, subtype, preenroll, soak, bypass, alarms, alerts, troubles, bypass_availability, partitions):
         """ Set the private variable values on instantiation. """
 
         self.__id = id
@@ -33,7 +33,7 @@ class Device(object):
         self.__device_type = device_type
         self.__type = type
         self.__subtype = subtype
-        self.__pre_enroll = pre_enroll
+        self.__preenroll = preenroll
         self.__soak = soak
         self.__bypass = bypass
         self.__alarms = alarms
@@ -76,7 +76,7 @@ class Device(object):
     @property
     def pre_enroll(self):
         """ Device pre_enroll. """
-        return self.__pre_enroll
+        return self.__preenroll
 
     @property
     def soak(self):
@@ -113,20 +113,34 @@ class Device(object):
         """ Device partitions. """
         return self.__partitions
 
-    # CONTACT: Properties specific to devices of subtype contact.
-    @property
-    def contact_state(self):
-        """ Returns the current state of the contact. If not a contact, 'undefined' is returned. """
 
-        # If device is not a contact
-        if self.__subtype == 'CONTACT':
-            if self.__troubles:
-                if 'OPENED' in self.__troubles:
-                    return 'opened'
-            else:
-                return 'closed'
+class ContactDevice(Device):
+    """ Contact device class definition. """
+
+    @property
+    def state(self):
+        """ Returns the current state of the contact. """
+
+        if self.troubles:
+            if 'OPENED' in self.troubles:
+                return 'opened'
         else:
-            return 'undefined'
+            return 'closed'
+
+
+class CameraDevice(Device):
+    """ Camera device class definition. """
+    pass
+
+
+class SmokeDevice(Device):
+    """ Smoke device class definition. """
+    pass
+
+
+class GenericDevice(Device):
+    """ Smoke device class definition. """
+    pass
 
 
 class System(object):
@@ -265,13 +279,14 @@ class System(object):
             print('Alarms:         {0}'.format(device.alarms))
             print('Alerts:         {0}'.format(device.alerts))
             print('Troubles:       {0}'.format(device.troubles))
-            print('Contact state:  {0}'.format(device.contact_state))
             if detailed:
-                print('Preenroll:      {0}'.format(device.pre_enroll))
+                print('Pre-enroll:     {0}'.format(device.pre_enroll))
                 print('Soak:           {0}'.format(device.soak))
                 print('Bypass:         {0}'.format(device.bypass))
                 print('Bypass Avail.:  {0}'.format(device.bypass_availability))
                 print('Partitions:     {0}'.format(device.partitions))
+            if isinstance(device, ContactDevice):
+                print('State:          {0}'.format(device.state))
 
     def update_status(self):
         """ Update all variables that are populated by the call to the status() API method. """
@@ -291,24 +306,79 @@ class System(object):
         # Clear the list since there is no way to uniquely identify the devices.
         self.__system_devices.clear()
 
-        for d in devices:
-            device = Device(
-                id=d['device_id'],
-                zone=d['zone'],
-                location=d['location'],
-                device_type=d['device_type'],
-                type=d['type'],
-                subtype=d['subtype'],
-                pre_enroll=d['preenroll'],
-                soak=d['soak'],
-                bypass=d['bypass'],
-                alarms=d['alarms'],
-                alerts=d['alerts'],
-                troubles=d['troubles'],
-                bypass_availability=d['bypass_availability'],
-                partitions=d['partitions']
-            )
-            self.__system_devices.append(device)
+        for device in devices:
+            if device['subtype'] == 'CONTACT':
+                contact_device = ContactDevice(
+                    id=device['device_id'],
+                    zone=device['zone'],
+                    location=device['location'],
+                    device_type=device['device_type'],
+                    type=device['type'],
+                    subtype=device['subtype'],
+                    preenroll=device['preenroll'],
+                    soak=device['soak'],
+                    bypass=device['bypass'],
+                    alarms=device['alarms'],
+                    alerts=device['alerts'],
+                    troubles=device['troubles'],
+                    bypass_availability=device['bypass_availability'],
+                    partitions=device['partitions']
+                )
+                self.__system_devices.append(contact_device)
+            elif device['subtype'] == 'MOTION_CAMERA':
+                camera_device = CameraDevice(
+                    id=device['device_id'],
+                    zone=device['zone'],
+                    location=device['location'],
+                    device_type=device['device_type'],
+                    type=device['type'],
+                    subtype=device['subtype'],
+                    preenroll=device['preenroll'],
+                    soak=device['soak'],
+                    bypass=device['bypass'],
+                    alarms=device['alarms'],
+                    alerts=device['alerts'],
+                    troubles=device['troubles'],
+                    bypass_availability=device['bypass_availability'],
+                    partitions=device['partitions']
+                )
+                self.__system_devices.append(camera_device)
+            elif device['subtype'] == 'SMOKE':
+                smoke_device = SmokeDevice(
+                    id=device['device_id'],
+                    zone=device['zone'],
+                    location=device['location'],
+                    device_type=device['device_type'],
+                    type=device['type'],
+                    subtype=device['subtype'],
+                    preenroll=device['preenroll'],
+                    soak=device['soak'],
+                    bypass=device['bypass'],
+                    alarms=device['alarms'],
+                    alerts=device['alerts'],
+                    troubles=device['troubles'],
+                    bypass_availability=device['bypass_availability'],
+                    partitions=device['partitions']
+                )
+                self.__system_devices.append(smoke_device)
+            else:
+                generic_device = GenericDevice(
+                    id=device['device_id'],
+                    zone=device['zone'],
+                    location=device['location'],
+                    device_type=device['device_type'],
+                    type=device['type'],
+                    subtype=device['subtype'],
+                    preenroll=device['preenroll'],
+                    soak=device['soak'],
+                    bypass=device['bypass'],
+                    alarms=device['alarms'],
+                    alerts=device['alerts'],
+                    troubles=device['troubles'],
+                    bypass_availability=device['bypass_availability'],
+                    partitions=device['partitions']
+                )
+                self.__system_devices.append(generic_device)
 
 
 class API(object):
