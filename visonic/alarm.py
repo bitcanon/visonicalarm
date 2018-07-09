@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 class Device(object):
-    """ Class definition of a device in the alarm system. """
+    """ Base class definition of a device in the alarm system. """
 
     # Property variables
     __id = None
