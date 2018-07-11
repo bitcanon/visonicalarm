@@ -205,6 +205,13 @@ class System(object):
         """ A list of devices connected to the alarm system and their current state. """
         return self.__system_devices
 
+    def get_device_by_id(self, id):
+        """ Get a device by its ID. """
+        for device in self.__system_devices:
+            if device.id == id:
+                return device
+        return None
+
     def connect(self):
         """ Connect to the alarm system and get the static system information. """
 
