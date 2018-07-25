@@ -1,7 +1,6 @@
 import json
 import requests
 
-from time import sleep
 from datetime import datetime
 
 
@@ -24,7 +23,9 @@ class Device(object):
     __bypass_availability = None
     __partitions = None
 
-    def __init__(self, id, zone, location, device_type, type, subtype, preenroll, soak, bypass, alarms, alerts, troubles, bypass_availability, partitions):
+    def __init__(self, id, zone, location, device_type, type, subtype,
+                 preenroll, soak, bypass, alarms, alerts, troubles,
+                 bypass_availability, partitions):
         """ Set the private variable values on instantiation. """
 
         self.__id = id
@@ -182,12 +183,13 @@ class System(object):
 
     @property
     def ready(self):
-        """ If the system is ready to be armed. If doors or windows are open the system can't be armed. """
+        """ If the system is ready to be armed. If doors or windows are open
+        the system can't be armed. """
         return self.__system_ready
 
     @property
     def state(self):
-        """ Current state of the alarm system (different flavors of armed or disarmed). """
+        """ Current state of the alarm system. """
         return self.__system_state
 
     @property
@@ -196,13 +198,18 @@ class System(object):
         return self.__system_active
 
     @property
+    def session_token(self):
+        """ Return the current session token. """
+        return self.__api.session_token
+
+    @property
     def connected(self):
         """ If the alarm system is connected to the API server or not. """
         return self.__system_connected
 
     @property
     def devices(self):
-        """ A list of devices connected to the alarm system and their current state. """
+        """ A list of devices connected to the alarm system and their state. """
         return self.__system_devices
 
     def get_device_by_id(self, id):
@@ -212,8 +219,28 @@ class System(object):
                 return device
         return None
 
+    def disarm(self):
+        """ Send Disarm command to the alarm system. """
+        self.__api.disarm(self.__api.partition)
+
+    def arm_home(self):
+        """ Send Arm Home command to the alarm system. """
+        self.__api.arm_home(self.__api.partition)
+
+    def arm_home_instant(self):
+        """ Send Arm Home Instant command to the alarm system. """
+        self.__api.arm_home_instant(self.__api.partition)
+
+    def arm_away(self):
+        """ Send Arm Away command to the alarm system. """
+        self.__api.arm_away(self.__api.partition)
+
+    def arm_away_instant(self):
+        """ Send Arm Away Instant command to the alarm system. """
+        self.__api.arm_away_instant(self.__api.partition)
+
     def connect(self):
-        """ Connect to the alarm system and get the static system information. """
+        """ Connect to the alarm system and get the static system info. """
 
         # Check that the server support API version 4.0.
         rest_versions = self.__api.get_version_info()['rest_versions']
@@ -222,13 +249,16 @@ class System(object):
         else:
             raise Exception('Rest API version 4.0 is not supported by server.')
 
-        # Check that the panel ID of your device is registered with the API server.
+        # Check that the panel ID of your device is registered with the server.
         if self.__api.get_panel_exists():
-            print('Panel ID {0} is registered with the API server.'.format(self.__api.panel_id))
+            print('Panel ID {0} is registered with the API server.'.format(
+                                                        self.__api.panel_id))
         else:
-            raise Exception('The Panel ID could not be found on the server. Please check your configuration.')
+            raise Exception('The Panel ID could not be found on the server. '
+                            'Please check your configuration.')
 
-        # Try to login and get a session token. This will raise an exception on failure.
+        # Try to login and get a session token.
+        # This will raise an exception on failure.
         self.__api.login()
         print('Login successful.')
 
@@ -296,7 +326,8 @@ class System(object):
                 print('State:          {0}'.format(device.state))
 
     def update_status(self):
-        """ Update all variables that are populated by the call to the status() API method. """
+        """ Update all variables that are populated by the call
+        to the status() API method. """
 
         status = self.__api.get_status()
         partition = status['partitions'][0]
@@ -439,10 +470,12 @@ class API(object):
         self.__partition = partition
 
         # Visonic API URLs that should be used
-        self.__url_base = 'https://' + self.__hostname + '/rest_api/' + self.__rest_version
+        self.__url_base = 'https://' + self.__hostname + '/rest_api/' + \
+                          self.__rest_version
 
         self.__url_version = 'https://' + self.__hostname + '/rest_api/version'
-        self.__url_is_panel_exists = self.__url_base + '/is_panel_exists?panel_web_name=' + self.__panel_id
+        self.__url_is_panel_exists = self.__url_base + \
+            '/is_panel_exists?panel_web_name=' + self.__panel_id
         self.__url_login = self.__url_base + '/login'
         self.__url_status = self.__url_base + '/status'
         self.__url_alarms = self.__url_base + '/alarms'
@@ -461,10 +494,12 @@ class API(object):
         self.__url_locations = self.__url_base + '/locations'
         self.__url_active_users_info = self.__url_base + '/active_users_info'
         self.__url_set_date_time = self.__url_base + '/set_date_time'
-        self.__url_allow_switch_to_programming_mode = self.__url_base + '/allow_switch_to_programming_mode'
+        self.__url_allow_switch_to_programming_mode = self.__url_base + \
+            '/allow_switch_to_programming_mode'
 
     def __send_get_request(self, url, with_session_token):
-        """ Send a GET request to the server. Includes the Session-Token only if with_session_token is True. """
+        """ Send a GET request to the server. Includes the Session-Token
+        only if with_session_token is True. """
 
         # Prepare the headers to be sent
         headers = {
@@ -480,7 +515,8 @@ class API(object):
         if with_session_token:
             headers['Session-Token'] = self.__session_token
 
-        # Perform the request and raise an exception if the response is not OK (HTML 200)
+        # Perform the request and raise an exception
+        # if the response is not OK (HTML 200)
         response = requests.get(url, headers=headers)
         response.raise_for_status()
 
@@ -489,7 +525,8 @@ class API(object):
             return value
 
     def __send_post_request(self, url, data_json, with_session_token):
-        """ Send a POST request to the server. Includes the Session-Token only if with_session_token is True. """
+        """ Send a POST request to the server. Includes the Session-Token
+        only if with_session_token is True. """
 
         # Prepare the headers to be sent
         headers = {
@@ -507,7 +544,8 @@ class API(object):
         if with_session_token:
             headers['Session-Token'] = self.__session_token
 
-        # Perform the request and raise an exception if the response is not OK (HTML 200)
+        # Perform the request and raise an exception
+        # if the response is not OK (HTML 200)
         response = requests.post(url, headers=headers, data=data_json)
         response.raise_for_status()
 
@@ -553,11 +591,13 @@ class API(object):
 
     def get_version_info(self):
         """ Find out which REST API versions are supported. """
-        return self.__send_get_request(self.__url_version, with_session_token=False)
+        return self.__send_get_request(self.__url_version,
+                                       with_session_token=False)
 
     def get_panel_exists(self):
         """ Check if our panel exists on the server. """
-        return self.__send_get_request(self.__url_is_panel_exists, with_session_token=False)
+        return self.__send_get_request(self.__url_is_panel_exists,
+                                       with_session_token=False)
 
     def login(self):
         """ Try to login and get a session token. """
@@ -570,7 +610,8 @@ class API(object):
         }
 
         login_json = json.dumps(login_info, separators=(',', ':'))
-        res = self.__send_post_request(self.__url_login, login_json, with_session_token=False)
+        res = self.__send_post_request(self.__url_login, login_json,
+                                       with_session_token=False)
         self.__session_token = res['session_token']
 
     def is_logged_in(self):
@@ -583,85 +624,106 @@ class API(object):
 
     def get_status(self):
         """ Get the current status of the alarm system. """
-        return self.__send_get_request(self.__url_status, with_session_token=True)
+        return self.__send_get_request(self.__url_status,
+                                       with_session_token=True)
 
     def get_alarms(self):
         """ Get the current alarms. """
-        return self.__send_get_request(self.__url_alarms, with_session_token=True)
+        return self.__send_get_request(self.__url_alarms,
+                                       with_session_token=True)
 
     def get_alerts(self):
         """ Get the current alerts. """
-        return self.__send_get_request(self.__url_alerts, with_session_token=True)
+        return self.__send_get_request(self.__url_alerts,
+                                       with_session_token=True)
 
     def get_troubles(self):
         """ Get the current troubles. """
-        return self.__send_get_request(self.__url_troubles, with_session_token=True)
+        return self.__send_get_request(self.__url_troubles,
+                                       with_session_token=True)
 
     def is_master_user(self):
         """ Check if the current user is a master user. """
-        ret = self.__send_get_request(self.__url_is_master_user, with_session_token=True)
+        ret = self.__send_get_request(self.__url_is_master_user,
+                                      with_session_token=True)
         return ret['is_master_user']
 
     def get_general_panel_info(self):
         """ Get the general panel information. """
-        return self.__send_get_request(self.__url_general_panel_info, with_session_token=True)
+        return self.__send_get_request(self.__url_general_panel_info,
+                                       with_session_token=True)
 
     def get_events(self):
         """ Get the alarm panel events. """
-        return self.__send_get_request(self.__url_events, with_session_token=True)
+        return self.__send_get_request(self.__url_events,
+                                       with_session_token=True)
 
     def get_wakeup_sms(self):
-        """ Get the information needed to send a wakeup SMS to the alarm system. """
-        return self.__send_get_request(self.__url_wakeup_sms, with_session_token=True)
+        """ Get the information needed to send a
+        wakeup SMS to the alarm system. """
+        return self.__send_get_request(self.__url_wakeup_sms,
+                                       with_session_token=True)
 
     def get_all_devices(self):
         """ Get the device specific information. """
-        return self.__send_get_request(self.__url_all_devices, with_session_token=True)
+        return self.__send_get_request(self.__url_all_devices,
+                                       with_session_token=True)
 
     def get_locations(self):
         """ Get all locations in the alarm system. """
-        return self.__send_get_request(self.__url_locations, with_session_token=True)
+        return self.__send_get_request(self.__url_locations,
+                                       with_session_token=True)
 
     def get_active_user_info(self):
-        """ Get information about the active users. Note: Only master users can see the active_user_ids! """
-        return self.__send_get_request(self.__url_active_users_info, with_session_token=True)
+        """ Get information about the active users.
+        Note: Only master users can see the active_user_ids! """
+        return self.__send_get_request(self.__url_active_users_info,
+                                       with_session_token=True)
 
     def set_date_time(self):
-        """ Set the time on the alarm panel. Note: Only master users can set the time! """
+        """ Set the time on the alarm panel.
+        Note: Only master users can set the time! """
 
         # Make sure the time has the correct format: 20180704T185700
-        current_time = datetime.now().isoformat().replace(':', '').replace('.', '').replace('-', '')[:15]
+        current_time = datetime.now().isoformat().replace(':', '').replace('.',
+                                                    '').replace('-', '')[:15]
 
         time_info = {'time': current_time}
         time_json = json.dumps(time_info, separators=(',', ':'))
-        return self.__send_post_request(self.__url_set_date_time, time_json, with_session_token=True)
+        return self.__send_post_request(self.__url_set_date_time, time_json,
+                                        with_session_token=True)
 
     def arm_home(self, partition):
         """ Arm in Home mode and with Exit Delay. """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
-        return self.__send_post_request(self.__url_arm_home, arm_json, with_session_token=True)
+        return self.__send_post_request(self.__url_arm_home, arm_json,
+                                        with_session_token=True)
 
     def arm_home_instant(self, partition):
         """ Arm in Home mode instantly (without Exit Delay). """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
-        return self.__send_post_request(self.__url_arm_home_instant, arm_json, with_session_token=True)
+        return self.__send_post_request(self.__url_arm_home_instant, arm_json,
+                                        with_session_token=True)
 
     def arm_away(self, partition):
         """ Arm in Away mode and with Exit Delay. """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
-        return self.__send_post_request(self.__url_arm_away, arm_json, with_session_token=True)
+        return self.__send_post_request(self.__url_arm_away, arm_json,
+                                        with_session_token=True)
 
     def arm_away_instant(self, partition):
         """ Arm in Away mode instantly (without Exit Delay). """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
-        return self.__send_post_request(self.__url_arm_away_instant, arm_json, with_session_token=True)
+        return self.__send_post_request(self.__url_arm_away_instant, arm_json,
+                                        with_session_token=True)
 
     def disarm(self, partition):
         """ Disarm the alarm system. """
         disarm_info = {'partition': partition}
         disarm_json = json.dumps(disarm_info, separators=(',', ':'))
-        return self.__send_post_request(self.__url_disarm, disarm_json, with_session_token=True)
+        return self.__send_post_request(self.__url_disarm, disarm_json,
+                                        with_session_token=True)
