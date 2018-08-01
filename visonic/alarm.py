@@ -1,7 +1,9 @@
 import json
 import requests
+from dateutil.relativedelta import *
 
 from datetime import datetime
+from dateutil import parser
 
 
 class Device(object):
@@ -273,6 +275,42 @@ class System(object):
 
         self.update_status()
 
+    def get_last_event(self, timestamp_hour_offset=0):
+        """ Get the last event. """
+
+        events = self.__api.get_events()
+
+        if events is None:
+            return None
+        else:
+            last_event = events[-1]
+            data = dict()
+
+            # Event ID
+            data['event_id'] = last_event['event']
+
+            # Determine the arm state.
+            if last_event['type_id'] == 89:
+                data['action'] = 'Disarm'
+            elif last_event['type_id'] == 85:
+                data['action'] = 'ArmHome'
+            elif last_event['type_id'] == 86:
+                data['action'] = 'ArmAway'
+            else:
+                data['action'] = 'Unknown type_id: {0}'.format(
+                    str(last_event['type_id']))
+
+            # User that caused the event
+            data['user'] = last_event['appointment']
+
+            # Event timestamp
+            dt = parser.parse(last_event['datetime'])
+            dt = dt + relativedelta(hours=timestamp_hour_offset)
+            timestamp = dt.strftime('%Y-%m-%d %H:%M:%S')
+            data['timestamp'] = timestamp
+
+            return data
+
     def print_system_information(self):
         """ Print system information. """
 
@@ -324,6 +362,27 @@ class System(object):
                 print('Partitions:     {0}'.format(device.partitions))
             if isinstance(device, ContactDevice):
                 print('State:          {0}'.format(device.state))
+
+    def print_events(self):
+        """ Print a list of all recent events. """
+
+        events = self.__api.get_events()
+
+        for index, event in enumerate(events):
+            print()
+            print('--------------')
+            print(' Event #{0} '.format(index+1))
+            print('--------------')
+            print('Event:         {0}'.format(event['event']))
+            print('Type ID:       {0}'.format(event['type_id']))
+            print('Label:         {0}'.format(event['label']))
+            print('Description:   {0}'.format(event['description']))
+            print('Appointment:   {0}'.format(event['appointment']))
+            print('Datetime:      {0}'.format(event['datetime']))
+            print('Video:         {0}'.format(event['video']))
+            print('Device Type:   {0}'.format(event['device_type']))
+            print('Zone:          {0}'.format(event['zone']))
+            print('Partitions:    {0}'.format(event['partitions']))
 
     def update_status(self):
         """ Update all variables that are populated by the call
@@ -459,6 +518,10 @@ class API(object):
     # API session token
     __session_token = None
 
+    # Use a session to reuse one TCP connection instead of creating a new
+    # connection for every call to the API
+    __session = None
+
     def __init__(self, hostname, user_code, user_id, panel_id, partition):
         """ Class constructor initializes all URL variables. """
 
@@ -497,6 +560,9 @@ class API(object):
         self.__url_allow_switch_to_programming_mode = self.__url_base + \
             '/allow_switch_to_programming_mode'
 
+        # Create a new session
+        self.__session = requests.session()
+
     def __send_get_request(self, url, with_session_token):
         """ Send a GET request to the server. Includes the Session-Token
         only if with_session_token is True. """
@@ -517,7 +583,7 @@ class API(object):
 
         # Perform the request and raise an exception
         # if the response is not OK (HTML 200)
-        response = requests.get(url, headers=headers)
+        response = self.__session.get(url, headers=headers)
         response.raise_for_status()
 
         if response.status_code == requests.codes.ok:
@@ -546,7 +612,7 @@ class API(object):
 
         # Perform the request and raise an exception
         # if the response is not OK (HTML 200)
-        response = requests.post(url, headers=headers, data=data_json)
+        response = self.__session.post(url, headers=headers, data=data_json)
         response.raise_for_status()
 
         # Check HTTP response code
