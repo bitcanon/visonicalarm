@@ -1,12 +1,9 @@
 import json
 import requests
 
-from dateutil.relativedelta import *
-from datetime import datetime
-from dateutil import parser
-
 from visonic.devices import *
 from visonic.core import APIv4
+from visonic.exceptions import *
 
 
 class Setup(object):
@@ -103,6 +100,20 @@ class Setup(object):
     def arm_away_instant(self):
         """ Send Arm Away Instant command to the alarm system. """
         self.__api.arm_away_instant(self.__api.partition)
+
+    def sync_time(self):
+        """
+        Synchronize the time and date of the alarm panel with the
+        date and time of the computer running the script.
+        """
+        try:
+            self.__api.set_date_time()
+        except requests.exceptions.HTTPError as e:
+            print(str(e))
+            if '440 Client Error: Session token not found' in str(e):
+                raise SessionTokenError()
+            elif '403 Client Error: Forbidden' in str(e):
+                raise NotAdminError()
 
     def connect(self):
         """ Connect to the alarm system and get the static system info. """
