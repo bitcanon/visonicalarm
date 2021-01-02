@@ -6,7 +6,7 @@ from datetime import datetime
 from dateutil import parser
 
 from visonic.devices import *
-from visonic.core import API
+from visonic.core import APIv4
 
 
 class Setup(object):
@@ -28,7 +28,7 @@ class Setup(object):
 
     def __init__(self, hostname, user_code, user_id, panel_id, partition='ALL'):
         """ Initiate the connection to the Visonic API """
-        self.__api = API(hostname, user_code, user_id, panel_id, partition)
+        self.__api = APIv4(hostname, user_code, user_id, panel_id, partition)
 
     # System properties
     @property

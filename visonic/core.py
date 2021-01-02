@@ -2,7 +2,7 @@ import json
 import requests
 
 
-class API(object):
+class APIv4(object):
     """ Class used for communication with the Visonic API """
 
     # Client configuration
