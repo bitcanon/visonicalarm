@@ -9,7 +9,7 @@ from visonic.devices import *
 from visonic.core import API
 
 
-class System(object):
+class Setup(object):
     """ Class definition of the main alarm system. """
 
     # API Connection
@@ -26,7 +26,7 @@ class System(object):
     __system_devices = []
     __is_master_user = False
 
-    def __init__(self, hostname, user_code, user_id, panel_id, partition):
+    def __init__(self, hostname, user_code, user_id, panel_id, partition='ALL'):
         """ Initiate the connection to the Visonic API """
         self.__api = API(hostname, user_code, user_id, panel_id, partition)
 
