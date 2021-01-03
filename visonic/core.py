@@ -120,6 +120,17 @@ class APIv4(object):
         except requests.exceptions.ConnectTimeout:
             raise ConnectionTimeoutError(f"Connection to '{self.__hostname}' timed out after {str(self.__timeout)} seconds.")
             return None
+        except requests.exceptions.HTTPError as e:
+            if   '403 Client Error: Forbidden' in str(e):
+                raise PermissionDeniedError()
+            elif '404 Client Error: Not Found' in str(e):
+                raise NotRestAPIError('Unable to retrieve supported Rest API versions from server.')
+            elif '440 Client Error: Session token not found' in str(e):
+                raise SessionTokenError()
+            elif '442 Client Error: Login attempts limit reached' in str(e):
+                raise LoginAttemptsLimitReachedError('Login attempts limit reached.')
+            elif '444 Client Error: Wrong user code' in str(e):
+                raise InvalidUserCodeError('Authentication failed due to wrong user code.')
 
         # Check HTTP response code
         if response.status_code == requests.codes.ok:
@@ -156,6 +167,17 @@ class APIv4(object):
         except requests.exceptions.ConnectTimeout:
             raise ConnectionTimeoutError(f"Connection to '{self.__hostname}' timed out after {str(self.__timeout)} seconds.")
             return None
+        except requests.exceptions.HTTPError as e:
+            if   '403 Client Error: Forbidden' in str(e):
+                raise PermissionDeniedError()
+            elif '404 Client Error: Not Found' in str(e):
+                raise NotRestAPIError('Unable to retrieve supported Rest API versions from server.')
+            elif '440 Client Error: Session token not found' in str(e):
+                raise SessionTokenError()
+            elif '442 Client Error: Login attempts limit reached' in str(e):
+                raise LoginAttemptsLimitReachedError('Login attempts limit reached.')
+            elif '444 Client Error: Wrong user code' in str(e):
+                raise InvalidUserCodeError('Authentication failed due to wrong user code.')
 
         # Check HTTP response code
         if response.status_code == requests.codes.ok:

@@ -74,6 +74,11 @@ class Setup(object):
         """ A list of devices connected to the alarm system and their state. """
         return self.__system_devices
 
+    @property
+    def is_master_user(self):
+        """ Check if the authenticated user is a master user. """
+        return self.__is_master_user
+
     def get_device_by_id(self, id):
         """ Get a device by its ID. """
         for device in self.__system_devices:
@@ -106,26 +111,13 @@ class Setup(object):
         Synchronize the time and date of the alarm panel with the
         date and time of the computer running the script.
         """
-        try:
-            self.__api.set_date_time()
-        except requests.exceptions.HTTPError as e:
-            print(str(e))
-            if '440 Client Error: Session token not found' in str(e):
-                raise SessionTokenError()
-            elif '403 Client Error: Forbidden' in str(e):
-                raise NotMasterError()
+        self.__api.set_date_time()
 
     def connect(self):
         """ Connect to the alarm system and get the static system info. """
 
         # Check that the server support API version 4.0.
-        rest_versions = []
-
-        try:
-            rest_versions = self.__api.get_version_info()['rest_versions']
-        except requests.exceptions.HTTPError as e:
-            if '404 Client Error: Not Found for url' in str(e):
-                raise NotRestAPIError('Unable to retrieve supported Rest API versions from server.')
+        rest_versions = self.__api.get_version_info()['rest_versions']
 
         if '4.0' in rest_versions:
             print('Rest API version 4.0 is supported.')
@@ -138,13 +130,7 @@ class Setup(object):
 
         # Try to login and get a session token.
         # This will raise an exception on failure.
-        try:
-            self.__api.login()
-        except requests.exceptions.HTTPError as e:
-            if '444 Client Error: Wrong user code' in str(e):
-                raise InvalidUserCodeError('Authentication failed due to wrong user code.')
-            elif '442 Client Error: Login attempts limit reached' in str(e):
-                raise LoginAttemptsLimitReachedError('Login attempts limit reached.')
+        self.__api.login()
 
         # Check if logged in user is a Master User.
         self.__is_master_user = self.__api.is_master_user()
