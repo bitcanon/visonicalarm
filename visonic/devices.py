@@ -37,6 +37,34 @@ class Device(object):
         self.__bypass_availability = bypass_availability
         self.__partitions = partitions
 
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented. """
+        return self.__str__()
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'id': self.id,
+            'zone': self.zone,
+            'location': self.location,
+            'device_type': self.device_type,
+            'type': self.type,
+            'subtype': self.subtype,
+            'preenroll': self.preenroll,
+            'soak': self.soak,
+            'bypass': self.bypass,
+            'alarms': self.alarms,
+            'alerts': self.alerts,
+            'troubles': self.troubles,
+            'bypass_availability': self.bypass_availability,
+            'partitions': self.partitions,
+        }
+
     # Device properties
     @property
     def id(self):
@@ -69,7 +97,7 @@ class Device(object):
         return self.__subtype
 
     @property
-    def pre_enroll(self):
+    def preenroll(self):
         """ Device pre_enroll. """
         return self.__preenroll
 
@@ -116,6 +144,15 @@ class CameraDevice(Device):
 
 class ContactDevice(Device):
     """ Contact device class definition. """
+
+    def __str__(self):
+        object_type = str(type(self))
+        value_dict = self.as_dict()
+        value_dict['state'] = self.state
+        return object_type + ": " + str(value_dict)
+
+    def __repr__(self):
+        return self.__str__()
 
     @property
     def state(self):
