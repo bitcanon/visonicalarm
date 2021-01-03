@@ -63,7 +63,7 @@ class InvalidUserCodeError(Error):
 class LoginAttemptsLimitReachedError(Error):
     """ Raised when the number of failed login attempts are too many. """
     
-    def __init__(self, message="Login attempts limit reached."):
+    def __init__(self, message="Login attempts limit reached. Please wait a few minutes and then try again."):
         self.message = message
         super().__init__(self.message)
 
