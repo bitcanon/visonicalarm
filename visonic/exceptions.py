@@ -36,7 +36,7 @@ class NotRestAPIError(Error):
         super().__init__(self.message)
 
 
-class UnsupportedRestAPIVersion(Error):
+class UnsupportedRestAPIVersionError(Error):
     """ Raised when a version of the REST API is unsupported. """
     
     def __init__(self, message="Unsupported REST API version."):

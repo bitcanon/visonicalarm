@@ -130,7 +130,7 @@ class Setup(object):
         if '4.0' in rest_versions:
             print('Rest API version 4.0 is supported.')
         else:
-            raise UnsupportedRestAPIVersion('Rest API version 4.0 is not supported by server.')
+            raise UnsupportedRestAPIVersionError('Rest API version 4.0 is not supported by server.')
 
         # Check that the panel ID of your device is registered with the server.
         if self.__api.get_panel_exists():
