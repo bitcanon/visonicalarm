@@ -119,11 +119,18 @@ class Setup(object):
         """ Connect to the alarm system and get the static system info. """
 
         # Check that the server support API version 4.0.
-        rest_versions = self.__api.get_version_info()['rest_versions']
+        rest_versions = []
+
+        try:
+            rest_versions = self.__api.get_version_info()['rest_versions']
+        except requests.exceptions.HTTPError as e:
+            if '404 Client Error: Not Found for url' in str(e):
+                raise NotRestAPIError('Unable to retrieve supported Rest API versions from server.')
+
         if '4.0' in rest_versions:
             print('Rest API version 4.0 is supported.')
         else:
-            raise Exception('Rest API version 4.0 is not supported by server.')
+            raise UnsupportedRestAPIVersion('Rest API version 4.0 is not supported by server.')
 
         # Check that the panel ID of your device is registered with the server.
         if self.__api.get_panel_exists():

@@ -19,3 +19,26 @@ class NotMasterError(Error):
         self.message = message
         super().__init__(self.message)
 
+
+class ConnectionTimeoutError(Error):
+    """ Raised when connection to the REST API Server timed out. """
+    
+    def __init__(self, message="Connection to host timed out."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class NotRestAPIError(Error):
+    """ Raised when connection to server is not a Rest API. """
+    
+    def __init__(self, message="Connection to host timed out."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class UnsupportedRestAPIVersion(Error):
+    """ Raised when a version of the REST API is unsupported. """
+    
+    def __init__(self, message="Unsupported REST API version."):
+        self.message = message
+        super().__init__(self.message)

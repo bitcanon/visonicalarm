@@ -5,6 +5,8 @@ from dateutil.relativedelta import *
 from datetime import datetime
 from dateutil import parser
 
+from visonic.exceptions import *
+
 
 class APIv4(object):
     """ Class used for communication with the Visonic API """
@@ -49,6 +51,7 @@ class APIv4(object):
     # Use a session to reuse one TCP connection instead of creating a new
     # connection for every call to the API
     __session = None
+    __timeout = 4
 
     def __init__(self, hostname, user_code, user_id, panel_id, partition):
         """ Class constructor initializes all URL variables. """
@@ -111,12 +114,19 @@ class APIv4(object):
 
         # Perform the request and raise an exception
         # if the response is not OK (HTML 200)
-        response = self.__session.get(url, headers=headers)
-        response.raise_for_status()
+        try:
+            response = self.__session.get(url, headers=headers, timeout=self.__timeout)
+            response.raise_for_status()
+        except requests.exceptions.ConnectTimeout:
+            raise ConnectionTimeoutError(f"Connection to '{self.__hostname}' timed out after {str(self.__timeout)} seconds.")
+            return None
 
+        # Check HTTP response code
         if response.status_code == requests.codes.ok:
             value = json.loads(response.content.decode('utf-8'))
             return value
+        else:
+            return None
 
     def __send_post_request(self, url, data_json, with_session_token):
         """ Send a POST request to the server. Includes the Session-Token
@@ -140,8 +150,12 @@ class APIv4(object):
 
         # Perform the request and raise an exception
         # if the response is not OK (HTML 200)
-        response = self.__session.post(url, headers=headers, data=data_json)
-        response.raise_for_status()
+        try:
+            response = self.__session.post(url, headers=headers, data=data_json, timeout=self.__timeout)
+            response.raise_for_status()
+        except requests.exceptions.ConnectTimeout:
+            raise ConnectionTimeoutError(f"Connection to '{self.__hostname}' timed out after {str(self.__timeout)} seconds.")
+            return None
 
         # Check HTTP response code
         if response.status_code == requests.codes.ok:
