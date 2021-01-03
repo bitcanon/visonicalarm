@@ -133,17 +133,18 @@ class Setup(object):
             raise UnsupportedRestAPIVersionError('Rest API version 4.0 is not supported by server.')
 
         # Check that the panel ID of your device is registered with the server.
-        if self.__api.get_panel_exists():
-            print('Panel ID {0} is registered with the API server.'.format(
-                                                        self.__api.panel_id))
-        else:
-            raise Exception('The Panel ID could not be found on the server. '
-                            'Please check your configuration.')
+        if not self.__api.get_panel_exists():
+            raise InvalidPanelIDError('The Panel ID could not be found on the server.')
 
         # Try to login and get a session token.
         # This will raise an exception on failure.
-        self.__api.login()
-        print('Login successful.')
+        try:
+            self.__api.login()
+        except requests.exceptions.HTTPError as e:
+            if '444 Client Error: Wrong user code' in str(e):
+                raise InvalidUserCodeError('Authentication failed due to wrong user code.')
+            elif '442 Client Error: Login attempts limit reached' in str(e):
+                raise LoginAttemptsLimitReachedError('Login attempts limit reached.')
 
         # Check if logged in user is a Master User.
         self.__is_master_user = self.__api.is_master_user()
