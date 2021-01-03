@@ -12,10 +12,10 @@ class SessionTokenError(Error):
         super().__init__(self.message)
 
 
-class NotAdminError(Error):
-    """ Raised when not authenticated with admin credentials. """
+class NotMasterError(Error):
+    """ Raised when not authenticated with master credentials. """
     
-    def __init__(self, message="Insufficient credentials. Please log in with admin user."):
+    def __init__(self, message="Insufficient credentials. Please connect with master user."):
         self.message = message
         super().__init__(self.message)
 

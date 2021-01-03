@@ -113,7 +113,7 @@ class Setup(object):
             if '440 Client Error: Session token not found' in str(e):
                 raise SessionTokenError()
             elif '403 Client Error: Forbidden' in str(e):
-                raise NotAdminError()
+                raise NotMasterError()
 
     def connect(self):
         """ Connect to the alarm system and get the static system info. """
