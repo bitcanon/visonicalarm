@@ -7,7 +7,7 @@ from dateutil.relativedelta import *
 from visonic.devices import *
 from visonic.core import APIv4
 from visonic.exceptions import *
-from visonic.classes import Location, User
+from visonic.classes import *
 
 
 class Setup(object):
@@ -156,8 +156,8 @@ class Setup(object):
             user_list.append(user)
         return user_list
 
-    def connect(self):
-        """ Connect to the alarm system and get the static system info. """
+    def login(self):
+        """ Connect and login to the alarm system and get the static system info. """
 
         # Check that the server support API version 4.0.
         rest_versions = self.__api.get_version_info()['rest_versions']
@@ -186,10 +186,20 @@ class Setup(object):
 
         self.update_status()
 
+    def get_events(self):
+        """  """
+        event_list = []
+        for event in self.__api.get_events():
+            new_event = Event(event['event'], event['type_id'], event['label'], event['description'], event['appointment'], event['datetime'], event['video'], event['device_type'], event['zone'], event['partitions'])
+            event_list.append(new_event)
+        return event_list
+
     def get_last_event(self, timestamp_hour_offset=0):
         """ Get the last event. """
 
         events = self.__api.get_events()
+
+        print(events)
 
         if events is None:
             return None
