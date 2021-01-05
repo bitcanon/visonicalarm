@@ -8,7 +8,7 @@ setuptools.setup(
     version="1.0.11",
     author="Mikael Schultz",
     author_email="mikael@bitcanon.com",
-    description="A simple API library for the Visonic Alarm system.",
+    description="A simple library for the Visonic Alarm API written in Python 3.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/bitcanon/visonicalarm",
