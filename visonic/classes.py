@@ -1,11 +1,6 @@
 class Event(object):
     """ Class definition of an event in the alarm system. """
 
-    # Property variables
-    __id = None
-    __name = None
-    __is_active = None
-
     def __init__(self, id, type_id, label, description, appointment, datetime, video, device_type, zone, partitions):
         """ Set the private variable values on instantiation. """
 
@@ -114,11 +109,6 @@ class Event(object):
 class User(object):
     """ Class definition of a user in the alarm system. """
 
-    # Property variables
-    __id = None
-    __name = None
-    __is_active = None
-
     def __init__(self, id, name, is_active):
         """ Set the private variable values on instantiation. """
 
@@ -169,11 +159,6 @@ class User(object):
 
 class Location(object):
     """ Class definition of a location in the alarm system. """
-
-    # Property variables
-    __id = None
-    __name = None
-    __is_editable = None
 
     def __init__(self, id, name, is_editable):
         """ Set the private variable values on instantiation. """
