@@ -1,3 +1,78 @@
+class Trouble(object):
+    """ Class definition of a trouble in the alarm system. """
+
+    def __init__(self, device_type, zone_type, zone, location, trouble_type, partitions):
+        """ Set the private variable values on instantiation. """
+
+        self.__device_type = device_type
+        self.__zone_type = zone_type
+        self.__zone = zone
+        self.__location = location
+        self.__trouble_type = trouble_type
+        self.__partitions = partitions
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+
+        class_name   = type(self).__name__
+        device_type  = f"device_type = '{self.device_type}'"
+        zone_type    = f"zone_type = '{self.zone_type}'"
+        zone         = f"zone = {self.zone}"
+        location     = f"location = '{self.location}'"
+        trouble_type = f"trouble_type = '{self.trouble_type}'"
+        partitions   = f"partitions = {str(self.partitions)}"
+
+        return f"{class_name}({device_type}, {zone_type}, {zone}, {location}, {trouble_type}, {partitions})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'device_type': self.device_type,
+            'zone_type': self.zone_type,
+            'zone': self.zone,
+            'location': self.location,
+            'trouble_type': self.trouble_type,
+            'partitions': self.partitions
+        }
+
+    # Event properties
+    @property
+    def device_type(self):
+        """ Device type. """
+        return self.__device_type
+
+    @property
+    def zone_type(self):
+        """ Zone type. """
+        return self.__zone_type
+
+    @property
+    def zone(self):
+        """ Zone ID. """
+        return self.__zone
+
+    @property
+    def location(self):
+        """ Location. """
+        return self.__location
+
+    @property
+    def trouble_type(self):
+        """ Trouble type. """
+        return self.__trouble_type
+
+    @property
+    def partitions(self):
+        """ Partitions. """
+        return self.__partitions
+
+
 class Event(object):
     """ Class definition of an event in the alarm system. """
 
