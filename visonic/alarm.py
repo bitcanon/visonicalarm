@@ -7,7 +7,7 @@ from dateutil.relativedelta import *
 from visonic.devices import *
 from visonic.core import APIv4
 from visonic.exceptions import *
-from visonic.classes import Location
+from visonic.classes import Location, User
 
 
 class Setup(object):
@@ -137,6 +137,19 @@ class Setup(object):
             True
         else:
             False
+
+    def get_users(self):
+        """ Fetch a list of users in the alarm system. """
+        users_info = self.__api.get_active_user_info()
+
+        total_users_count = users_info['total_users_count']
+        active_user_ids = users_info['active_user_ids']
+
+        user_list = []
+        for user_id in range(1, total_users_count+1):
+            user = User(user_id, 'User '+str(user_id), True if user_id in active_user_ids else False)
+            user_list.append(user)
+        return user_list
 
     def connect(self):
         """ Connect to the alarm system and get the static system info. """
