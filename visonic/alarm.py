@@ -202,6 +202,92 @@ class Setup(object):
             trouble_list.append(new_trouble)
         return trouble_list
 
+    def get_devices(self):
+        """ Fetch all the devices that are available. """
+        device_list = []
+
+        devices = self.__api.get_all_devices()
+
+        for device in devices:
+            # Capitalize for cleaner look
+            if device['location']:
+                device['location'] = device['location'].capitalize()
+
+            if device['subtype'] == 'CONTACT':
+                contact_device = ContactDevice(
+                    id=device['device_id'],
+                    zone=device['zone'],
+                    location=device['location'],
+                    device_type=device['device_type'],
+                    type=device['type'],
+                    subtype=device['subtype'],
+                    preenroll=device['preenroll'],
+                    soak=device['soak'],
+                    bypass=device['bypass'],
+                    alarms=device['alarms'],
+                    alerts=device['alerts'],
+                    troubles=device['troubles'],
+                    bypass_availability=device['bypass_availability'],
+                    partitions=device['partitions']
+                )
+                device_list.append(contact_device)
+            elif device['subtype'] == 'MOTION_CAMERA':
+                camera_device = CameraDevice(
+                    id=device['device_id'],
+                    zone=device['zone'],
+                    location=device['location'],
+                    device_type=device['device_type'],
+                    type=device['type'],
+                    subtype=device['subtype'],
+                    preenroll=device['preenroll'],
+                    soak=device['soak'],
+                    bypass=device['bypass'],
+                    alarms=device['alarms'],
+                    alerts=device['alerts'],
+                    troubles=device['troubles'],
+                    bypass_availability=device['bypass_availability'],
+                    partitions=device['partitions']
+                )
+                device_list.append(camera_device)
+            elif device['subtype'] == 'SMOKE':
+                smoke_device = SmokeDevice(
+                    id=device['device_id'],
+                    zone=device['zone'],
+                    location=device['location'],
+                    device_type=device['device_type'],
+                    type=device['type'],
+                    subtype=device['subtype'],
+                    preenroll=device['preenroll'],
+                    soak=device['soak'],
+                    bypass=device['bypass'],
+                    alarms=device['alarms'],
+                    alerts=device['alerts'],
+                    troubles=device['troubles'],
+                    bypass_availability=device['bypass_availability'],
+                    partitions=device['partitions']
+                )
+                device_list.append(smoke_device)
+            else:
+                generic_device = GenericDevice(
+                    id=device['device_id'],
+                    zone=device['zone'],
+                    location=device['location'],
+                    device_type=device['device_type'],
+                    type=device['type'],
+                    subtype=device['subtype'],
+                    preenroll=device['preenroll'],
+                    soak=device['soak'],
+                    bypass=device['bypass'],
+                    alarms=device['alarms'],
+                    alerts=device['alerts'],
+                    troubles=device['troubles'],
+                    bypass_availability=device['bypass_availability'],
+                    partitions=device['partitions']
+                )
+                device_list.append(generic_device)
+
+        return device_list
+
     def get_last_event(self, timestamp_hour_offset=0):
         """ Get the last event. """
 

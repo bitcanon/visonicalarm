@@ -43,8 +43,25 @@ class Device(object):
         return object_type + ": " + str(self.as_dict())
 
     def __repr__(self):
-        """ Define how the object is represented. """
-        return self.__str__()
+        """ Define how the object is represented when output to console. """
+
+        class_name          = type(self).__name__
+        id                  = f"id = '{self.id}'"
+        zone                = f"zone = {self.zone}"
+        location            = f"location = '{self.location}'"
+        device_type         = f"device_type = '{self.device_type}'"
+        type_               = f"type = '{self.type}'"
+        subtype             = f"subtype = '{self.subtype}'"
+        preenroll           = f"preenroll = {self.preenroll}"
+        soak                = f"soak = {self.soak}"
+        bypass              = f"bypass = {self.bypass}"
+        alarms              = f"alarms = {self.alarms}"
+        alerts              = f"alerts = {self.alerts}"
+        troubles            = f"troubles = {self.troubles}"
+        bypass_availability = f"bypass_availability = {self.bypass_availability}"
+        partitions          = f"partitions = {str(self.partitions)}"
+
+        return f"{class_name}({id}, {zone}, {location}, {device_type}, {type_}, {subtype}, {preenroll}, {soak}, {bypass}, {alarms}, {alerts}, {troubles}, {bypass_availability}, {partitions})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """
@@ -146,13 +163,12 @@ class ContactDevice(Device):
     """ Contact device class definition. """
 
     def __str__(self):
+        """ Define how the print() method should print the object. """
+
         object_type = str(type(self))
         value_dict = self.as_dict()
         value_dict['state'] = self.state
         return object_type + ": " + str(value_dict)
-
-    def __repr__(self):
-        return self.__str__()
 
     @property
     def state(self):
