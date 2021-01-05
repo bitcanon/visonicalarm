@@ -67,7 +67,7 @@ class APIv4(object):
 
         self.__url_version = 'https://' + self.__hostname + '/rest_api/version'
         self.__url_is_panel_exists = self.__url_base + \
-            '/is_panel_exists?panel_web_name=' + self.__panel_id
+            '/is_panel_exists?panel_web_name='
         self.__url_login = self.__url_base + '/login'
         self.__url_status = self.__url_base + '/status'
         self.__url_alarms = self.__url_base + '/alarms'
@@ -184,9 +184,9 @@ class APIv4(object):
                                        with_session_token=False,
                                        request_type='GET')
 
-    def get_panel_exists(self):
+    def get_panel_exists(self, panel_id):
         """ Check if our panel exists on the server. """
-        return self.__send_request(self.__url_is_panel_exists,
+        return self.__send_request(self.__url_is_panel_exists + panel_id,
                                        with_session_token=False,
                                        request_type='GET')
 

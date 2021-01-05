@@ -14,6 +14,7 @@ class Setup(object):
 
     # API Connection
     __api = None
+    __panel_id = None
 
     # Property variables
     __system_name = None
@@ -28,6 +29,7 @@ class Setup(object):
 
     def __init__(self, hostname, user_code, user_id, panel_id, partition='ALL'):
         """ Initiate the connection to the Visonic API """
+        self.__panel_id = panel_id
         self.__api = APIv4(hostname, user_code, user_id, panel_id, partition)
 
     # System properties
@@ -89,6 +91,14 @@ class Setup(object):
                 return device
         return None
 
+    def rest_api_version(self):
+        """ Check which versions of the API that the server support. """
+        return self.__api.get_version_info()['rest_versions']
+
+    def check_panel_id(self, panel_id):
+        """ Check if the panel ID exists on the alarm server. """
+        return self.__api.get_panel_exists(panel_id)
+
     def disarm(self):
         """ Send Disarm command to the alarm system. """
         self.__api.disarm(self.__api.partition)
@@ -128,7 +138,7 @@ class Setup(object):
             raise UnsupportedRestAPIVersionError('Rest API version 4.0 is not supported by server.')
 
         # Check that the panel ID of your device is registered with the server.
-        if not self.__api.get_panel_exists():
+        if not self.__api.get_panel_exists(self.__panel_id):
             raise InvalidPanelIDError('The Panel ID could not be found on the server.')
 
         # Try to login and get a session token.
