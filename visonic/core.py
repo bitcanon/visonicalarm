@@ -284,62 +284,62 @@ class APIv4(object):
                                        with_session_token=True,
                                        request_type='GET')
 
-    def set_date_time(self):
+    def set_date_time(self, current_time):
         """ Set the time on the alarm panel.
         Note: Only master users can set the time! """
 
         # Make sure the time has the correct format: 20180704T185700
-        current_time = datetime.now().isoformat().replace(':', '').replace('.',
+        set_time = current_time.isoformat().replace(':', '').replace('.',
                                                     '').replace('-', '')[:15]
 
-        time_info = {'time': current_time}
+        time_info = {'time': set_time}
         time_json = json.dumps(time_info, separators=(',', ':'))
-        return self.__send_request(self.__url_set_date_time, time_json,
+        return self.__send_request(self.__url_set_date_time,
                                         with_session_token=True,
-                                        data_json=login_json,
+                                        data_json=time_json,
                                         request_type='POST')
 
     def arm_home(self, partition):
         """ Arm in Home mode and with Exit Delay. """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
-        return self.__send_request(self.__url_arm_home, arm_json,
+        return self.__send_request(self.__url_arm_home,
                                         with_session_token=True,
-                                        data_json=login_json,
+                                        data_json=arm_json,
                                         request_type='POST')
 
     def arm_home_instant(self, partition):
         """ Arm in Home mode instantly (without Exit Delay). """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
-        return self.__send_request(self.__url_arm_home_instant, arm_json,
+        return self.__send_request(self.__url_arm_home_instant,
                                         with_session_token=True,
-                                        data_json=login_json,
+                                        data_json=arm_json,
                                         request_type='POST')
 
     def arm_away(self, partition):
         """ Arm in Away mode and with Exit Delay. """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
-        return self.__send_request(self.__url_arm_away, arm_json,
+        return self.__send_request(self.__url_arm_away,
                                         with_session_token=True,
-                                        data_json=login_json,
+                                        data_json=arm_json,
                                         request_type='POST')
 
     def arm_away_instant(self, partition):
         """ Arm in Away mode instantly (without Exit Delay). """
         arm_info = {'partition': partition}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
-        return self.__send_request(self.__url_arm_away_instant, arm_json,
+        return self.__send_request(self.__url_arm_away_instant,
                                         with_session_token=True,
-                                        data_json=login_json,
+                                        data_json=arm_json,
                                         request_type='POST')
 
     def disarm(self, partition):
         """ Disarm the alarm system. """
         disarm_info = {'partition': partition}
         disarm_json = json.dumps(disarm_info, separators=(',', ':'))
-        return self.__send_request(self.__url_disarm, disarm_json,
+        return self.__send_request(self.__url_disarm,
                                         with_session_token=True,
-                                        data_json=login_json,
+                                        data_json=disarm_json,
                                         request_type='POST')

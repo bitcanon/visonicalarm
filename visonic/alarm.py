@@ -101,7 +101,7 @@ class Setup(object):
         return self.__api.get_panel_exists(panel_id)
 
     def get_locations(self):
-        """ Fetch to locations associated with the alarm system. """
+        """ Fetch the locations associated with the alarm system. """
         location_list = []
         for loc in self.__api.get_locations():
             location = Location(loc['hel_id'], loc['name'].capitalize(), loc['is_editable'])
@@ -128,12 +128,15 @@ class Setup(object):
         """ Send Arm Away Instant command to the alarm system. """
         self.__api.arm_away_instant(self.__api.partition)
 
-    def sync_time(self):
+    def set_time(self, current_time):
         """
-        Synchronize the time and date of the alarm panel with the
-        date and time of the computer running the script.
+        Set the time of the alarm system.
         """
-        self.__api.set_date_time()
+        result = self.__api.set_date_time(current_time)
+        if result['process_token']:
+            True
+        else:
+            False
 
     def connect(self):
         """ Connect to the alarm system and get the static system info. """
