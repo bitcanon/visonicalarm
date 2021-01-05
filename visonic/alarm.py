@@ -7,6 +7,7 @@ from dateutil.relativedelta import *
 from visonic.devices import *
 from visonic.core import APIv4
 from visonic.exceptions import *
+from visonic.classes import Location
 
 
 class Setup(object):
@@ -98,6 +99,14 @@ class Setup(object):
     def check_panel_id(self, panel_id):
         """ Check if the panel ID exists on the alarm server. """
         return self.__api.get_panel_exists(panel_id)
+
+    def get_locations(self):
+        """ Fetch to locations associated with the alarm system. """
+        location_list = []
+        for loc in self.__api.get_locations():
+            location = Location(loc['hel_id'], loc['name'].capitalize(), loc['is_editable'])
+            location_list.append(location)
+        return location_list
 
     def disarm(self):
         """ Send Disarm command to the alarm system. """
