@@ -138,7 +138,7 @@ class Setup(object):
         else:
             False
 
-    def get_users(self):
+    def get_users(self, override_user_names=[]):
         """ Fetch a list of users in the alarm system. """
         users_info = self.__api.get_active_user_info()
 
@@ -147,7 +147,12 @@ class Setup(object):
 
         user_list = []
         for user_id in range(1, total_users_count+1):
-            user = User(user_id, 'User '+str(user_id), True if user_id in active_user_ids else False)
+            name = 'User '+str(user_id)
+            if user_id in override_user_names:
+                name = override_user_names[user_id]
+
+            user = User(user_id, name, True if user_id in active_user_ids else False)
+
             user_list.append(user)
         return user_list
 
