@@ -60,13 +60,13 @@ except ConnectionTimeoutError:
     print('Connection to host timed out.')
 except NotRestAPIError:
     print('The host is not a REST API server.')
-except UnsupportedRestAPIVersionError as e:
-    print(str(e))
+except UnsupportedRestAPIVersionError:
+    print('Unsupported REST API version.')
 except InvalidPanelIDError:
     print('The Panel ID is not registered with the API server.')
-except InvalidUserCodeError as e:
+except InvalidUserCodeError:
     print('The user code supplied is invalid.')
-except LoginAttemptsLimitReachedError as e:
+except LoginAttemptsLimitReachedError:
     print('To many login attempts. Please wait a few minutes and try again.')
 ```
 
