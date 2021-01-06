@@ -418,7 +418,7 @@ class User(object):
         name       = f"name = '{self.name}'"
         is_active  = f"is_active = {self.is_active}"
 
-        return f"{class_name}({id}, {name}, {is_editable})"
+        return f"{class_name}({id}, {name}, {is_active})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """

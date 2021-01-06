@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setuptools.setup(
     name='visonicalarm',
-    version='2.0.3',
+    version='2.0.5',
     author='Mikael Schultz',
     author_email='mikael@bitcanon.com',
     description='A simple library for the Visonic Alarm API written in Python 3.',
@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url='https://github.com/bitcanon/visonicalarm',
     packages=setuptools.find_packages(),
-    install_requires=['requests', 'dateutils'],
+    install_requires=['requests', 'python-dateutil'],
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
