@@ -1,7 +1,8 @@
 class PanelInfo(object):
-    """ Class definition of a partition in the alarm system. """
+    """ Class definition of the general alarm system information. """
 
-    def __init__(self, name, serial, model, alarm_amount, alert_amount, trouble_amount, camera_amount, bypass_mode, enabled_partition_mode):
+    def __init__(self, name, serial, model, alarm_amount, alert_amount, 
+        trouble_amount, camera_amount, bypass_mode, enabled_partition_mode):
         """ Set the private variable values on instantiation. """
 
         self.__name = name
@@ -34,7 +35,8 @@ class PanelInfo(object):
         bypass_mode            = f"bypass_mode = '{self.bypass_mode}'"
         enabled_partition_mode = f"enabled_partition_mode = {self.enabled_partition_mode}"
 
-        return f"{class_name}({name}, {serial}, {model}, {alarm_amount}, {alert_amount}, {trouble_amount}, {camera_amount}, {bypass_mode}, {enabled_partition_mode})"
+        return f"{class_name}({name}, {serial}, {model}, {alarm_amount}, {alert_amount}, \
+            {trouble_amount}, {camera_amount}, {bypass_mode}, {enabled_partition_mode})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """
@@ -237,7 +239,8 @@ class Trouble(object):
         trouble_type = f"trouble_type = '{self.trouble_type}'"
         partitions   = f"partitions = {str(self.partitions)}"
 
-        return f"{class_name}({device_type}, {zone_type}, {zone}, {location}, {trouble_type}, {partitions})"
+        return f"{class_name}({device_type}, {zone_type}, \
+            {zone}, {location}, {trouble_type}, {partitions})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """
@@ -321,7 +324,8 @@ class Event(object):
         zone        = f"zone = {self.zone}"
         partitions  = f"partitions = {str(self.partitions)}"
 
-        return f"{class_name}({id}, {type_id}, {label}, {description}, {appointment}, {datetime}, {video}, {device_type}, {zone}, {partitions})"
+        return f"{class_name}({id}, {type_id}, {label}, {description}, {appointment}, \
+            {datetime}, {video}, {device_type}, {zone}, {partitions})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """

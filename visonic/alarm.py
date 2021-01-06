@@ -111,7 +111,8 @@ class Setup(object):
         # Get general panel information
         gpi = self.__api.get_general_panel_info()
 
-        return PanelInfo(gpi['name'], gpi['serial'], gpi['model'], gpi['alarm_amount'], gpi['alert_amount'], gpi['trouble_amount'], gpi['camera_amount'], gpi['bypass_mode'], gpi['enabled_partition_mode'])
+        return PanelInfo(gpi['name'], gpi['serial'], gpi['model'], gpi['alarm_amount'], gpi['alert_amount'], 
+            gpi['trouble_amount'], gpi['camera_amount'], gpi['bypass_mode'], gpi['enabled_partition_mode'])
 
     def get_users(self, override_user_names=[]):
         """ Fetch a list of users in the alarm system. """
@@ -157,7 +158,9 @@ class Setup(object):
         """ Fetch all the events that are available. """
         event_list = []
         for event in self.__api.get_events():
-            new_event = Event(event['event'], event['type_id'], event['label'], event['description'], event['appointment'], event['datetime'], event['video'], event['device_type'], event['zone'], event['partitions'])
+            new_event = Event(event['event'], event['type_id'], event['label'], 
+                event['description'], event['appointment'], event['datetime'], 
+                event['video'], event['device_type'], event['zone'], event['partitions'])
             event_list.append(new_event)
         return event_list
 
@@ -165,7 +168,8 @@ class Setup(object):
         """ Fetch all the troubles that are available. """
         trouble_list = []
         for trouble in self.__api.get_troubles():
-            new_trouble = Trouble(trouble['device_type'], trouble['zone_type'], trouble['zone'], trouble['location'], trouble['trouble_type'], trouble['partitions'])
+            new_trouble = Trouble(trouble['device_type'], trouble['zone_type'], trouble['zone'], 
+                trouble['location'], trouble['trouble_type'], trouble['partitions'])
             trouble_list.append(new_trouble)
         return trouble_list
 
