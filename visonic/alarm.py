@@ -21,11 +21,6 @@ class Setup(object):
     __system_name = None
     __system_serial = None
     __system_model = None
-    __system_ready = False
-    __system_state = None
-    __system_active = False
-    __system_connected = False
-    __system_devices = []
     __is_master_user = False
 
     def __init__(self, hostname, user_code, user_id, panel_id, partition='ALL'):
@@ -50,30 +45,9 @@ class Setup(object):
         return self.__system_model
 
     @property
-    def ready(self):
-        """ If the system is ready to be armed. If doors or windows are open
-        the system can't be armed. """
-        return self.__system_ready
-
-    @property
-    def state(self):
-        """ Current state of the alarm system. """
-        return self.__system_state
-
-    @property
-    def active(self):
-        """ If the alarm system is active or not. """
-        return self.__system_active
-
-    @property
     def session_token(self):
         """ Return the current session token. """
         return self.__api.session_token
-
-    @property
-    def connected(self):
-        """ If the alarm system is connected to the API server or not. """
-        return self.__system_connected
 
     @property
     def devices(self):
@@ -84,13 +58,6 @@ class Setup(object):
     def is_master_user(self):
         """ Check if the authenticated user is a master user. """
         return self.__is_master_user
-
-    def get_device_by_id(self, id):
-        """ Get a device by its ID. """
-        for device in self.__system_devices:
-            if device.id == id:
-                return device
-        return None
 
     def rest_api_version(self):
         """ Check which versions of the API that the server support. """
@@ -183,8 +150,6 @@ class Setup(object):
         self.__system_name = gpi['name']
         self.__system_serial = gpi['serial']
         self.__system_model = gpi['model']
-
-        self.update_status()
 
     def get_events(self):
         """ Fetch all the events that are available. """
@@ -288,6 +253,30 @@ class Setup(object):
 
         return device_list
 
+    def get_status(self):
+        """ Fetch the current state of the alarm system. """
+
+        status = self.__api.get_status()
+
+        partition_list = []
+
+        # Create the partitions
+        for part in status['partitions']:
+            partition = part['partition']
+            active = part['active']
+            state = part['state']
+            ready_status = part['ready_status']
+            new_part = Partition(partition, active, state, ready_status)
+
+            partition_list.append(new_part)
+
+        # Create the status
+        is_connected = status['is_connected']
+        exit_delay = status['exit_delay']
+        partitions = partition_list
+
+        return Status(is_connected, exit_delay, partitions)
+
     def get_last_event(self, timestamp_hour_offset=0):
         """ Get the last event. """
 
@@ -325,89 +314,4 @@ class Setup(object):
             data['timestamp'] = timestamp
 
             return data
-
-    def print_system_information(self):
-        """ Print system information. """
-
-        print()
-        print('---------------------------------')
-        print(' Connection specific information ')
-        print('---------------------------------')
-        print('Host:          {0}'.format(self.__api.hostname))
-        print('User Code:     {0}'.format(self.__api.user_code))
-        print('User ID:       {0}'.format(self.__api.user_id))
-        print('Panel ID:      {0}'.format(self.__api.panel_id))
-        print('Partition:     {0}'.format(self.__api.partition))
-        print('Session-Token: {0}'.format(self.__api.session_token))
-        print()
-        print('----------------------------')
-        print(' General system information ')
-        print('----------------------------')
-        print('Name:         {0}'.format(self.__system_name))
-        print('Serial:       {0}'.format(self.__system_serial))
-        print('Model:        {0}'.format(self.__system_model))
-        print('Ready:        {0}'.format(self.__system_ready))
-        print('State:        {0}'.format(self.__system_state))
-        print('Active:       {0}'.format(self.__system_active))
-        print('Connected:    {0}'.format(self.__system_connected))
-        print('Master User:  {0}'.format(self.__is_master_user))
-
-    def print_system_devices(self, detailed=False):
-        """ Print information about the devices in the alarm system. """
-
-        for index, device in enumerate(self.__system_devices):
-            print()
-            print('--------------')
-            print(' Device #{0} '.format(index+1))
-            print('--------------')
-            print('ID:             {0}'.format(device.id))
-            print('Zone:           {0}'.format(device.zone))
-            print('Location:       {0}'.format(device.location))
-            print('Device Type:    {0}'.format(device.device_type))
-            print('Type:           {0}'.format(device.type))
-            print('Subtype:        {0}'.format(device.subtype))
-            print('Alarms:         {0}'.format(device.alarms))
-            print('Alerts:         {0}'.format(device.alerts))
-            print('Troubles:       {0}'.format(device.troubles))
-            if detailed:
-                print('Pre-enroll:     {0}'.format(device.pre_enroll))
-                print('Soak:           {0}'.format(device.soak))
-                print('Bypass:         {0}'.format(device.bypass))
-                print('Bypass Avail.:  {0}'.format(device.bypass_availability))
-                print('Partitions:     {0}'.format(device.partitions))
-            if isinstance(device, ContactDevice):
-                print('State:          {0}'.format(device.state))
-
-    def print_events(self):
-        """ Print a list of all recent events. """
-
-        events = self.__api.get_events()
-
-        for index, event in enumerate(events):
-            print()
-            print('--------------')
-            print(' Event #{0} '.format(index+1))
-            print('--------------')
-            print('Event:         {0}'.format(event['event']))
-            print('Type ID:       {0}'.format(event['type_id']))
-            print('Label:         {0}'.format(event['label']))
-            print('Description:   {0}'.format(event['description']))
-            print('Appointment:   {0}'.format(event['appointment']))
-            print('Datetime:      {0}'.format(event['datetime']))
-            print('Video:         {0}'.format(event['video']))
-            print('Device Type:   {0}'.format(event['device_type']))
-            print('Zone:          {0}'.format(event['zone']))
-            print('Partitions:    {0}'.format(event['partitions']))
-
-    def update_status(self):
-        """ Update all variables that are populated by the call
-        to the status() API method. """
-
-        status = self.__api.get_status()
-        partition = status['partitions'][0]
-        self.__system_ready = partition['ready_status']
-        self.__system_state = partition['state']
-        self.__system_active = partition['active']
-        self.__system_connected = status['is_connected']
-
 

@@ -1,3 +1,113 @@
+class Partition(object):
+    """ Class definition of a partition in the alarm system. """
+
+    def __init__(self, name, active, state, ready_status):
+        """ Set the private variable values on instantiation. """
+
+        self.__name = name
+        self.__active = active
+        self.__state = state
+        self.__ready_status = ready_status
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+
+        class_name   = type(self).__name__
+        name    = f"name = '{self.name}'"
+        active       = f"active = {self.active}"
+        state        = f"state = '{self.state}'"
+        ready_status = f"ready_status = {self.ready_status}"
+
+        return f"{class_name}({name}, {active}, {state}, {ready_status})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'name': self.name,
+            'active': self.active,
+            'state': self.state,
+            'ready_status': self.ready_status
+        }
+
+    # Event properties
+    @property
+    def name(self):
+        """ Partition name. """
+        return self.__name
+
+    @property
+    def active(self):
+        """ Partition is active. """
+        return self.__active
+
+    @property
+    def state(self):
+        """ Current alarm state. """
+        return self.__state
+
+    @property
+    def ready_status(self):
+        """ The alarm system is ready to be armed. """
+        return self.__ready_status
+
+
+class Status(object):
+    """ Class definition representing the status of the alarm system. """
+
+    def __init__(self, is_connected, exit_delay, partitions):
+        """ Set the private variable values on instantiation. """
+
+        self.__is_connected = is_connected
+        self.__exit_delay = exit_delay
+        self.__partitions = partitions
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+
+        class_name   = type(self).__name__
+        is_connected = f"is_connected = {self.is_connected}"
+        exit_delay   = f"exit_delay = {self.exit_delay}"
+        partitions   = f"partitions = [{str(self.partitions)}]"
+
+        return f"{class_name}({is_connected}, {exit_delay}, {partitions})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'is_connected': self.is_connected,
+            'exit_delay': self.exit_delay,
+            'partitions': self.partitions
+        }
+
+    # Event properties
+    @property
+    def is_connected(self):
+        """ Alarm system is connected. """
+        return self.__is_connected
+
+    @property
+    def exit_delay(self):
+        """ Exit delays configured (in seconds). """
+        return self.__exit_delay
+
+    @property
+    def partitions(self):
+        """ The partitions in the alarm system. """
+        return self.__partitions
+
+
 class Trouble(object):
     """ Class definition of a trouble in the alarm system. """
 
