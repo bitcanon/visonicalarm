@@ -105,6 +105,14 @@ class Setup(object):
         else:
             False
 
+    def get_panel_info(self):
+        """ Fetch basic information about the alarm system. """
+
+        # Get general panel information
+        gpi = self.__api.get_general_panel_info()
+
+        return PanelInfo(gpi['name'], gpi['serial'], gpi['model'], gpi['alarm_amount'], gpi['alert_amount'], gpi['trouble_amount'], gpi['camera_amount'], gpi['bypass_mode'], gpi['enabled_partition_mode'])
+
     def get_users(self, override_user_names=[]):
         """ Fetch a list of users in the alarm system. """
         users_info = self.__api.get_active_user_info()
@@ -144,12 +152,6 @@ class Setup(object):
 
         # Check if logged in user is a Master User.
         self.__is_master_user = self.__api.is_master_user()
-
-        # Get general panel information
-        gpi = self.__api.get_general_panel_info()
-        self.__system_name = gpi['name']
-        self.__system_serial = gpi['serial']
-        self.__system_model = gpi['model']
 
     def get_events(self):
         """ Fetch all the events that are available. """
