@@ -1,21 +1,23 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open('README.md', 'r', encoding='utf-8') as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="visonicalarm",
-    version="1.0.11",
-    author="Mikael Schultz",
-    author_email="mikael@bitcanon.com",
-    description="A simple library for the Visonic Alarm API written in Python 3.",
+    name='visonicalarm',
+    version='2.0.3',
+    author='Mikael Schultz',
+    author_email='mikael@bitcanon.com',
+    description='A simple library for the Visonic Alarm API written in Python 3.',
     long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/bitcanon/visonicalarm",
+    long_description_content_type='text/markdown',
+    url='https://github.com/bitcanon/visonicalarm',
     packages=setuptools.find_packages(),
+    install_requires=['requests', 'dateutils'],
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
     ],
+    python_requires='>=3.6',
 )
