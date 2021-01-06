@@ -1,0 +1,57 @@
+Various Notes
+=============
+
+Events
+------
+Different event types noted.
+01. type_id = 179
+    label = 'OFFLINE'
+    description = 'BBA module has gone offline'
+    appointment = 'IPMP'
+    device_type = 'IPMP_SERVER'
+02. type_id = 180
+    label = 'ONLINE'
+    description = 'BBA module has come online'
+    appointment = 'IPMP'
+    device_type = 'IPMP_SERVER'
+03. type_id = 89
+    label = 'DISARM'
+    description = 'Frånkoppla' // Disarm
+    appointment = 'Användare 1'
+    device_type = 'USER'
+04. type_id = 86
+    label = 'ARM'
+    description = 'Tillkopplat borta' // Arm Away
+    appointment = 'Användare 2'
+    device_type = 'USER'
+05. type_id = 87
+    label = 'ARM'
+    description = 'Snabbtillkoppla hemma' // Arm Home Instant
+    appointment = 'Kontrollpanel'
+    device_type = 'CONTROL_PANEL'
+06. type_id = 55
+    label = 'NONE'
+    description = 'Telefonlinjefel' // Phone Line Error
+    appointment = 'GSM 1'
+    device_type = 'GSM'
+07. type_id = 56
+    label = 'NONE'
+    description = 'Telefonlinje återställd' // Phone Line Restored
+    appointment = 'GSM 1'
+    device_type = 'GSM'
+08. type_id = ''
+    label = ''
+    description = ''
+    appointment = ''
+    device_type = ''
+09. type_id = ''
+    label = ''
+    description = ''
+    appointment = ''
+    device_type = ''
+10. type_id = ''
+    label = ''
+    description = ''
+    appointment = ''
+    device_type = ''
+
