@@ -86,6 +86,38 @@ print('Is Active: ' + str(user.is_active))
 ```
 ## Alarm
 
+### Devices
+These are the devices connected to your alarm system (contacts, cameras, keypads, and so on).
+
+A device is defined in the `Device` base class, or more specifically, in one of its sub-classes (`ContactDevice`, `CameraDevice`, `...`).
+
+Get a list of all devices by calling the `get_devices()` method.
+```python
+for device in alarm.get_devices():
+    print(device)
+```
+Output:
+```
+<class 'visonic.devices.ContactDevice'>: {'id': '100-2030', 'zone': 1, 'location': 'Entry door', 'device_type': 'ZONE', 'type': 'DELAY_1', 'subtype': 'CONTACT', 'preenroll': False, 'soak': False, 'bypass': False, 'alarms': None, 'alerts': None, 'troubles': None, 'bypass_availability': False, 'partitions': ['ALL'], 'state': 'closed'}
+<class 'visonic.devices.CameraDevice'>: {'id': '140-3040', 'zone': 2, 'location': 'Livingroom', 'device_type': 'ZONE', 'type': 'INTERIOR_FOLLOW', 'subtype': 'MOTION_CAMERA', 'preenroll': False, 'soak': False, 'bypass': False, 'alarms': None, 'alerts': None, 'troubles': None, 'bypass_availability': False, 'partitions': ['ALL']}
+...
+```
+
+### Events
+Events are generated when the alarm system is armed, disarmed, phone line changes (GSM), and so on.
+
+An event is defined in the `Event` class. Get a list of all events by calling the `get_events()` method.
+```python
+for event in alarm.get_events():
+    print(event)
+```
+Output:
+```
+<class 'visonic.classes.Event'>: {'id': 19000001, 'type_id': 86, 'label': 'ARM', 'description': 'Armed away', 'appointment': 'User 1', 'datetime': '2000-01-01 06:00:00', 'video': False, 'device_type': 'USER', 'zone': 1, 'partitions': ['ALL']}
+<class 'visonic.classes.Event'>: {'id': 19000002, 'type_id': 89, 'label': 'DISARM', 'description': 'Disarm', 'appointment': 'User 1', 'datetime': '2000-01-01 07:00:00', 'video': False, 'device_type': 'USER', 'zone': 1, 'partitions': ['ALL']}
+...
+```
+
 ### Locations
 A location is defined in the `Location` class. Get a list of all locations by calling the `get_locations()` method.
 ```python
@@ -97,6 +129,44 @@ Output:
 <class 'visonic.classes.Location'>: {'id': 0, 'name': 'Entry', 'is_editable': False}
 <class 'visonic.classes.Location'>: {'id': 1, 'name': 'Backdoor', 'is_editable': False}
 ...
+```
+
+### Panel Information
+The general panel information is defined in the `PanelInfo` class. Get the panel information by calling the `get_panel_info()` method.
+```python
+panel_info = alarm.get_panel_info():
+    print(panel_info)
+```
+Output:
+```
+<class 'visonic.classes.PanelInfo'>: {'name': '123ABC', 'serial': '123ABC', 'model': 'PowerMaster 10', 'alarm_amount': 0, 'alert_amount': 0, 'trouble_amount': 0, 'camera_amount': 15, 'bypass_mode': 'No bypass', 'enabled_partition_mode': False}
+```
+> This is a quick and easy way to check if there are any alarms, alerts or troubles in your alarm system.
+
+### Status
+The status of the alarm system is defined in the `Status` class. Get the current status by calling the `get_status()` method.
+
+This method will allow you to access two properties (`is_connected` and `exit_delay`) together with a `list` of partitions (defined in the `Partition` class) containing the current state of the partitions in your alarm system.
+
+> If you don't have a multi partition alarm system, the `ALL` partition will always be used.
+
+```python
+status = alarm.get_status()
+print(status)
+```
+Output:
+```
+<class 'visonic.classes.Status'>: {'is_connected': True, 'exit_delay': 30, 'partitions': [Partition(name = 'ALL', active = True, state = 'Disarm', ready_status = True)]}
+```
+
+Since the partitions are located in a list you can iterate over them like this:
+```python
+for partition in status.partitions:
+    print(partition)
+```
+Output:
+```
+<class 'visonic.classes.Partition'>: {'name': 'ALL', 'active': True, 'state': 'Disarm', 'ready_status': True}
 ```
 
 ### Users
@@ -122,21 +192,6 @@ Output:
 <class 'visonic.classes.User'>: {'id': 1, 'name': 'Bob', 'is_active': True}
 <class 'visonic.classes.User'>: {'id': 2, 'name': 'Alice', 'is_active': False}
 <class 'visonic.classes.User'>: {'id': 3, 'name': 'User 3', 'is_active': False}
-...
-```
-
-### Events
-Events are generated when the alarm system is armed, disarmed, phone line changes (GSM), and so on.
-
-An event is defined in the `Event` class. Get a list of all events by calling the `get_events()` method.
-```python
-for event in alarm.get_events():
-    print(event)
-```
-Output:
-```
-<class 'visonic.classes.Event'>: {'id': 19000001, 'type_id': 86, 'label': 'ARM', 'description': 'Armed away', 'appointment': 'User 1', 'datetime': '2000-01-01 06:00:00', 'video': False, 'device_type': 'USER', 'zone': 1, 'partitions': ['ALL']}
-<class 'visonic.classes.Event'>: {'id': 19000002, 'type_id': 89, 'label': 'DISARM', 'description': 'Disarm', 'appointment': 'User 1', 'datetime': '2000-01-01 07:00:00', 'video': False, 'device_type': 'USER', 'zone': 1, 'partitions': ['ALL']}
 ...
 ```
 
