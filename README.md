@@ -70,7 +70,7 @@ except LoginAttemptsLimitReachedError:
     print('To many login attempts. Please wait a few minutes and try again.')
 ```
 
-### Print Objects
+### Printing Objects and Properties
 The objects representing various entities in the alarm system can be output with the `print()` method for easy inspection of its properties.
 
 As an example, you can output the properties of a user object by passing it to the `print()` method:
@@ -78,7 +78,7 @@ As an example, you can output the properties of a user object by passing it to t
 print(user)
 # Output: <class 'visonic.classes.User'>: {'id': 1, 'name': 'User 1', 'is_active': True}
 ```
-Also, the properties are easily accessed from the user object:
+Also, the properties are easily accessed from the object:
 ```python
 print('User ID:   ' + user.id)
 print('User Name: ' + user.name)
@@ -194,6 +194,21 @@ Output:
 <class 'visonic.classes.User'>: {'id': 3, 'name': 'User 3', 'is_active': False}
 ...
 ```
+
+## Arming and Disarming
+
+### Arm Home
+
+Coming soon...
+
+### Arm Away
+
+Coming soon...
+
+### Disarm
+
+Coming soon...
+
 
 ## System
 
