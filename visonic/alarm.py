@@ -50,11 +50,6 @@ class Setup(object):
         return self.__api.session_token
 
     @property
-    def devices(self):
-        """ A list of devices connected to the alarm system and their state. """
-        return self.__system_devices
-
-    @property
     def is_master_user(self):
         """ Check if the authenticated user is a master user. """
         return self.__is_master_user
