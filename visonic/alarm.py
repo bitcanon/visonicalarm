@@ -70,25 +70,25 @@ class Setup(object):
             location_list.append(location)
         return location_list
 
-    def disarm(self):
+    def disarm(self, partition='ALL'):
         """ Send Disarm command to the alarm system. """
-        self.__api.disarm(self.__api.partition)
+        self.__api.disarm(partition)
 
-    def arm_home(self):
+    def arm_home(self, partition='ALL'):
         """ Send Arm Home command to the alarm system. """
-        self.__api.arm_home(self.__api.partition)
+        self.__api.arm_home(partition)
 
-    def arm_home_instant(self):
+    def arm_home_instant(self, partition='ALL'):
         """ Send Arm Home Instant command to the alarm system. """
-        self.__api.arm_home_instant(self.__api.partition)
+        self.__api.arm_home_instant(partition)
 
-    def arm_away(self):
+    def arm_away(self, partition='ALL'):
         """ Send Arm Away command to the alarm system. """
-        self.__api.arm_away(self.__api.partition)
+        self.__api.arm_away(partition)
 
-    def arm_away_instant(self):
+    def arm_away_instant(self, partition='ALL'):
         """ Send Arm Away Instant command to the alarm system. """
-        self.__api.arm_away_instant(self.__api.partition)
+        self.__api.arm_away_instant(partition)
 
     def set_time(self, current_time):
         """
