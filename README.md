@@ -196,19 +196,66 @@ Output:
 ```
 
 ## Arming and Disarming
+There are two ways to arm you alarm system.
+- **Arm Home:** This will arm your perimeter protection (often doors and windows). You can still move around inside the house.
+- **Arm Away:** This will arm the entire alarm system (doors, windows, motion, cameras, etc). You can not move around inside the house.
 
 ### Arm Home
+To arm the alarm system in *home mode* just call the `arm_home()` method. 
 
-Coming soon...
+```python
+alarm.arm_home()
+```
+When using a multi partition alarm system, just pass the partition name as an argument to the `arm_home()` method.
+```python
+alarm.arm_home(partition='P1')
+```
+
+Poll the `state` property of your partition in the `get_status()` method to watch the state changing.
+```python
+alarm.get_status().partitions[0].state  # Output: 'Disarm'
+```
+
+### Arm Home Instant
+This work the same way as the `arm_home()` method above. The difference is that the exit delay is ignored, and the alarm is triggered instantly when opening a door.
+
+```python
+alarm.arm_home_instant()
+```
 
 ### Arm Away
+To arm the alarm system in *away mode* just call the `arm_away()` method. 
 
-Coming soon...
+```python
+alarm.arm_away()
+```
+When using a multi partition alarm system, just pass the partition name as an argument to the `arm_away()` method.
+```python
+alarm.arm_away(partition='P1')
+```
+
+Poll the `state` property of your partition in the `get_status()` method to watch the state changing.
+```python
+alarm.get_status().partitions[0].state  # Output: 'Disarm'
+```
+
+### Arm Away Instant
+This work the same way as the `arm_away()` method above. The difference is that the exit delay is ignored, and the alarm is triggered instantly when opening a door.
+
+```python
+alarm.arm_away_instant()
+```
 
 ### Disarm
+To disarm the alarm system just call the `disarm()` method. 
 
-Coming soon...
-
+```python
+alarm.disarm()
+```
+Poll the `state` property of your partition in the `get_status()` method to watch the state changing.
+```python
+alarm.get_status().partitions[0].state  # Output: 'Disarm'
+```
 
 ## System
 
