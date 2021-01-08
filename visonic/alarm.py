@@ -100,6 +100,30 @@ class Setup(object):
         else:
             False
 
+    def set_user_code(self, user_code, user_id):
+        """
+        Set a users pin code.
+        """
+        result = self.__api.set_user_code(user_code, user_id)
+
+        # The API server returns a process token that we can poll to get 
+        # the result of the set_user_code() command.
+        process_status = self.__api.get_process_status(result['process_token'])[0]
+
+        return Process(process_status['token'], process_status['status'], process_status['message'])
+
+
+    def get_process_status(self, process_status):
+        """ 
+        Check the process status of a process running on the API server.
+        A process will usally go through the statuses 'start', 'handled' and 'succeeded'/'failed'
+
+        """
+        process_status = self.__api.get_process_status(process_status.token)[0]
+
+        # Return a Process object for easy access to the process status
+        return Process(process_status['token'], process_status['status'], process_status['message'])
+
     def get_panel_info(self):
         """ Fetch basic information about the alarm system. """
 

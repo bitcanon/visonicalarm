@@ -41,6 +41,8 @@ class APIv4(object):
     __url_locations = None
     __url_active_users_info = None
     __url_set_date_time = None
+    __url_set_user_code = None
+    __url_process_status = None
     __url_allow_switch_to_programming_mode = None
 
     # API session token
@@ -86,6 +88,9 @@ class APIv4(object):
         self.__url_locations = self.__url_base + '/locations'
         self.__url_active_users_info = self.__url_base + '/active_users_info'
         self.__url_set_date_time = self.__url_base + '/set_date_time'
+        self.__url_set_user_code = self.__url_base + '/set_user_code'
+        self.__url_process_status = self.__url_base + \
+            '/process_status?process_tokens='
         self.__url_allow_switch_to_programming_mode = self.__url_base + \
             '/allow_switch_to_programming_mode'
 
@@ -284,6 +289,12 @@ class APIv4(object):
                                        with_session_token=True,
                                        request_type='GET')
 
+    def get_process_status(self, process_token):
+        """ Get the current status of a process running on API server. """
+        return self.__send_request(self.__url_process_status + process_token,
+                                       with_session_token=True,
+                                       request_type='GET')
+
     def set_date_time(self, current_time):
         """ Set the time on the alarm panel.
         Note: Only master users can set the time! """
@@ -297,6 +308,20 @@ class APIv4(object):
         return self.__send_request(self.__url_set_date_time,
                                         with_session_token=True,
                                         data_json=time_json,
+                                        request_type='POST')
+
+    def set_user_code(self, user_code, user_id):
+        """ Change the users pin code.
+        Note: Only master users can change the codes! """
+
+        user_info = {
+            'user_code': user_code,
+            'user_id': user_id
+        }
+        user_json = json.dumps(user_info, separators=(',', ':'))
+        return self.__send_request(self.__url_set_user_code,
+                                        with_session_token=True,
+                                        data_json=user_json,
                                         request_type='POST')
 
     def arm_home(self, partition):

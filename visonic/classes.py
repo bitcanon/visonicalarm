@@ -1,3 +1,53 @@
+class Process(object):
+    """ Class definition of a process running on the API server. """
+
+    def __init__(self, token, status, message):
+
+        self.__token = token
+        self.__status = status
+        self.__message = message
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+
+        class_name = type(self).__name__
+        token      = f"name = '{self.name}'"
+        status     = f"serial = '{self.serial}'"
+        message    = f"model = '{self.model}'"
+
+        return f"{class_name}({token}, {status}, {message})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'token': self.token,
+            'status': self.status,
+            'message': self.message
+        }
+
+    # Process properties
+    @property
+    def token(self):
+        """ Process token. """
+        return self.__token
+
+    @property
+    def status(self):
+        """ Process status. """
+        return self.__status
+
+    @property
+    def message(self):
+        """ Process status message. """
+        return self.__message
+
+
 class PanelInfo(object):
     """ Class definition of the general alarm system information. """
 
@@ -52,7 +102,7 @@ class PanelInfo(object):
             'enabled_partition_mode': self.enabled_partition_mode,
         }
 
-    # Event properties
+    # PanelInfo properties
     @property
     def name(self):
         """ Partition name. """
@@ -136,7 +186,7 @@ class Partition(object):
             'ready_status': self.ready_status
         }
 
-    # Event properties
+    # Partition properties
     @property
     def name(self):
         """ Partition name. """
@@ -192,7 +242,7 @@ class Status(object):
             'partitions': self.partitions
         }
 
-    # Event properties
+    # Status properties
     @property
     def is_connected(self):
         """ Alarm system is connected. """
@@ -253,7 +303,7 @@ class Trouble(object):
             'partitions': self.partitions
         }
 
-    # Event properties
+    # Trouble properties
     @property
     def device_type(self):
         """ Device type. """
@@ -428,7 +478,7 @@ class User(object):
             'is_active': self.is_active,
         }
 
-   # Device properties
+   # User properties
     @property
     def id(self):
         """ User ID. """
@@ -479,7 +529,7 @@ class Location(object):
             'is_editable': self.is_editable,
         }
 
-   # Device properties
+   # Location properties
     @property
     def id(self):
         """ Device ID. """
