@@ -17,9 +17,9 @@ class Process(object):
         """ Define how the object is represented on output to console. """
 
         class_name = type(self).__name__
-        token      = f"name = '{self.name}'"
-        status     = f"serial = '{self.serial}'"
-        message    = f"model = '{self.model}'"
+        token      = f"token = '{self.token}'"
+        status     = f"status = '{self.status}'"
+        message    = f"message = '{self.message}'"
 
         return f"{class_name}({token}, {status}, {message})"
 
