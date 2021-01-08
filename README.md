@@ -268,3 +268,7 @@ except PermissionDeniedError:
     print('Permission denied. Please login using a master user and try again.')
 ```
 > Note: You must be logged in with a master user in order to set the time.
+
+## Examples
+
+Find more examples here: [/visonicalarm/examples](https://github.com/bitcanon/visonicalarm/tree/master/examples)
