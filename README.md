@@ -5,7 +5,7 @@ A simple library for the Visonic PowerMaster API written in Python 3.
 
 It is built using same technique used in the Visonic-Go app. So if you can use the app to connect to your alarm system, the chances are you can use this library as well. I have developed and tested it with a Visonic PowerMaster-10 using a PowerLink 3 IP module.
 
-> The library currently only support verion 4.0 of the API running on the server side. As of now that is the only version my alarm company is supporting and thus I have no other version to develop against. It seems that some alarm companies has been rolling out version 8.0 of the API (requiring username and password authentication), which will be supported in the future.
+> The library currently only support version 4.0 of the API running on the server side. As of now that is the only version my alarm company is supporting and thus I have no other version to develop against. It seems that some alarm companies has been rolling out version 8.0 of the API (requiring username and password authentication), which will be supported in the future.
 
 ## Installation
 Install the latest version with pip3:
