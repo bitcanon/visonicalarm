@@ -95,10 +95,12 @@ class Setup(object):
         Set the time of the alarm system.
         """
         result = self.__api.set_date_time(current_time)
-        if result['process_token']:
-            True
-        else:
-            False
+
+        # The API server returns a process token that we can poll to get 
+        # the result of the set_time() command.
+        process_status = self.__api.get_process_status(result['process_token'])[0]
+
+        return Process(process_status['token'], process_status['status'], process_status['message'])
 
     def set_user_code(self, user_code, user_id):
         """
