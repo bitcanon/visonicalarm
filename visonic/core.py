@@ -108,7 +108,6 @@ class APIv4(object):
             'Accept': '*/*',
             'User-Agent': self.__user_agent,
             'Accept-Language': 'en-us',
-            'Accept-Encoding': 'br, gzip, deflate',
         }
 
         # Only needed for POST requests
