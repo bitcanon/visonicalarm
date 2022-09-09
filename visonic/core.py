@@ -402,9 +402,6 @@ class APIv9(object):
     __url_disarm = None
     __url_locations = None
     __url_active_users_info = None
-    __url_set_date_time = None
-    __url_set_user_code = None
-    __url_process_status = None
 
     # API session token
     __session_token = None
