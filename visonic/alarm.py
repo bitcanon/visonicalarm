@@ -22,7 +22,6 @@ class Setup(object):
     __system_name = None
     __system_serial = None
     __system_model = None
-    __is_master_user = False
 
     def __init__(self, hostname, user_code, user_id, panel_id, user_email=None, user_password=None, partition='ALL', api_version=9):
         """ Initiate the connection to the Visonic API """
@@ -52,11 +51,6 @@ class Setup(object):
     def session_token(self):
         """ Return the current session token. """
         return self.__api.session_token
-
-    @property
-    def is_master_user(self):
-        """ Check if the authenticated user is a master user. """
-        return self.__is_master_user
 
     def rest_api_version(self):
         """ Check which versions of the API that the server support. """
@@ -169,9 +163,6 @@ class Setup(object):
         # This will raise an exception on failure.
         if not self.__api.login():
             raise LoginFailedError()
-
-        # Check if logged in user is a Master User.
-        #self.__is_master_user = self.__api.is_master_user()
 
     def get_troubles(self):
         """ Fetch all the troubles that are available. """
