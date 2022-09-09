@@ -355,41 +355,34 @@ class Setup(object):
 
         return Status(is_connected, exit_delay, partitions)
 
-    def get_last_event(self, timestamp_hour_offset=0):
-        """ Get the last event. """
+    def get_events(self, timestamp_hour_offset=2):
+        """ Get the last couple of events (60 events on my system). """
+        event_list = []
 
         events = self.__api.get_events()
 
-        print(events)
-
-        if events is None:
-            return None
-        else:
-            last_event = events[-1]
-            data = dict()
-
-            # Event ID
-            data['event_id'] = last_event['event']
-
-            # Determine the arm state.
-            if last_event['type_id'] == 89:
-                data['action'] = 'Disarm'
-            elif last_event['type_id'] == 85:
-                data['action'] = 'ArmHome'
-            elif last_event['type_id'] == 86:
-                data['action'] = 'ArmAway'
-            else:
-                data['action'] = 'Unknown type_id: {0}'.format(
-                    str(last_event['type_id']))
-
-            # User that caused the event
-            data['user'] = last_event['appointment']
-
+        for event in events:
             # Event timestamp
-            dt = parser.parse(last_event['datetime'])
+            dt = parser.parse(event['datetime'])
             dt = dt + relativedelta(hours=timestamp_hour_offset)
             timestamp = dt.strftime('%Y-%m-%d %H:%M:%S')
-            data['timestamp'] = timestamp
+            event['datetime'] = timestamp
 
-            return data
+            new_event = Event(
+                id=event['event'],
+                type_id=event['type_id'],
+                label=event['label'],
+                description=event['description'],
+                appointment=event['appointment'],
+                datetime=event['datetime'],
+                video=event['video'],
+                device_type=event['device_type'],
+                zone=event['zone'],
+                partitions=event['partitions'],
+                name=event['name'],
+            )
+
+            event_list.append(new_event)
+
+        return event_list
 

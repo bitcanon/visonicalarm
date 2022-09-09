@@ -338,7 +338,7 @@ class Trouble(object):
 class Event(object):
     """ Class definition of an event in the alarm system. """
 
-    def __init__(self, id, type_id, label, description, appointment, datetime, video, device_type, zone, partitions):
+    def __init__(self, id, type_id, label, description, appointment, datetime, video, device_type, zone, partitions, name):
         """ Set the private variable values on instantiation. """
 
         self.__id = id
@@ -351,6 +351,7 @@ class Event(object):
         self.__device_type = device_type
         self.__zone = zone
         self.__partitions = partitions
+        self.__name = name
 
 
     def __str__(self):
@@ -373,9 +374,10 @@ class Event(object):
         device_type = f"device_type = '{self.device_type}'"
         zone        = f"zone = {self.zone}"
         partitions  = f"partitions = {str(self.partitions)}"
+        name  = f"partitions = {str(self.name)}"
 
         return f"{class_name}({id}, {type_id}, {label}, {description}, {appointment}, \
-            {datetime}, {video}, {device_type}, {zone}, {partitions})"
+            {datetime}, {video}, {device_type}, {zone}, {partitions}, {name})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """
@@ -389,7 +391,8 @@ class Event(object):
             'video': self.video,
             'device_type': self.device_type,
             'zone': self.zone,
-            'partitions': self.partitions
+            'partitions': self.partitions,
+            'name': self.name,
         }
 
    # Event properties
@@ -442,6 +445,11 @@ class Event(object):
     def partitions(self):
         """ Event partitions. """
         return self.__partitions
+
+    @property
+    def name(self):
+        """ Event name. """
+        return self.__name
 
 
 class User(object):
