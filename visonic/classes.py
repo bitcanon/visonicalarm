@@ -447,12 +447,13 @@ class Event(object):
 class User(object):
     """ Class definition of a user in the alarm system. """
 
-    def __init__(self, id, name, is_active):
+    def __init__(self, id, name, email, partitions):
         """ Set the private variable values on instantiation. """
 
         self.__id = id
         self.__name = name
-        self.__is_active = is_active
+        self.__email = email
+        self.__partitions = partitions
 
     def __str__(self):
         """ Define how the print() method should print the object. """
@@ -463,19 +464,21 @@ class User(object):
     def __repr__(self):
         """ Define how the object is represented on output to console. """
 
-        class_name = type(self).__name__
-        id         = f"id = {self.id}"
-        name       = f"name = '{self.name}'"
-        is_active  = f"is_active = {self.is_active}"
+        class_name  = type(self).__name__
+        id          = f"id = {self.id}"
+        name        = f"name = '{self.name}'"
+        email       = f"email = '{self.name}'"
+        partitions  = f"partitions = {self.is_active}"
 
-        return f"{class_name}({id}, {name}, {is_active})"
+        return f"{class_name}({id}, {name}, {email}, {partitions})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """
         return {
             'id': self.id,
             'name': self.name,
-            'is_active': self.is_active,
+            'email': self.email,
+            'partitions': self.partitions,
         }
 
    # User properties
@@ -490,9 +493,14 @@ class User(object):
         return self.__name
 
     @property
-    def is_active(self):
+    def email(self):
+        """ User email. """
+        return self.__email
+
+    @property
+    def partitions(self):
         """ Device is active. """
-        return self.__is_active
+        return self.__partitions
 
 
 class Location(object):

@@ -1,0 +1,25 @@
+RESULT FROM: GET /users
+{
+	'max_users_count': 8, 
+	'users': 
+	[
+		{
+			'id': 1, 
+			'name': 'User Name', 
+			'partitions': [1, 2, 3], 
+			'email': 'user.name@email.com'
+		}, 
+		{
+			'id': 2, 
+			'name': 'User 2', 
+			'partitions': [1], 
+			'email': 'user.2@email.com'
+		}, 
+		{
+			'id': 8, 
+			'name': 'Donald Duck', 
+			'partitions': [1], 
+			'email': 'donald@duck.com'
+		}
+	]
+}

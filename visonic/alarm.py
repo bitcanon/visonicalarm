@@ -5,7 +5,7 @@ from dateutil import parser
 from dateutil.relativedelta import *
 
 from visonic.devices import *
-from visonic.core import APIv4
+from visonic.core import APIv4, APIv9
 from visonic.exceptions import *
 from visonic.classes import *
 
@@ -23,10 +23,13 @@ class Setup(object):
     __system_model = None
     __is_master_user = False
 
-    def __init__(self, hostname, user_code, user_id, panel_id, partition='ALL'):
+    def __init__(self, hostname, user_code, user_id, panel_id, user_email=None, user_password=None, partition='ALL', api_version=9):
         """ Initiate the connection to the Visonic API """
         self.__panel_id = panel_id
-        self.__api = APIv4(hostname, user_code, user_id, panel_id, partition)
+        if api_version == 4:
+            self.__api = APIv4(hostname, user_code, user_id, panel_id, partition)
+        elif api_version == 9:
+            self.__api = APIv9(hostname, user_code, user_id, panel_id, partition, user_email, user_password)
 
     # System properties
     @property
@@ -135,43 +138,43 @@ class Setup(object):
         return PanelInfo(gpi['name'], gpi['serial'], gpi['model'], gpi['alarm_amount'], gpi['alert_amount'], 
             gpi['trouble_amount'], gpi['camera_amount'], gpi['bypass_mode'], gpi['enabled_partition_mode'])
 
-    def get_users(self, override_user_names=[]):
+    def get_users(self):
         """ Fetch a list of users in the alarm system. """
         users_info = self.__api.get_active_user_info()
 
-        total_users_count = users_info['total_users_count']
-        active_user_ids = users_info['active_user_ids']
-
+        #print(users_info)
         user_list = []
-        for user_id in range(1, total_users_count+1):
-            name = 'User '+str(user_id)
-            if user_id in override_user_names:
-                name = override_user_names[user_id]
 
-            user = User(user_id, name, True if user_id in active_user_ids else False)
-
+        for user in users_info['users']:
+            user = User(user['id'], user['name'], user['email'], user['partitions'])
             user_list.append(user)
+
         return user_list
 
     def login(self):
         """ Connect and login to the alarm system and get the static system info. """
 
-        # Check that the server support API version 4.0.
+        # Check that the server support API version 9.0.
         rest_versions = self.__api.get_version_info()['rest_versions']
 
-        if '4.0' not in rest_versions:
-            raise UnsupportedRestAPIVersionError('Rest API version 4.0 is not supported by server.')
+        if '9.0' not in rest_versions:
+            raise UnsupportedRestAPIVersionError('Rest API version 9.0 is not supported by server.')
 
         # Check that the panel ID of your device is registered with the server.
-        if not self.__api.get_panel_exists(self.__panel_id):
-            raise InvalidPanelIDError('The Panel ID could not be found on the server.')
+        #if not self.__api.get_panel_exists(self.__panel_id):
+        #    raise InvalidPanelIDError('The Panel ID could not be found on the server.')
+
+        # Try to authenticate with provided user credentials
+        if not self.__api.authenticate():
+            raise AuthenticationFailedError()
 
         # Try to login and get a session token.
         # This will raise an exception on failure.
-        self.__api.login()
+        if not self.__api.login():
+            raise LoginFailedError()
 
         # Check if logged in user is a Master User.
-        self.__is_master_user = self.__api.is_master_user()
+        #self.__is_master_user = self.__api.is_master_user()
 
     def get_events(self):
         """ Fetch all the events that are available. """
@@ -287,17 +290,17 @@ class Setup(object):
 
         # Create the partitions
         for part in status['partitions']:
-            partition = part['partition']
-            active = part['active']
+            partition = part['id']
+            active = part['status']
             state = part['state']
-            ready_status = part['ready_status']
+            ready_status = part['ready']
             new_part = Partition(partition, active, state, ready_status)
 
             partition_list.append(new_part)
 
         # Create the status
-        is_connected = status['is_connected']
-        exit_delay = status['exit_delay']
+        is_connected = status['connected']
+        exit_delay = -1
         partitions = partition_list
 
         return Status(is_connected, exit_delay, partitions)
