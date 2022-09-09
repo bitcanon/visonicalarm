@@ -177,22 +177,20 @@ class Setup(object):
         # Check if logged in user is a Master User.
         #self.__is_master_user = self.__api.is_master_user()
 
-    def get_events(self):
-        """ Fetch all the events that are available. """
-        event_list = []
-        for event in self.__api.get_events():
-            new_event = Event(event['event'], event['type_id'], event['label'], 
-                event['description'], event['appointment'], event['datetime'], 
-                event['video'], event['device_type'], event['zone'], event['partitions'])
-            event_list.append(new_event)
-        return event_list
-
     def get_troubles(self):
         """ Fetch all the troubles that are available. """
         trouble_list = []
         for trouble in self.__api.get_troubles():
-            new_trouble = Trouble(trouble['device_type'], trouble['zone_type'], trouble['zone'], 
-                trouble['location'], trouble['trouble_type'], trouble['partitions'])
+            new_trouble = Trouble(
+                device_type=trouble['device_type'],
+                location=trouble['location'],
+                partitions=trouble['partitions'],
+                trouble_type=trouble['trouble_type'],
+                zone=trouble['zone'],
+                zone_name=trouble['zone_name'],
+                zone_type=trouble['zone_type'],
+            )
+
             trouble_list.append(new_trouble)
         return trouble_list
 
