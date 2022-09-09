@@ -56,10 +56,6 @@ class Setup(object):
         """ Check which versions of the API that the server support. """
         return self.__api.get_version_info()['rest_versions']
 
-    def check_panel_id(self, panel_id):
-        """ Check if the panel ID exists on the alarm server. """
-        return self.__api.get_panel_exists(panel_id)
-
     def get_locations(self):
         """ Fetch the locations associated with the alarm system. """
         location_list = []
@@ -150,10 +146,6 @@ class Setup(object):
 
         if '9.0' not in rest_versions:
             raise UnsupportedRestAPIVersionError('Rest API version 9.0 is not supported by server.')
-
-        # Check that the panel ID of your device is registered with the server.
-        #if not self.__api.get_panel_exists(self.__panel_id):
-        #    raise InvalidPanelIDError('The Panel ID could not be found on the server.')
 
         # Try to authenticate with provided user credentials
         if not self.__api.authenticate():

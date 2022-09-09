@@ -386,13 +386,11 @@ class APIv9(object):
     # The Visonic API URLs used
     __url_base = None
     __url_version = None
-    __url_is_panel_exists = None
     __url_login = None
     __url_status = None
     __url_alarms = None
     __url_alerts = None
     __url_troubles = None
-    __url_is_master_user = None
     __url_panel_info = None
     __url_events = None
     __url_wakeup_sms = None
@@ -434,15 +432,12 @@ class APIv9(object):
                           self.__rest_version
 
         self.__url_version = 'https://' + self.__hostname + '/rest_api/version'
-        self.__url_is_panel_exists = self.__url_base + \
-            '/is_panel_exists?panel_web_name='
         self.__url_auth = self.__url_base + '/auth'
         self.__url_login = self.__url_base + '/panel/login'
         self.__url_status = self.__url_base + '/status'
         self.__url_alarms = self.__url_base + '/alarms'
         self.__url_alerts = self.__url_base + '/alerts'
         self.__url_troubles = self.__url_base + '/troubles'
-        self.__url_is_master_user = self.__url_base + '/is_master_user'
         self.__url_panel_info = self.__url_base + '/panel_info'
         self.__url_events = self.__url_base + '/events'
         self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'
@@ -579,10 +574,6 @@ class APIv9(object):
                                        with_user_token=False,
                                        request_type='GET')
 
-    def get_panel_exists(self, panel_id):
-        """ Check if our panel exists on the server. """
-        raise NotSupportedError()
-
     def authenticate(self):
         """ Try to authenticate and get a user auth token. """
         auth_info = {
@@ -654,13 +645,6 @@ class APIv9(object):
         return self.__send_request(self.__url_troubles,
                                        with_session_token=True,
                                        request_type='GET')
-
-    def is_master_user(self):
-        """ Check if the current user is a master user. """
-        ret = self.__send_request(self.__url_is_master_user,
-                                      with_session_token=True,
-                                      request_type='GET')
-        return ret['is_master_user']
 
     def get_panel_info(self):
         """ The general panel information is only supported in version 4.0. """
