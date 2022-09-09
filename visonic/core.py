@@ -446,7 +446,7 @@ class APIv9(object):
         self.__url_general_panel_info = self.__url_base + '/general_panel_info'
         self.__url_events = self.__url_base + '/events'
         self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'
-        self.__url_all_devices = self.__url_base + '/all_devices'
+        self.__url_all_devices = self.__url_base + '/devices'
         self.__url_arm_home = self.__url_base + '/arm_home'
         self.__url_arm_home_instant = self.__url_base + '/arm_home_instant'
         self.__url_arm_away = self.__url_base + '/arm_away'

@@ -8,6 +8,7 @@ from visonic.devices import *
 from visonic.core import APIv4, APIv9
 from visonic.exceptions import *
 from visonic.classes import *
+from pprint import pprint
 
 
 class Setup(object):
@@ -202,81 +203,130 @@ class Setup(object):
         devices = self.__api.get_all_devices()
 
         for device in devices:
-            # Capitalize for cleaner look
-            if device['location']:
-                device['location'] = device['location'].capitalize()
-
             if device['subtype'] == 'CONTACT':
                 contact_device = ContactDevice(
-                    id=device['device_id'],
-                    zone=device['zone'],
-                    location=device['location'],
+                    device_number=device['device_number'],
                     device_type=device['device_type'],
-                    type=device['type'],
-                    subtype=device['subtype'],
+                    enrollment_id=device['enrollment_id'],
+                    id=device['id'],
+                    name=device['name'],
+                    partitions=device['partitions'],
                     preenroll=device['preenroll'],
-                    soak=device['soak'],
-                    bypass=device['bypass'],
-                    alarms=device['alarms'],
-                    alerts=device['alerts'],
-                    troubles=device['troubles'],
-                    bypass_availability=device['bypass_availability'],
-                    partitions=device['partitions']
+                    removable=device['removable'],
+                    renamable=device['renamable'],
+                    subtype=device['subtype'],
+                    warnings=device['warnings'],
+                    zone_type=device['zone_type'],
+                    location=device['traits']['location']['name'].capitalize(),
+                    soak=device['traits']['soak']['enabled'],
                 )
                 device_list.append(contact_device)
             elif device['subtype'] == 'MOTION_CAMERA':
-                camera_device = CameraDevice(
-                    id=device['device_id'],
-                    zone=device['zone'],
-                    location=device['location'],
+                contact_device = CameraDevice(
+                    device_number=device['device_number'],
                     device_type=device['device_type'],
-                    type=device['type'],
-                    subtype=device['subtype'],
+                    enrollment_id=device['enrollment_id'],
+                    id=device['id'],
+                    name=device['name'],
+                    partitions=device['partitions'],
                     preenroll=device['preenroll'],
-                    soak=device['soak'],
-                    bypass=device['bypass'],
-                    alarms=device['alarms'],
-                    alerts=device['alerts'],
-                    troubles=device['troubles'],
-                    bypass_availability=device['bypass_availability'],
-                    partitions=device['partitions']
+                    removable=device['removable'],
+                    renamable=device['renamable'],
+                    subtype=device['subtype'],
+                    warnings=device['warnings'],
+                    zone_type=device['zone_type'],
+                    location=device['traits']['location']['name'].capitalize(),
+                    soak=device['traits']['soak']['enabled'],
+                    vod=device['traits']['vod'],
                 )
-                device_list.append(camera_device)
+                device_list.append(contact_device)
             elif device['subtype'] == 'SMOKE':
-                smoke_device = SmokeDevice(
-                    id=device['device_id'],
-                    zone=device['zone'],
-                    location=device['location'],
+                contact_device = SmokeDevice(
+                    device_number=device['device_number'],
                     device_type=device['device_type'],
-                    type=device['type'],
-                    subtype=device['subtype'],
+                    enrollment_id=device['enrollment_id'],
+                    id=device['id'],
+                    name=device['name'],
+                    partitions=device['partitions'],
                     preenroll=device['preenroll'],
-                    soak=device['soak'],
-                    bypass=device['bypass'],
-                    alarms=device['alarms'],
-                    alerts=device['alerts'],
-                    troubles=device['troubles'],
-                    bypass_availability=device['bypass_availability'],
-                    partitions=device['partitions']
+                    removable=device['removable'],
+                    renamable=device['renamable'],
+                    subtype=device['subtype'],
+                    warnings=device['warnings'],
+                    zone_type=device['zone_type'],
+                    location=device['traits']['location']['name'].capitalize(),
+                    soak=device['traits']['soak']['enabled'],
                 )
-                device_list.append(smoke_device)
+                device_list.append(contact_device)
+            elif device['subtype'] == 'BASIC_KEYFOB':
+                contact_device = KeyFobDevice(
+                    device_number=device['device_number'],
+                    device_type=device['device_type'],
+                    enrollment_id=device['enrollment_id'],
+                    id=device['id'],
+                    name=device['name'],
+                    partitions=device['partitions'],
+                    preenroll=device['preenroll'],
+                    removable=device['removable'],
+                    renamable=device['renamable'],
+                    subtype=device['subtype'],
+                    warnings=device['warnings'],
+                    zone_type=device['zone_type'],
+                    owner_id=device['traits']['owner']['id'],
+                    owner_name=device['traits']['owner']['name'],
+                )
+                device_list.append(contact_device)
+            elif device['device_type'] == 'GSM':
+                contact_device = GSMDevice(
+                    device_number=device['device_number'],
+                    device_type=device['device_type'],
+                    enrollment_id=device['enrollment_id'],
+                    id=device['id'],
+                    name=device['name'],
+                    partitions=device['partitions'],
+                    preenroll=device['preenroll'],
+                    removable=device['removable'],
+                    renamable=device['renamable'],
+                    subtype=device['subtype'],
+                    warnings=device['warnings'],
+                    zone_type=device['zone_type'],
+                    signal_level=device['traits']['signal_level']['level'],
+                )
+                device_list.append(contact_device)
+            elif device['device_type'] == 'PGM':
+                contact_device = PGMDevice(
+                    device_number=device['device_number'],
+                    device_type=device['device_type'],
+                    enrollment_id=device['enrollment_id'],
+                    id=device['id'],
+                    name=device['name'],
+                    partitions=device['partitions'],
+                    preenroll=device['preenroll'],
+                    removable=device['removable'],
+                    renamable=device['renamable'],
+                    subtype=device['subtype'],
+                    warnings=device['warnings'],
+                    zone_type=device['zone_type'],
+                    parent_id=device['traits']['parent']['id'],
+                    parent_port=device['traits']['parent']['port'],
+                )
+                device_list.append(contact_device)
             else:
                 generic_device = GenericDevice(
-                    id=device['device_id'],
-                    zone=device['zone'],
-                    location=device['location'],
+                    device_number=device['device_number'],
                     device_type=device['device_type'],
-                    type=device['type'],
-                    subtype=device['subtype'],
+                    enrollment_id=device['enrollment_id'],
+                    id=device['id'],
+                    name=device['name'],
+                    partitions=device['partitions'],
                     preenroll=device['preenroll'],
-                    soak=device['soak'],
-                    bypass=device['bypass'],
-                    alarms=device['alarms'],
-                    alerts=device['alerts'],
-                    troubles=device['troubles'],
-                    bypass_availability=device['bypass_availability'],
-                    partitions=device['partitions']
+                    removable=device['removable'],
+                    renamable=device['renamable'],
+                    subtype=device['subtype'],
+                    warnings=device['warnings'],
+                    zone_type=device['zone_type'],
                 )
+                print(f"TEST: '{device['traits']}'")
                 device_list.append(generic_device)
 
         return device_list
