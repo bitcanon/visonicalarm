@@ -393,7 +393,7 @@ class APIv9(object):
     __url_alerts = None
     __url_troubles = None
     __url_is_master_user = None
-    __url_general_panel_info = None
+    __url_panel_info = None
     __url_events = None
     __url_wakeup_sms = None
     __url_all_devices = None
@@ -443,7 +443,7 @@ class APIv9(object):
         self.__url_alerts = self.__url_base + '/alerts'
         self.__url_troubles = self.__url_base + '/troubles'
         self.__url_is_master_user = self.__url_base + '/is_master_user'
-        self.__url_general_panel_info = self.__url_base + '/general_panel_info'
+        self.__url_panel_info = self.__url_base + '/panel_info'
         self.__url_events = self.__url_base + '/events'
         self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'
         self.__url_all_devices = self.__url_base + '/devices'
@@ -662,9 +662,11 @@ class APIv9(object):
                                       request_type='GET')
         return ret['is_master_user']
 
-    def get_general_panel_info(self):
+    def get_panel_info(self):
         """ The general panel information is only supported in version 4.0. """
-        raise NotSupportedError()
+        return self.__send_request(self.__url_panel_info,
+                                       with_session_token=True,
+                                       request_type='GET')
 
     def get_events(self):
         """ Get the alarm panel events. """

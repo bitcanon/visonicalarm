@@ -51,19 +51,13 @@ class Process(object):
 class PanelInfo(object):
     """ Class definition of the general alarm system information. """
 
-    def __init__(self, name, serial, model, alarm_amount, alert_amount, 
-        trouble_amount, camera_amount, bypass_mode, enabled_partition_mode):
+    def __init__(self, current_user, manufacturer, model, serial):
         """ Set the private variable values on instantiation. """
 
-        self.__name = name
-        self.__serial = serial
+        self.__current_user = current_user
+        self.__manufacturer = manufacturer
         self.__model = model
-        self.__alarm_amount = alarm_amount
-        self.__alert_amount = alert_amount
-        self.__trouble_amount = trouble_amount
-        self.__camera_amount = camera_amount
-        self.__bypass_mode = bypass_mode
-        self.__enabled_partition_mode = enabled_partition_mode
+        self.__serial = serial
 
     def __str__(self):
         """ Define how the print() method should print the object. """
@@ -75,43 +69,30 @@ class PanelInfo(object):
         """ Define how the object is represented on output to console. """
 
         class_name             = type(self).__name__
-        name                   = f"name = '{self.name}'"
-        serial                 = f"serial = '{self.serial}'"
+        current_user           = f"current_user = '{self.current_user}'"
+        manufacturer           = f"manufacturer = '{self.manufacturer}'"
         model                  = f"model = '{self.model}'"
-        alarm_amount           = f"alarm_amount = {self.alarm_amount}"
-        alert_amount           = f"alert_amount = {self.alert_amount}"
-        trouble_amount         = f"trouble_amount = {self.trouble_amount}"
-        camera_amount          = f"camera_amount = {self.camera_amount}"
-        bypass_mode            = f"bypass_mode = '{self.bypass_mode}'"
-        enabled_partition_mode = f"enabled_partition_mode = {self.enabled_partition_mode}"
+        serial                 = f"serial = {self.serial}"
 
-        return f"{class_name}({name}, {serial}, {model}, {alarm_amount}, {alert_amount}, \
-            {trouble_amount}, {camera_amount}, {bypass_mode}, {enabled_partition_mode})"
+        return f"{class_name}({current_user}, {manufacturer}, {model}, {serial})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """
         return {
-            'name': self.name,
-            'serial': self.serial,
+            'current_user': self.current_user,
+            'manufacturer': self.manufacturer,
             'model': self.model,
-            'alarm_amount': self.alarm_amount,
-            'alert_amount': self.alert_amount,
-            'trouble_amount': self.trouble_amount,
-            'camera_amount': self.camera_amount,
-            'bypass_mode': self.bypass_mode,
-            'enabled_partition_mode': self.enabled_partition_mode,
+            'serial': self.serial,
         }
 
     # PanelInfo properties
     @property
-    def name(self):
-        """ Partition name. """
-        return self.__name
+    def current_user(self):
+        return self.__current_user
 
     @property
-    def serial(self):
-        """ System serial number. """
-        return self.__serial
+    def manufacturer(self):
+        return self.__manufacturer
 
     @property
     def model(self):
@@ -119,34 +100,8 @@ class PanelInfo(object):
         return self.__model
 
     @property
-    def alarm_amount(self):
-        """ Number of active alarms. """
-        return self.__alarm_amount
-
-    @property
-    def alert_amount(self):
-        """ Number of active alerts. """
-        return self.__alert_amount
-
-    @property
-    def trouble_amount(self):
-        """ Number of active troubles. """
-        return self.__trouble_amount
-
-    @property
-    def camera_amount(self):
-        """ Number of cameras. """
-        return self.__camera_amount
-
-    @property
-    def bypass_mode(self):
-        """ Bypass mode enabled. """
-        return self.__bypass_mode
-
-    @property
-    def enabled_partition_mode(self):
-        """ Partitions enabled in the alarm system. """
-        return self.__enabled_partition_mode
+    def serial(self):
+        return self.__serial
 
 
 class Partition(object):

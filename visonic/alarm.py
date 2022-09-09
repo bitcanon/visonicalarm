@@ -123,7 +123,6 @@ class Setup(object):
         """ 
         Check the process status of a process running on the API server.
         A process will usally go through the statuses 'start', 'handled' and 'succeeded'/'failed'
-
         """
         process_status = self.__api.get_process_status(process_status.token)[0]
 
@@ -132,12 +131,9 @@ class Setup(object):
 
     def get_panel_info(self):
         """ Fetch basic information about the alarm system. """
+        gpi = self.__api.get_panel_info()
 
-        # Get general panel information
-        gpi = self.__api.get_general_panel_info()
-
-        return PanelInfo(gpi['name'], gpi['serial'], gpi['model'], gpi['alarm_amount'], gpi['alert_amount'], 
-            gpi['trouble_amount'], gpi['camera_amount'], gpi['bypass_mode'], gpi['enabled_partition_mode'])
+        return PanelInfo(gpi['current_user'], gpi['manufacturer'], gpi['model'], gpi['serial'])
 
     def get_users(self):
         """ Fetch a list of users in the alarm system. """
