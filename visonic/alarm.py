@@ -187,7 +187,6 @@ class Setup(object):
                     warnings=device['warnings'],
                     zone_type=device['zone_type'],
                 )
-                print(f"TEST: '{device['traits']}'")
                 device_list.append(generic_device)
 
         return device_list
