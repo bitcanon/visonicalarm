@@ -14,12 +14,11 @@ class APIv9(object):
     __rest_version = '9.0'
     __hostname = 'visonic.tycomonitor.com'
     __user_code = '1234'
-    __user_id = '00000000-0000-0000-0000-000000000000'
+    __app_id = '00000000-0000-0000-0000-000000000000'
     __user_email = 'your@email.com'
     __user_password = 'YourSecretPassword!'
     __user_token = None
     __panel_id = '123456'
-    __partition = -1
 
     # API session token
     __session_token = None
@@ -29,15 +28,14 @@ class APIv9(object):
     __session = None
     __timeout = 4
 
-    def __init__(self, hostname, user_code, user_id, panel_id, partition, user_email, user_password):
+    def __init__(self, hostname, user_code, user_id, panel_id, user_email, user_password):
         """ Class constructor initializes all URL variables. """
 
         # Set connection specific details
         self.__hostname = hostname
         self.__user_code = user_code
-        self.__user_id = user_id
+        self.__app_id = user_id
         self.__panel_id = panel_id
-        self.__partition = partition
         self.__user_email = user_email
         self.__user_password = user_password
 
@@ -156,19 +154,14 @@ class APIv9(object):
         return self.__user_token
 
     @property
-    def user_id(self):
+    def app_id(self):
         """ Property to keep track of the user id (UUID) beeing used. """
-        return self.__user_id
+        return self.__app_id
 
     @property
     def panel_id(self):
         """ Property to keep track of the panel id (panel web name). """
         return self.__panel_id
-
-    @property
-    def partition(self):
-        """ Property to keep track of the partition. """
-        return self.__partition
 
     def get_version_info(self):
         """ Find out which REST API versions are supported. """
@@ -182,7 +175,7 @@ class APIv9(object):
         auth_info = {
             'email': self.__user_email,
             'password': self.__user_password,
-            'app_id': self.__user_id,
+            'app_id': self.__app_id,
         }
 
         auth_json = json.dumps(auth_info, separators=(',', ':'))
@@ -202,7 +195,7 @@ class APIv9(object):
         login_info = {
             'user_code': self.__user_code,
             'app_type': self.__app_type,
-            'app_id': self.__user_id,
+            'app_id': self.__app_id,
             'panel_serial': self.__panel_id
         }
 

@@ -18,10 +18,10 @@ class Setup(object):
     __api = None
     __panel_id = None
 
-    def __init__(self, hostname, user_code, user_id, panel_id, user_email=None, user_password=None, partition=-1):
+    def __init__(self, hostname, user_code, app_id, panel_id, user_email=None, user_password=None):
         """ Initiate the connection to the Visonic REST API 9.0 """
         self.__panel_id = panel_id
-        self.__api = APIv9(hostname, user_code, user_id, panel_id, partition, user_email, user_password)
+        self.__api = APIv9(hostname, user_code, app_id, panel_id, user_email, user_password)
 
     # System properties
     @property
