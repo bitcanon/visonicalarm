@@ -287,21 +287,33 @@ class Setup(object):
         partition_list = []
 
         # Create the partitions
-        for part in status['partitions']:
-            partition = part['id']
-            active = part['status']
-            state = part['state']
-            ready_status = part['ready']
-            new_part = Partition(partition, active, state, ready_status)
-
+        for partition in status['partitions']:
+            new_part = Partition(
+                id=partition['id'], 
+                state=partition['state'], 
+                status=partition['status'], 
+                ready=partition['ready'], 
+                options=partition['options'],
+            )
             partition_list.append(new_part)
 
         # Create the status
-        is_connected = status['connected']
-        exit_delay = -1
-        partitions = partition_list
+        new_status = Status(
+            connected=status['connected'],
+            bba_connected=status['connected_status']['bba']['is_connected'],
+            bba_state=status['connected_status']['bba']['state'],
+            gprs_connected=status['connected_status']['gprs']['is_connected'],
+            gprs_state=status['connected_status']['gprs']['state'],
+            discovery_completed=status['discovery']['completed'],
+            discovery_stages=status['discovery']['stages'],
+            discovery_in_queue=status['discovery']['in_queue'],
+            discovery_triggered=status['discovery']['triggered'],
+            partitions=partition_list,
+            rssi_level=status['rssi']['level'],
+            rssi_network=status['rssi']['network'],
+        )
 
-        return Status(is_connected, exit_delay, partitions)
+        return new_status
 
     def get_events(self, timestamp_hour_offset=2):
         """ Get the last couple of events (60 events on my system). """

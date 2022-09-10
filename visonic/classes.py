@@ -57,13 +57,14 @@ class PanelInfo(object):
 class Partition(object):
     """ Class definition of a partition in the alarm system. """
 
-    def __init__(self, name, active, state, ready_status):
+    def __init__(self, id, state, status, ready, options):
         """ Set the private variable values on instantiation. """
 
-        self.__name = name
-        self.__active = active
+        self.__id = id
         self.__state = state
-        self.__ready_status = ready_status
+        self.__status = status
+        self.__ready = ready
+        self.__options = options
 
     def __str__(self):
         """ Define how the print() method should print the object. """
@@ -74,54 +75,64 @@ class Partition(object):
     def __repr__(self):
         """ Define how the object is represented on output to console. """
 
-        class_name   = type(self).__name__
-        name         = f"name = '{self.name}'"
-        active       = f"active = {self.active}"
-        state        = f"state = '{self.state}'"
-        ready_status = f"ready_status = {self.ready_status}"
+        class_name = type(self).__name__
+        id         = f"id = {self.id}"
+        state      = f"state = '{self.state}'"
+        status     = f"status = '{self.status}'"
+        ready      = f"ready = {self.ready}"
+        options    = f"options = {self.options}"
 
-        return f"{class_name}({name}, {active}, {state}, {ready_status})"
+        return f"{class_name}({id}, {state}, {status}, {ready}, {options})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """
         return {
-            'name': self.name,
-            'active': self.active,
+            'id': self.id,
             'state': self.state,
-            'ready_status': self.ready_status
+            'status': self.status,
+            'ready': self.ready,
+            'options': self.options,
         }
 
     # Partition properties
     @property
-    def name(self):
-        """ Partition name. """
-        return self.__name
-
-    @property
-    def active(self):
-        """ Partition is active. """
-        return self.__active
+    def id(self):
+        return self.__id
 
     @property
     def state(self):
-        """ Current alarm state. """
         return self.__state
 
     @property
-    def ready_status(self):
-        """ The alarm system is ready to be armed. """
-        return self.__ready_status
+    def status(self):
+        return self.__status
+
+    @property
+    def ready(self):
+        return self.__ready
+
+    @property
+    def options(self):
+        return self.__options
 
 
 class Status(object):
     """ Class definition representing the status of the alarm system. """
 
-    def __init__(self, is_connected, exit_delay, partitions):
+    def __init__(self, connected, bba_connected, bba_state, gprs_connected, gprs_state, discovery_completed, discovery_stages, discovery_in_queue, discovery_triggered, partitions, rssi_level, rssi_network):
         """ Set the private variable values on instantiation. """
-
-        self.__is_connected = is_connected
-        self.__exit_delay = exit_delay
+        self.__connected = connected
+        self.__bba_connected = bba_connected
+        self.__bba_state = bba_state
+        self.__gprs_connected = gprs_connected
+        self.__gprs_state = gprs_state
+        self.__discovery_completed = discovery_completed
+        self.__discovery_stages = discovery_stages
+        self.__discovery_in_queue = discovery_in_queue
+        self.__discovery_triggered = discovery_triggered
         self.__partitions = partitions
+        self.__rssi_level = rssi_level
+        self.__rssi_network = rssi_network
 
     def __str__(self):
         """ Define how the print() method should print the object. """
@@ -132,36 +143,90 @@ class Status(object):
     def __repr__(self):
         """ Define how the object is represented on output to console. """
 
-        class_name   = type(self).__name__
-        is_connected = f"is_connected = {self.is_connected}"
-        exit_delay   = f"exit_delay = {self.exit_delay}"
-        partitions   = f"partitions = [{str(self.partitions)}]"
+        class_name = type(self).__name__
+        connected = f"connected = {self.connected}"
+        bba_connected = f"bba_connected = {self.bba_connected}"
+        bba_state = f"bba_state = {self.bba_state}"
+        gprs_connected = f"gprs_connected = {self.gprs_connected}"
+        gprs_state = f"gprs_state = {self.gprs_state}"
+        discovery_completed = f"discovery_completed = {self.discovery_completed}"
+        discovery_stages = f"discovery_stages = {self.discovery_stages}"
+        discovery_in_queue = f"discovery_in_queue = {self.discovery_in_queue}"
+        discovery_triggered = f"discovery_triggered = {self.discovery_triggered}"
+        partitions = f"partitions = [{str(self.partitions)}]"
+        rssi_level = f"rssi_level = {self.rssi_level}"
+        rssi_network = f"rssi_network = {self.rssi_network}"
 
-        return f"{class_name}({is_connected}, {exit_delay}, {partitions})"
+        return f"{class_name}({connected}, {bba_connected}, {bba_state}, {gprs_connected}, \
+                 {gprs_state}, {discovery_completed}, {discovery_stages}, {discovery_in_queue}, \
+                 {discovery_triggered}, {partitions}, {rssi_level}, {rssi_network})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """
         return {
-            'is_connected': self.is_connected,
-            'exit_delay': self.exit_delay,
-            'partitions': self.partitions
+            'connected': self.connected,
+            'bba_connected': self.bba_connected,
+            'bba_state': self.bba_state,
+            'gprs_connected': self.gprs_connected,
+            'gprs_state': self.gprs_state,
+            'discovery_completed': self.discovery_completed,
+            'discovery_stages': self.discovery_stages,
+            'discovery_in_queue': self.discovery_in_queue,
+            'discovery_triggered': self.discovery_triggered,
+            'partitions': self.partitions,
+            'rssi_level': self.rssi_level,
+            'rssi_network': self.rssi_network,
         }
 
     # Status properties
     @property
-    def is_connected(self):
-        """ Alarm system is connected. """
-        return self.__is_connected
+    def connected(self):
+        return self.__connected
 
     @property
-    def exit_delay(self):
-        """ Exit delays configured (in seconds). """
-        return self.__exit_delay
+    def bba_connected(self):
+        return self.__bba_connected
+
+    @property
+    def bba_state(self):
+        return self.__bba_state
+
+    @property
+    def gprs_connected(self):
+        return self.__gprs_connected
+
+    @property
+    def gprs_state(self):
+        return self.__gprs_state
+
+    @property
+    def discovery_completed(self):
+        return self.__discovery_completed
+
+    @property
+    def discovery_stages(self):
+        return self.__discovery_stages
+
+    @property
+    def discovery_in_queue(self):
+        return self.__discovery_in_queue
+
+    @property
+    def discovery_triggered(self):
+        return self.__discovery_triggered
 
     @property
     def partitions(self):
-        """ The partitions in the alarm system. """
         return self.__partitions
+
+    @property
+    def rssi_level(self):
+        return self.__rssi_level
+
+    @property
+    def rssi_network(self):
+        return self.__rssi_network
+
 
 
 class Trouble(object):
