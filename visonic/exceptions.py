@@ -68,6 +68,14 @@ class NotFoundError(Error):
         super().__init__(self.message)
 
 
+class NotImplementedError(Error):
+    """ Raised when a method is called that is not implemented yet. """
+
+    def __init__(self, message="The method called has not yet been implemented."):
+        self.message = message
+        super().__init__(self.message)
+
+
 class NotRestAPIError(Error):
     """ Raised when connection to server is not a Rest API. """
     

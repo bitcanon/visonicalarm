@@ -247,6 +247,11 @@ class APIv9(object):
         """ The general panel information is only supported in version 4.0. """
         return self.__send_request(self.__url_panel_info, request_type='GET')
 
+    def get_panels(self):
+        """ Get a list of panels. """
+        # send_get('https://larm1.gardaalarm.se/rest_api/9.0/panels')
+        raise NotImplementedError()
+
     def get_status(self):
         """ Get the current status of the alarm system. """
         return self.__send_request(self.__url_status, request_type='GET')
@@ -254,6 +259,11 @@ class APIv9(object):
     def get_troubles(self):
         """ Get the current troubles. """
         return self.__send_request(self.__url_troubles, request_type='GET')
+
+    def wakeup_sms(self):
+        """ Send a wakeup SMS to the alarm panel. """
+        # send_get('https://larm1.gardaalarm.se/rest_api/9.0/wakeup_sms')
+        raise NotImplementedError()
 
     def arm_home(self, partition):
         """ Arm in Home mode. """
@@ -272,3 +282,12 @@ class APIv9(object):
         disarm_info = {'partition': partition, 'state': 'DISARM'}
         disarm_json = json.dumps(disarm_info, separators=(',', ':'))
         return self.__send_request(self.__url_set_state, data_json=disarm_json, request_type='POST')
+
+    def send_get(self, url):
+        """ Send a custom POST request. """
+        return self.__send_request(url, request_type='GET')
+
+    def send_post(self, url, data):
+        """ Send a custom POST request. """
+        data_json = json.dumps(data, separators=(',', ':'))
+        return self.__send_request(url, data_json=data_json, request_type='POST')

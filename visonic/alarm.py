@@ -57,6 +57,10 @@ class Setup(object):
         self.__system_model = panel_info.model
         self.__system_serial = panel_info.serial
 
+    def connected(self):
+        """ Check if the API server is connected to the alarm panel """
+        return self.get_status().connected
+
     def get_devices(self):
         """ Fetch all the devices that are available. """
         device_list = []
