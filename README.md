@@ -1,4 +1,5 @@
 # Visonic Alarm Library
+<a href="https://www.buymeacoffee.com/bitcanon" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 ## Introduction
 A simple library for the Visonic PowerMaster API written in Python 3.
