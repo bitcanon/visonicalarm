@@ -19,7 +19,7 @@ class Setup(object):
     __panel_id = None
 
     # Property variables
-    __system_name = None
+    __system_manufacturer = None
     __system_serial = None
     __system_model = None
 
@@ -33,14 +33,14 @@ class Setup(object):
 
     # System properties
     @property
-    def serial_number(self):
+    def serial(self):
         """ Serial number of the system. """
         return self.__system_serial
 
     @property
-    def name(self):
+    def manufacturer(self):
         """ Name of the system. """
-        return self.__system_name
+        return self.__system_manufacturer
 
     @property
     def model(self):
@@ -120,6 +120,12 @@ class Setup(object):
         # This will raise an exception on failure.
         if not self.__api.login():
             raise LoginFailedError()
+
+        # Get some basic alarm panel information
+        panel_info = self.get_panel_info()
+        self.__system_manufacturer = panel_info.manufacturer
+        self.__system_model = panel_info.model
+        self.__system_serial = panel_info.serial
 
     def get_troubles(self):
         """ Fetch all the troubles that are available. """

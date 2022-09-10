@@ -438,6 +438,7 @@ class APIv9(object):
         self.__url_events = self.__url_base + '/events'
         self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'
         self.__url_all_devices = self.__url_base + '/devices'
+        self.__url_set_state = self.__url_base + '/set_state'
         self.__url_arm_home = self.__url_base + '/arm_home'
         self.__url_arm_home_instant = self.__url_base + '/arm_home_instant'
         self.__url_arm_away = self.__url_base + '/arm_away'
@@ -483,12 +484,13 @@ class APIv9(object):
             elif request_type == 'POST':
                 response = self.__session.post(url, headers=headers, data=data_json, timeout=self.__timeout)
             response.raise_for_status()
+            print(f"RESPONSE = '{response.content}'")
         except requests.exceptions.ConnectTimeout:
             raise ConnectionTimeoutError(f"Connection to '{self.__hostname}' timed out after {str(self.__timeout)} seconds.")
             return None
         except requests.exceptions.HTTPError as e:
             if   '400 Client Error: Bad Request' in str(e):
-                raise BadRequestError()
+                raise BadRequestError(response.content)
             elif '403 Client Error: Forbidden' in str(e):
                 raise PermissionDeniedError()
             elif '404 Client Error: Not Found' in str(e):
@@ -676,9 +678,12 @@ class APIv9(object):
 
     def arm_home(self, partition):
         """ Arm in Home mode and with Exit Delay. """
-        arm_info = {'partition': partition}
+        arm_info = {
+            'partition': -1,
+            'state': 'HOME',
+        }
         arm_json = json.dumps(arm_info, separators=(',', ':'))
-        return self.__send_request(self.__url_arm_home,
+        return self.__send_request(self.__url_set_state,
                                         with_session_token=True,
                                         data_json=arm_json,
                                         request_type='POST')
@@ -712,9 +717,12 @@ class APIv9(object):
 
     def disarm(self, partition):
         """ Disarm the alarm system. """
-        disarm_info = {'partition': partition}
+        disarm_info = {
+            'partition': -1,
+            'state': 'DISARM',
+        }
         disarm_json = json.dumps(disarm_info, separators=(',', ':'))
-        return self.__send_request(self.__url_disarm,
+        return self.__send_request(self.__url_set_state,
                                         with_session_token=True,
                                         data_json=disarm_json,
                                         request_type='POST')
