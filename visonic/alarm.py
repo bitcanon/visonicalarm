@@ -5,7 +5,7 @@ from dateutil import parser
 from dateutil.relativedelta import *
 
 from visonic.devices import *
-from visonic.core import APIv4, APIv9
+from visonic.core import APIv9
 from visonic.exceptions import *
 from visonic.classes import *
 from pprint import pprint
@@ -18,90 +18,20 @@ class Setup(object):
     __api = None
     __panel_id = None
 
-    # Property variables
-    __system_manufacturer = None
-    __system_serial = None
-    __system_model = None
-
-    def __init__(self, hostname, user_code, user_id, panel_id, user_email=None, user_password=None, partition='ALL', api_version=9):
-        """ Initiate the connection to the Visonic API """
+    def __init__(self, hostname, user_code, user_id, panel_id, user_email=None, user_password=None, partition=-1):
+        """ Initiate the connection to the Visonic REST API 9.0 """
         self.__panel_id = panel_id
-        if api_version == 4:
-            self.__api = APIv4(hostname, user_code, user_id, panel_id, partition)
-        elif api_version == 9:
-            self.__api = APIv9(hostname, user_code, user_id, panel_id, partition, user_email, user_password)
+        self.__api = APIv9(hostname, user_code, user_id, panel_id, partition, user_email, user_password)
 
     # System properties
     @property
-    def serial(self):
-        """ Serial number of the system. """
-        return self.__system_serial
-
-    @property
-    def manufacturer(self):
-        """ Name of the system. """
-        return self.__system_manufacturer
-
-    @property
-    def model(self):
-        """ Model of the system. """
-        return self.__system_model
-
-    @property
-    def session_token(self):
-        """ Return the current session token. """
-        return self.__api.session_token
+    def api(self):
+        """ Return the API for direct access. """
+        return self.__api
 
     def rest_api_version(self):
         """ Check which versions of the API that the server support. """
-        return self.__api.get_version_info()['rest_versions']
-
-    def get_locations(self):
-        """ Fetch the locations associated with the alarm system. """
-        location_list = []
-        for loc in self.__api.get_locations():
-            location = Location(loc['hel_id'], loc['name'].capitalize(), loc['is_editable'])
-            location_list.append(location)
-        return location_list
-
-    def disarm(self, partition='ALL'):
-        """ Send Disarm command to the alarm system. """
-        self.__api.disarm(partition)
-
-    def arm_home(self, partition='ALL'):
-        """ Send Arm Home command to the alarm system. """
-        self.__api.arm_home(partition)
-
-    def arm_home_instant(self, partition='ALL'):
-        """ Send Arm Home Instant command to the alarm system. """
-        self.__api.arm_home_instant(partition)
-
-    def arm_away(self, partition='ALL'):
-        """ Send Arm Away command to the alarm system. """
-        self.__api.arm_away(partition)
-
-    def arm_away_instant(self, partition='ALL'):
-        """ Send Arm Away Instant command to the alarm system. """
-        self.__api.arm_away_instant(partition)
-
-    def get_panel_info(self):
-        """ Fetch basic information about the alarm system. """
-        gpi = self.__api.get_panel_info()
-
-        return PanelInfo(gpi['current_user'], gpi['manufacturer'], gpi['model'], gpi['serial'])
-
-    def get_users(self):
-        """ Fetch a list of users in the alarm system. """
-        users_info = self.__api.get_active_user_info()
-
-        #print(users_info)
-        user_list = []
-
-        for user in users_info['users']:
-            user = User(user['id'], user['name'], user['email'], user['partitions'])
-            user_list.append(user)
-
-        return user_list
+        return self.api.get_version_info()['rest_versions']
 
     def login(self):
         """ Connect and login to the alarm system and get the static system info. """
@@ -127,28 +57,11 @@ class Setup(object):
         self.__system_model = panel_info.model
         self.__system_serial = panel_info.serial
 
-    def get_troubles(self):
-        """ Fetch all the troubles that are available. """
-        trouble_list = []
-        for trouble in self.__api.get_troubles():
-            new_trouble = Trouble(
-                device_type=trouble['device_type'],
-                location=trouble['location'],
-                partitions=trouble['partitions'],
-                trouble_type=trouble['trouble_type'],
-                zone=trouble['zone'],
-                zone_name=trouble['zone_name'],
-                zone_type=trouble['zone_type'],
-            )
-
-            trouble_list.append(new_trouble)
-        return trouble_list
-
     def get_devices(self):
         """ Fetch all the devices that are available. """
         device_list = []
 
-        devices = self.__api.get_all_devices()
+        devices = self.__api.get_devices()
 
         for device in devices:
             if device['subtype'] == 'CONTACT':
@@ -279,6 +192,50 @@ class Setup(object):
 
         return device_list
 
+    def get_events(self, timestamp_hour_offset=2):
+        """ Get the last couple of events (60 events on my system). """
+        event_list = []
+
+        events = self.__api.get_events()
+
+        for event in events:
+            # Event timestamp
+            dt = parser.parse(event['datetime'])
+            dt = dt + relativedelta(hours=timestamp_hour_offset)
+            timestamp = dt.strftime('%Y-%m-%d %H:%M:%S')
+            event['datetime'] = timestamp
+
+            new_event = Event(
+                id=event['event'],
+                type_id=event['type_id'],
+                label=event['label'],
+                description=event['description'],
+                appointment=event['appointment'],
+                datetime=event['datetime'],
+                video=event['video'],
+                device_type=event['device_type'],
+                zone=event['zone'],
+                partitions=event['partitions'],
+                name=event['name'],
+            )
+
+            event_list.append(new_event)
+
+        return event_list
+
+    def get_locations(self):
+        """ Fetch the locations associated with the alarm system. """
+        location_list = []
+        for location in self.__api.get_locations():
+            location_list.append(Location(location['hel_id'], location['name'].capitalize(), location['is_editable']))
+        return location_list
+
+    def get_panel_info(self):
+        """ Fetch basic information about the alarm system. """
+        gpi = self.__api.get_panel_info()
+
+        return PanelInfo(gpi['current_user'], gpi['manufacturer'], gpi['model'], gpi['serial'])
+
     def get_status(self):
         """ Fetch the current state of the alarm system. """
 
@@ -315,34 +272,44 @@ class Setup(object):
 
         return new_status
 
-    def get_events(self, timestamp_hour_offset=2):
-        """ Get the last couple of events (60 events on my system). """
-        event_list = []
-
-        events = self.__api.get_events()
-
-        for event in events:
-            # Event timestamp
-            dt = parser.parse(event['datetime'])
-            dt = dt + relativedelta(hours=timestamp_hour_offset)
-            timestamp = dt.strftime('%Y-%m-%d %H:%M:%S')
-            event['datetime'] = timestamp
-
-            new_event = Event(
-                id=event['event'],
-                type_id=event['type_id'],
-                label=event['label'],
-                description=event['description'],
-                appointment=event['appointment'],
-                datetime=event['datetime'],
-                video=event['video'],
-                device_type=event['device_type'],
-                zone=event['zone'],
-                partitions=event['partitions'],
-                name=event['name'],
+    def get_troubles(self):
+        """ Fetch all the troubles that are available. """
+        trouble_list = []
+        for trouble in self.__api.get_troubles():
+            new_trouble = Trouble(
+                device_type=trouble['device_type'],
+                location=trouble['location'],
+                partitions=trouble['partitions'],
+                trouble_type=trouble['trouble_type'],
+                zone=trouble['zone'],
+                zone_name=trouble['zone_name'],
+                zone_type=trouble['zone_type'],
             )
 
-            event_list.append(new_event)
+            trouble_list.append(new_trouble)
+        return trouble_list
 
-        return event_list
+    def get_users(self):
+        """ Fetch a list of users in the alarm system. """
+        users_info = self.__api.get_active_user_info()
 
+        #print(users_info)
+        user_list = []
+
+        for user in users_info['users']:
+            user = User(user['id'], user['name'], user['email'], user['partitions'])
+            user_list.append(user)
+
+        return user_list
+
+    def arm_home(self, partition=-1):
+        """ Send Arm Home command to the alarm system. """
+        self.__api.arm_home(partition)
+
+    def arm_away(self, partition=-1):
+        """ Send Arm Away command to the alarm system. """
+        self.__api.arm_away(partition)
+
+    def disarm(self, partition=-1):
+        """ Send Disarm command to the alarm system. """
+        self.__api.disarm(partition)

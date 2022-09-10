@@ -1,3 +1,171 @@
+class Event(object):
+    """ Class definition of an event in the alarm system. """
+
+    def __init__(self, id, type_id, label, description, appointment, datetime, video, device_type, zone, partitions, name):
+        """ Set the private variable values on instantiation. """
+
+        self.__id = id
+        self.__type_id = type_id
+        self.__label = label
+        self.__description = description
+        self.__appointment = appointment
+        self.__datetime = datetime
+        self.__video = video
+        self.__device_type = device_type
+        self.__zone = zone
+        self.__partitions = partitions
+        self.__name = name
+
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+
+        class_name  = type(self).__name__
+        id          = f"id = {self.id}"
+        type_id     = f"type_id = {self.type_id}"
+        label       = f"label = '{self.label}'"
+        description = f"description = '{self.description}'"
+        appointment = f"appointment = '{self.appointment}'"
+        datetime    = f"datetime = '{self.datetime}'"
+        video       = f"video = {self.video}"
+        device_type = f"device_type = '{self.device_type}'"
+        zone        = f"zone = {self.zone}"
+        partitions  = f"partitions = {str(self.partitions)}"
+        name  = f"partitions = {str(self.name)}"
+
+        return f"{class_name}({id}, {type_id}, {label}, {description}, {appointment}, \
+            {datetime}, {video}, {device_type}, {zone}, {partitions}, {name})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'id': self.id,
+            'type_id': self.type_id,
+            'label': self.label,
+            'description': self.description,
+            'appointment': self.appointment,
+            'datetime': self.datetime,
+            'video': self.video,
+            'device_type': self.device_type,
+            'zone': self.zone,
+            'partitions': self.partitions,
+            'name': self.name,
+        }
+
+   # Event properties
+    @property
+    def id(self):
+        """ User ID. """
+        return self.__id
+
+    @property
+    def type_id(self):
+        """ Event type ID. """
+        return self.__type_id
+
+    @property
+    def label(self):
+        """ Event label. """
+        return self.__label
+
+    @property
+    def description(self):
+        """ Event description. """
+        return self.__description
+
+    @property
+    def appointment(self):
+        """ Event appointment. """
+        return self.__appointment
+
+    @property
+    def datetime(self):
+        """ Event datetime. """
+        return self.__datetime
+
+    @property
+    def video(self):
+        """ Event has video. """
+        return self.__video
+
+    @property
+    def device_type(self):
+        """ Event device type. """
+        return self.__device_type
+
+    @property
+    def zone(self):
+        """ Event zone. """
+        return self.__zone
+
+    @property
+    def partitions(self):
+        """ Event partitions. """
+        return self.__partitions
+
+    @property
+    def name(self):
+        """ Event name. """
+        return self.__name
+
+
+class Location(object):
+    """ Class definition of a location in the alarm system. """
+
+    def __init__(self, id, name, is_editable):
+        """ Set the private variable values on instantiation. """
+
+        self.__id = id
+        self.__name = name
+        self.__is_editable = is_editable
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+        
+        class_name   = type(self).__name__
+        id           = f"id = {self.id}"
+        name         = f"name = '{self.name}'"
+        is_editable  = f"is_editable = {self.is_editable}"
+
+        return f"{class_name}({id}, {name}, {is_editable})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'id': self.id,
+            'name': self.name,
+            'is_editable': self.is_editable,
+        }
+
+   # Location properties
+    @property
+    def id(self):
+        """ Device ID. """
+        return self.__id
+
+    @property
+    def name(self):
+        """ Device name. """
+        return self.__name
+
+    @property
+    def is_editable(self):
+        """ Device is editable. """
+        return self.__is_editable
+
+
 class PanelInfo(object):
     """ Class definition of the general alarm system information. """
 
@@ -228,7 +396,6 @@ class Status(object):
         return self.__rssi_network
 
 
-
 class Trouble(object):
     """ Class definition of a trouble in the alarm system. """
 
@@ -313,123 +480,6 @@ class Trouble(object):
         return self.__zone_type
 
 
-class Event(object):
-    """ Class definition of an event in the alarm system. """
-
-    def __init__(self, id, type_id, label, description, appointment, datetime, video, device_type, zone, partitions, name):
-        """ Set the private variable values on instantiation. """
-
-        self.__id = id
-        self.__type_id = type_id
-        self.__label = label
-        self.__description = description
-        self.__appointment = appointment
-        self.__datetime = datetime
-        self.__video = video
-        self.__device_type = device_type
-        self.__zone = zone
-        self.__partitions = partitions
-        self.__name = name
-
-
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-
-        object_type = str(type(self))
-        return object_type + ": " + str(self.as_dict())
-
-    def __repr__(self):
-        """ Define how the object is represented on output to console. """
-
-        class_name  = type(self).__name__
-        id          = f"id = {self.id}"
-        type_id     = f"type_id = {self.type_id}"
-        label       = f"label = '{self.label}'"
-        description = f"description = '{self.description}'"
-        appointment = f"appointment = '{self.appointment}'"
-        datetime    = f"datetime = '{self.datetime}'"
-        video       = f"video = {self.video}"
-        device_type = f"device_type = '{self.device_type}'"
-        zone        = f"zone = {self.zone}"
-        partitions  = f"partitions = {str(self.partitions)}"
-        name  = f"partitions = {str(self.name)}"
-
-        return f"{class_name}({id}, {type_id}, {label}, {description}, {appointment}, \
-            {datetime}, {video}, {device_type}, {zone}, {partitions}, {name})"
-
-    def as_dict(self):
-        """ Return the object properties in a dictionary. """
-        return {
-            'id': self.id,
-            'type_id': self.type_id,
-            'label': self.label,
-            'description': self.description,
-            'appointment': self.appointment,
-            'datetime': self.datetime,
-            'video': self.video,
-            'device_type': self.device_type,
-            'zone': self.zone,
-            'partitions': self.partitions,
-            'name': self.name,
-        }
-
-   # Event properties
-    @property
-    def id(self):
-        """ User ID. """
-        return self.__id
-
-    @property
-    def type_id(self):
-        """ Event type ID. """
-        return self.__type_id
-
-    @property
-    def label(self):
-        """ Event label. """
-        return self.__label
-
-    @property
-    def description(self):
-        """ Event description. """
-        return self.__description
-
-    @property
-    def appointment(self):
-        """ Event appointment. """
-        return self.__appointment
-
-    @property
-    def datetime(self):
-        """ Event datetime. """
-        return self.__datetime
-
-    @property
-    def video(self):
-        """ Event has video. """
-        return self.__video
-
-    @property
-    def device_type(self):
-        """ Event device type. """
-        return self.__device_type
-
-    @property
-    def zone(self):
-        """ Event zone. """
-        return self.__zone
-
-    @property
-    def partitions(self):
-        """ Event partitions. """
-        return self.__partitions
-
-    @property
-    def name(self):
-        """ Event name. """
-        return self.__name
-
-
 class User(object):
     """ Class definition of a user in the alarm system. """
 
@@ -487,54 +537,3 @@ class User(object):
     def partitions(self):
         """ Device is active. """
         return self.__partitions
-
-
-class Location(object):
-    """ Class definition of a location in the alarm system. """
-
-    def __init__(self, id, name, is_editable):
-        """ Set the private variable values on instantiation. """
-
-        self.__id = id
-        self.__name = name
-        self.__is_editable = is_editable
-
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-
-        object_type = str(type(self))
-        return object_type + ": " + str(self.as_dict())
-
-    def __repr__(self):
-        """ Define how the object is represented on output to console. """
-        
-        class_name   = type(self).__name__
-        id           = f"id = {self.id}"
-        name         = f"name = '{self.name}'"
-        is_editable  = f"is_editable = {self.is_editable}"
-
-        return f"{class_name}({id}, {name}, {is_editable})"
-
-    def as_dict(self):
-        """ Return the object properties in a dictionary. """
-        return {
-            'id': self.id,
-            'name': self.name,
-            'is_editable': self.is_editable,
-        }
-
-   # Location properties
-    @property
-    def id(self):
-        """ Device ID. """
-        return self.__id
-
-    @property
-    def name(self):
-        """ Device name. """
-        return self.__name
-
-    @property
-    def is_editable(self):
-        """ Device is editable. """
-        return self.__is_editable
