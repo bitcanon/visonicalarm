@@ -17,7 +17,7 @@ The upgrade from API version 4.0 to 9.0 was a **major upgrade** which broke more
 
 Some other changes are the way we arm and disarm the alarm system (endpoint changes). The data structures returned by the API server also differs a bit so almost all of the classes (`Status`, `Device`, `Event`, `Trouble`, `...`) have been updated to reflect these changes. See the examples in the rest of this document on how to use them.
 
-Also, if you still need to run API version 4.0 just read on.
+**Nonetheless, the library is still really easy to get started with.**
 
 ## Need support for API 4.0?
 Even though the latest version of the library no longer support API version 4.0 you can still run it, simply install a previous version:
@@ -29,7 +29,7 @@ The documentation for this version can be found [here](https://github.com/bitcan
 ## Installation
 Install the latest version with pip3:
 ```
-$ pip3 install visonicalarm
+pip3 install visonicalarm
 ```
 
 ## Basics
@@ -100,42 +100,54 @@ print('User Name:  ' + user.name)
 print('Email:      ' + user.email)
 print('Partitions: ' + str(user.partitions))
 ```
+This is the same for all object classes in the library: Users, Devices, Events, Locations, Troubles, and so on...
 ## Alarm
+
+### Alarm Panel
+After calling the `login()` method it takes a few moments for the API server to connect to the alarm panel in your house. To check of the connection has been make, call the `connected()` method:
+```python
+if alarm.connected():
+    print('Alarm Panel connected')
+else:
+    print('Alarm Panel disconnected')
+```
+>Use the `connected()` method to make sure you are connected to the alarm panel before calling arm/disarm methods to avoid exceptions.
 
 ### Devices
 These are the devices connected to your alarm system (contacts, cameras, keypads, and so on).
 
-A device is defined in the `Device` base class, or more specifically, in one of its sub-classes (`ContactDevice`, `CameraDevice`, `...`).
+A device is defined in the `Device` base class, or more specifically, in one of its sub-classes (`CameraDevice`, `ContactDevice`, `GenericDevice`, `GSMDevice`, `KeyFobDevice`, `PGMDevice` and `SmokeDevice`).
 
-Get a list of all devices by calling the `get_devices()` method.
+Get a `list` of all devices by calling the `get_devices()` method.
 ```python
 for device in alarm.get_devices():
     print(device)
 ```
 Output:
 ```
-<class 'visonic.devices.ContactDevice'>: {'id': '100-2030', 'zone': 1, 'location': 'Entry door', 'device_type': 'ZONE', 'type': 'DELAY_1', 'subtype': 'CONTACT', 'preenroll': False, 'soak': False, 'bypass': False, 'alarms': None, 'alerts': None, 'troubles': None, 'bypass_availability': False, 'partitions': ['ALL'], 'state': 'closed'}
-<class 'visonic.devices.CameraDevice'>: {'id': '140-3040', 'zone': 2, 'location': 'Livingroom', 'device_type': 'ZONE', 'type': 'INTERIOR_FOLLOW', 'subtype': 'MOTION_CAMERA', 'preenroll': False, 'soak': False, 'bypass': False, 'alarms': None, 'alerts': None, 'troubles': None, 'bypass_availability': False, 'partitions': ['ALL']}
+<class 'visonic.devices.ContactDevice'>: {'device_number': 14, 'device_type': 'ZONE', 'enrollment_id': '100-0305', 'id': 12340, 'name': '', 'partitions': [1], 'preenroll': False, 'removable': True, 'renamable': True, 'subtype': 'CONTACT', 'warnings': None, 'zone_type': 'PERIMETER', 'location': 'Garage', 'soak': False}
+<class 'visonic.devices.CameraDevice'>:  {'device_number': 15, 'device_type': 'ZONE', 'enrollment_id': '120-2041', 'id': 12341, 'name': '', 'partitions': [1], 'preenroll': False, 'removable': True, 'renamable': True, 'subtype': 'MOTION_CAMERA', 'warnings': None, 'zone_type': 'INTERIOR_FOLLOW', 'location': 'Vardagsrum', 'soak': False, 'vod': {}}
+<class 'visonic.devices.SmokeDevice'>:   {'device_number': 16, 'device_type': 'ZONE', 'enrollment_id': '300-3546', 'id': 12343, 'name': '', 'partitions': [1], 'preenroll': False, 'removable': True, 'renamable': True, 'subtype': 'SMOKE', 'warnings': None, 'zone_type': 'FIRE', 'location': 'Vardagsrum', 'soak': False}
 ...
 ```
 
 ### Events
 Events are generated when the alarm system is armed, disarmed, phone line changes (GSM), and so on.
 
-An event is defined in the `Event` class. Get a list of all events by calling the `get_events()` method.
+An event is defined in the `Event` class. Get a `list` of all events by calling the `get_events()` method.
 ```python
 for event in alarm.get_events():
     print(event)
 ```
 Output:
 ```
-<class 'visonic.classes.Event'>: {'id': 19000001, 'type_id': 86, 'label': 'ARM', 'description': 'Armed away', 'appointment': 'User 1', 'datetime': '2000-01-01 06:00:00', 'video': False, 'device_type': 'USER', 'zone': 1, 'partitions': ['ALL']}
-<class 'visonic.classes.Event'>: {'id': 19000002, 'type_id': 89, 'label': 'DISARM', 'description': 'Disarm', 'appointment': 'User 1', 'datetime': '2000-01-01 07:00:00', 'video': False, 'device_type': 'USER', 'zone': 1, 'partitions': ['ALL']}
+<class 'visonic.classes.Event'>: {'id': 333801, 'type_id': 89, 'label': 'DISARM', 'description': 'Disarm', 'appointment': 'Mikael Schultz', 'datetime': '2022-09-11 06:59:08', 'video': False, 'device_type': 'USER', 'zone': 1, 'partitions': [1], 'name': 'Mikael Schultz'}
+<class 'visonic.classes.Event'>: {'id': 334310, 'type_id': 86, 'label': 'ARM', 'description': 'Arm Away', 'appointment': 'User 2', 'datetime': '2022-09-11 07:55:55', 'video': False, 'device_type': 'USER', 'zone': 2, 'partitions': [1], 'name': None}
 ...
 ```
 
 ### Locations
-A location is defined in the `Location` class. Get a list of all locations by calling the `get_locations()` method.
+A location is defined in the `Location` class. Get a `list` of all locations by calling the `get_locations()` method.
 ```python
 for location in alarm.get_locations():
     print(location)
@@ -150,21 +162,20 @@ Output:
 ### Panel Information
 The general panel information is defined in the `PanelInfo` class. Get the panel information by calling the `get_panel_info()` method.
 ```python
-panel_info = alarm.get_panel_info():
-    print(panel_info)
+panel_info = alarm.get_panel_info()
+print(panel_info)
 ```
 Output:
 ```
-<class 'visonic.classes.PanelInfo'>: {'name': '123ABC', 'serial': '123ABC', 'model': 'PowerMaster 10', 'alarm_amount': 0, 'alert_amount': 0, 'trouble_amount': 0, 'camera_amount': 15, 'bypass_mode': 'No bypass', 'enabled_partition_mode': False}
+<class 'visonic.classes.PanelInfo'>: {'current_user': 'master_user', 'manufacturer': 'Visonic', 'model': 'PowerMaster 10', 'serial': '123ABC'}
 ```
-> This is a quick and easy way to check if there are any alarms, alerts or troubles in your alarm system.
 
 ### Status
 The status of the alarm system is defined in the `Status` class. Get the current status by calling the `get_status()` method.
 
-This method will allow you to access two properties (`is_connected` and `exit_delay`) together with a `list` of partitions (defined in the `Partition` class) containing the current state of the partitions in your alarm system.
+This method will allow you to view the current status of the PowerLink 3 IP module (`bba`), mobile module (`gprs`) as well as all partitions (defined in the `Partition` class) in the alarm system.
 
-> If you don't have a multi partition alarm system, the `ALL` partition will always be used.
+> If you don't have a multi partition alarm system, the `-1` partition will always be used.
 
 ```python
 status = alarm.get_status()
@@ -172,7 +183,7 @@ print(status)
 ```
 Output:
 ```
-<class 'visonic.classes.Status'>: {'is_connected': True, 'exit_delay': 30, 'partitions': [Partition(name = 'ALL', active = True, state = 'Disarm', ready_status = True)]}
+<class 'visonic.classes.Status'>: {'connected': True, 'bba_connected': True, 'bba_state': 'online', 'gprs_connected': False, 'gprs_state': 'online', 'discovery_completed': True, 'discovery_stages': 17, 'discovery_in_queue': 0, 'discovery_triggered': None, 'partitions': [Partition(id = -1, state = 'DISARM', status = '', ready = True, options = [])], 'rssi_level': 'ok', 'rssi_network': 'Unknown'}
 ```
 
 Since the partitions are located in a list you can iterate over them like this:
@@ -182,32 +193,21 @@ for partition in status.partitions:
 ```
 Output:
 ```
-<class 'visonic.classes.Partition'>: {'name': 'ALL', 'active': True, 'state': 'Disarm', 'ready_status': True}
+<class 'visonic.classes.Partition'>: {'id': -1, 'state': 'DISARM', 'status': '', 'ready': True, 'options': []}
 ```
 
+>**Single partition system?** Just run `print(status.partitions[0].state)` to get the current arm state.
+
 ### Users
-A user is defined in the `User` class. Get a list of all users by calling the `get_users()` method.
+A user is defined in the `User` class. Get a `list` of all users by calling the `get_users()` method.
 ```python
 for user in alarm.get_users():
     print(user)
 ```
 Output:
 ```
-<class 'visonic.classes.User'>: {'id': 1, 'name': 'User 1', 'is_active': True}
-<class 'visonic.classes.User'>: {'id': 2, 'name': 'User 2', 'is_active': False}
-...
-```
-
-You can override the names of the users by calling the `get_users()` method with a dictionary mapping and ID with a name.
-```python
-for user in alarm.get_users({1: 'Bob', 2: 'Alice'}):
-    print(user)
-```
-Output:
-```
-<class 'visonic.classes.User'>: {'id': 1, 'name': 'Bob', 'is_active': True}
-<class 'visonic.classes.User'>: {'id': 2, 'name': 'Alice', 'is_active': False}
-<class 'visonic.classes.User'>: {'id': 3, 'name': 'User 3', 'is_active': False}
+<class 'visonic.classes.User'>: {'id': 1, 'name': 'John Doe', 'email': 'john@doe.com', 'partitions': [1, 2, 3, 4, 5]}
+<class 'visonic.classes.User'>: {'id': 2, 'name': '', 'email': '', 'partitions': [1]}
 ...
 ```
 
@@ -224,19 +224,12 @@ alarm.arm_home()
 ```
 When using a multi partition alarm system, just pass the partition name as an argument to the `arm_home()` method.
 ```python
-alarm.arm_home(partition='P1')
+alarm.arm_home(partition=2)
 ```
 
 Poll the `state` property of your partition in the `get_status()` method to watch the state changing.
 ```python
-alarm.get_status().partitions[0].state  # Output: 'Disarm'
-```
-
-### Arm Home Instant
-This work the same way as the `arm_home()` method above. The difference is that the exit delay is ignored, and the alarm is triggered instantly when opening a door.
-
-```python
-alarm.arm_home_instant()
+alarm.get_status().partitions[0].state  # Output: 'HOME'
 ```
 
 ### Arm Away
@@ -247,19 +240,12 @@ alarm.arm_away()
 ```
 When using a multi partition alarm system, just pass the partition name as an argument to the `arm_away()` method.
 ```python
-alarm.arm_away(partition='P1')
+alarm.arm_away(partition=2)
 ```
 
 Poll the `state` property of your partition in the `get_status()` method to watch the state changing.
 ```python
-alarm.get_status().partitions[0].state  # Output: 'Disarm'
-```
-
-### Arm Away Instant
-This work the same way as the `arm_away()` method above. The difference is that the exit delay is ignored, and the alarm is triggered instantly when opening a door.
-
-```python
-alarm.arm_away_instant()
+alarm.get_status().partitions[0].state  # Output: 'AWAY'
 ```
 
 ### Disarm
@@ -268,22 +254,15 @@ To disarm the alarm system just call the `disarm()` method.
 ```python
 alarm.disarm()
 ```
+When using a multi partition alarm system, just pass the partition name as an argument to the `disarm()` method.
+```python
+alarm.disarm(partition=2)
+```
+
 Poll the `state` property of your partition in the `get_status()` method to watch the state changing.
 ```python
-alarm.get_status().partitions[0].state  # Output: 'Disarm'
+alarm.get_status().partitions[0].state  # Output: 'DISARM'
 ```
-
-## System
-
-### Set the time
-You can update the time of the alarm system by calling the `set_time()` method. It accepts a datetime object that will be used to set the time.
-```python
-try:
-    alarm.set_time(datetime.now())
-except PermissionDeniedError:
-    print('Permission denied. Please login using a master user and try again.')
-```
-> Note: You must be logged in with a master user in order to set the time.
 
 ## Examples
 
