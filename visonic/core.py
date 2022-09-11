@@ -250,7 +250,7 @@ class APIv9(object):
 
     def get_panels(self):
         """ Get a list of panels. """
-        # send_get('https://larm1.gardaalarm.se/rest_api/9.0/panels')
+        # send_get('https://api.server.com/rest_api/9.0/panels')
         raise NotImplementedError()
 
     def get_process_status(self, process_token):
