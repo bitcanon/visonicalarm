@@ -17,7 +17,7 @@ The upgrade from API version 4.0 to 9.0 was a **major upgrade** which broke more
 
 Some other changes are the way we arm and disarm the alarm system (endpoint changes). The data structures returned by the API server also differs a bit so almost all of the classes (`Status`, `Device`, `Event`, `Trouble`, `...`) have been updated to reflect these changes. See the examples in the rest of this document on how to use them.
 
-**Nonetheless, the library is still really easy to get started with.**
+>**Nevertheless**: the library is still really easy getting started with.
 
 ## Need support for API 4.0?
 Even though the latest version of the library no longer support API version 4.0 you can still run it, simply install a previous version:
@@ -29,7 +29,7 @@ The documentation for this version can be found [here](https://github.com/bitcan
 ## Installation
 Install the latest version with pip3:
 ```
-pip3 install visonicalarm
+pip install visonicalarm
 ```
 
 ## Basics
@@ -52,11 +52,11 @@ The `app_id` is a UUID (**U**niversally **U**nique **ID**entifier) that should b
 
 Create a UUID with a simple one liner:
 ```
-python3 -c "import uuid; print(uuid.uuid4())"
+python -c "import uuid; print(uuid.uuid4())"
 ```
 This will output a UUID (for example: `e9bce150-57c9-47b9-8447-129158356c63`) that can be used to replace the zeroed `app_id`.
 
->1. It is important that you create an account in the app prior to setting up the library.
+>1. It's important that you create an account in the app prior to setting up the library.
 >2. All of the following code assume you have completed the Setup step prior to calling any of the methods.
 
 ### Pre-flight checks
@@ -100,11 +100,11 @@ print('User Name:  ' + user.name)
 print('Email:      ' + user.email)
 print('Partitions: ' + str(user.partitions))
 ```
-This is the same for all object classes in the library: Users, Devices, Events, Locations, Troubles, and so on...
+This is the same for all object classes in the library: Users, devices, events, locations, troubles, and so on...
 ## Alarm
 
 ### Alarm Panel
-After calling the `login()` method it takes a few moments for the API server to connect to the alarm panel in your house. To check of the connection has been make, call the `connected()` method:
+After calling the `login()` method it takes a few moments for the API server to connect to the alarm panel in your house. To check of the connection has been made, call the `connected()` method:
 ```python
 if alarm.connected():
     print('Alarm Panel connected')
@@ -116,7 +116,7 @@ else:
 ### Devices
 These are the devices connected to your alarm system (contacts, cameras, keypads, and so on).
 
-A device is defined in the `Device` base class, or more specifically, in one of its sub-classes (`CameraDevice`, `ContactDevice`, `GenericDevice`, `GSMDevice`, `KeyFobDevice`, `PGMDevice` and `SmokeDevice`).
+A device is defined in the `Device` base class and, more specifically, in one of its sub-classes (`CameraDevice`, `ContactDevice`, `GenericDevice`, `GSMDevice`, `KeyFobDevice`, `PGMDevice` and `SmokeDevice`).
 
 Get a `list` of all devices by calling the `get_devices()` method.
 ```python
@@ -214,7 +214,7 @@ Output:
 ## Arming and Disarming
 There are two ways to arm you alarm system.
 - **Arm Home:** This will arm your perimeter protection (often doors and windows). You can still move around inside the house.
-- **Arm Away:** This will arm the entire alarm system (doors, windows, motion, cameras, etc). You can not move around inside the house.
+- **Arm Away:** This will arm the entire alarm system (doors, windows, motion, cameras, etc). Moving around in the house will trigger the alarm to go off.
 
 ### Arm Home
 To arm the alarm system in *home mode* just call the `arm_home()` method. 
@@ -222,7 +222,7 @@ To arm the alarm system in *home mode* just call the `arm_home()` method.
 ```python
 alarm.arm_home()
 ```
-When using a multi partition alarm system, just pass the partition name as an argument to the `arm_home()` method.
+When using a multi partition alarm system, just pass the partition ID as an argument to the `arm_home()` method.
 ```python
 alarm.arm_home(partition=2)
 ```
@@ -238,7 +238,7 @@ To arm the alarm system in *away mode* just call the `arm_away()` method.
 ```python
 alarm.arm_away()
 ```
-When using a multi partition alarm system, just pass the partition name as an argument to the `arm_away()` method.
+When using a multi partition alarm system, just pass the partition ID as an argument to the `arm_away()` method.
 ```python
 alarm.arm_away(partition=2)
 ```
@@ -254,7 +254,7 @@ To disarm the alarm system just call the `disarm()` method.
 ```python
 alarm.disarm()
 ```
-When using a multi partition alarm system, just pass the partition name as an argument to the `disarm()` method.
+When using a multi partition alarm system, just pass the partition ID as an argument to the `disarm()` method.
 ```python
 alarm.disarm(partition=2)
 ```
