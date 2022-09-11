@@ -239,6 +239,19 @@ class Setup(object):
 
         return PanelInfo(gpi['current_user'], gpi['manufacturer'], gpi['model'], gpi['serial'])
 
+    def get_process_status(self, process_token):
+        """ Fetch the status information associated with a process token. """
+        process_list = []
+        for process in self.__api.get_process_status(process_token):
+            new_process = Process(
+                token=process['token'],
+                status=process['status'],
+                message=process['message'],
+                error=process['error'],
+            )
+            process_list.append(new_process)
+        return process_list
+
     def get_status(self):
         """ Fetch the current state of the alarm system. """
 
@@ -307,12 +320,12 @@ class Setup(object):
 
     def arm_home(self, partition=-1):
         """ Send Arm Home command to the alarm system. """
-        self.__api.arm_home(partition)
+        return self.__api.arm_home(partition)['process_token']
 
     def arm_away(self, partition=-1):
         """ Send Arm Away command to the alarm system. """
-        self.__api.arm_away(partition)
+        return self.__api.arm_away(partition)['process_token']
 
     def disarm(self, partition=-1):
         """ Send Disarm command to the alarm system. """
-        self.__api.disarm(partition)
+        return self.__api.disarm(partition)['process_token']

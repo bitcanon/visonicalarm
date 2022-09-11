@@ -56,6 +56,7 @@ class APIv9(object):
         self.__url_set_state = self.__url_base + '/set_state'
         self.__url_locations = self.__url_base + '/locations'
         self.__url_active_users_info = self.__url_base + '/users'
+        self.__url_process_status = self.__url_base + '/process_status?process_tokens='
 
         # Create a new session
         self.__session = requests.session()
@@ -251,6 +252,11 @@ class APIv9(object):
         """ Get a list of panels. """
         # send_get('https://larm1.gardaalarm.se/rest_api/9.0/panels')
         raise NotImplementedError()
+
+    def get_process_status(self, process_token):
+        """ Get the current status of a process running on API server. """
+        url = self.__url_process_status + process_token
+        return self.__send_request(url, request_type='GET')
 
     def get_status(self):
         """ Get the current status of the alarm system. """

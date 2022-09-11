@@ -284,6 +284,61 @@ class Partition(object):
         return self.__options
 
 
+class Process(object):
+    """ Class definition of a process in the alarm system. """
+
+    def __init__(self, token, status, message, error):
+        """ Set the private variable values on instantiation. """
+
+        self.__token = token
+        self.__status = status
+        self.__message = message
+        self.__error = error
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+
+        class_name = type(self).__name__
+        token   = f"token = '{self.token}'"
+        status  = f"status = '{self.status}'"
+        message = f"message = '{self.message}'"
+        error   = f"error = '{self.error}'"
+
+        return f"{class_name}({token}, {status}, {message}, {error})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'token': self.token,
+            'status': self.status,
+            'message': self.message,
+            'error': self.error,
+        }
+
+    # Partition properties
+    @property
+    def token(self):
+        return self.__token
+
+    @property
+    def status(self):
+        return self.__status
+
+    @property
+    def message(self):
+        return self.__message
+
+    @property
+    def error(self):
+        return self.__error
+
+
 class Status(object):
     """ Class definition representing the status of the alarm system. """
 
