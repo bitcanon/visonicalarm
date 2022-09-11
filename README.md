@@ -1,5 +1,9 @@
 # Visonic Alarm Library
+Hi and welcome! Click the button below if you enjoy this library and want to support my work. A lot of coffee is consumed as a software developer you know 😁
+
 <a href="https://www.buymeacoffee.com/bitcanon" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+>Needless to say, this is completely voluntary.
 
 ## Introduction
 A simple library for the Visonic PowerMaster API written in Python 3.
@@ -170,6 +174,20 @@ Output:
 <class 'visonic.classes.PanelInfo'>: {'current_user': 'master_user', 'manufacturer': 'Visonic', 'model': 'PowerMaster 10', 'serial': '123ABC'}
 ```
 
+### Process Information
+Some API methods return a **process token** as a return value. This makes it possible to find out how the call went and make you aware of potential errors that occured. The API methods returning a token seems to be the ones that change the state of the alarm system, such as `arm_home()`, `arm_away()` and `disarm()`.
+
+A process is defined in the `Process` class. Get a `list` of all processes associated with a **process token** by calling the `get_process_status()` method.
+```python
+token = alarm.disarm()
+for process in alarm.get_process_status(token):
+    print(process)
+```
+Output:
+```
+<class 'visonic.classes.Process'>: {'token': '346eca73-1316-4a1e-b922-4b2061d79b71', 'status': 'start', 'message': '', 'error': None}
+```
+
 ### Status
 The status of the alarm system is defined in the `Status` class. Get the current status by calling the `get_status()` method.
 
@@ -197,6 +215,20 @@ Output:
 ```
 
 >**Single partition system?** Just run `print(status.partitions[0].state)` to get the current arm state.
+
+### Troubles
+When something is in need of attention a trouble is triggered. It might be a door that's open or the control panel running on battery when a power outage occurs.
+
+A trouble is defined in the `Trouble` class. Get a `list` of all troubles by calling the `get_troubles()` method.
+```python
+for trouble in alarm.get_troubles():
+    print(trouble)
+```
+Output:
+```
+<class 'visonic.classes.Trouble'>: {'device_type': 'CONTROL_PANEL', 'location': None, 'partitions': [1], 'trouble_type': 'AC_FAILURE', 'zone': None, 'zone_name': None, 'zone_type': None}
+<class 'visonic.classes.Trouble'>: {'device_type': 'ZONE', 'location': 'Front door', 'partitions': [1], 'trouble_type': 'OPENED', 'zone': 3, 'zone_name': '', 'zone_type': 'PERIMETER'}
+```
 
 ### Users
 A user is defined in the `User` class. Get a `list` of all users by calling the `get_users()` method.
