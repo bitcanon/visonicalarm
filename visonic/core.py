@@ -268,7 +268,7 @@ class APIv9(object):
 
     def wakeup_sms(self):
         """ Send a wakeup SMS to the alarm panel. """
-        # send_get('https://larm1.gardaalarm.se/rest_api/9.0/wakeup_sms')
+        # send_get('https://api.server.com/rest_api/9.0/wakeup_sms')
         raise NotImplementedError()
 
     def arm_home(self, partition):
