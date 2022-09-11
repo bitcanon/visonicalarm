@@ -5,9 +5,9 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setuptools.setup(
     name='visonicalarm',
-    version='2.0.1',
+    version='3.0.0',
     author='Mikael Schultz',
-    author_email='mikael@bitcanon.com',
+    author_email='bitcanon@pm.me',
     description='A simple library for the Visonic Alarm API written in Python 3.',
     long_description=long_description,
     long_description_content_type='text/markdown',
