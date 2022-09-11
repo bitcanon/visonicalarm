@@ -124,7 +124,6 @@ class Device(object):
         return self.__zone_type
 
 
-
 class CameraDevice(Device):
     """ Camera device class definition. """
     __location = None
@@ -191,27 +190,24 @@ class GenericDevice(Device):
     pass
 
 
-class SmokeDevice(Device):
-    """ Smoke device class definition. """
-    __location = None
-    __soak = None
+class GSMDevice(Device):
+    """ GSM device class definition. """
+    __signal_level = None
 
     def __init__(self, device_number, device_type, enrollment_id, id, 
                  name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type, location, soak):
+                 subtype, warnings, zone_type, signal_level):
         Device.__init__(self, device_number, device_type, enrollment_id, id, 
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type)
-        self.__location = location
-        self.__soak = soak
+        self.__signal_level = signal_level
 
     def __str__(self):
         """ Define how the print() method should print the object. """
 
         object_type = str(type(self))
         value_dict = self.as_dict()
-        value_dict['location'] = self.__location
-        value_dict['soak'] = self.__soak
+        value_dict['signal_level'] = self.__signal_level
         return object_type + ": " + str(value_dict)
 
 
@@ -239,27 +235,6 @@ class KeyFobDevice(Device):
         return object_type + ": " + str(value_dict)
 
 
-class GSMDevice(Device):
-    """ GSM device class definition. """
-    __signal_level = None
-
-    def __init__(self, device_number, device_type, enrollment_id, id, 
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type, signal_level):
-        Device.__init__(self, device_number, device_type, enrollment_id, id, 
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type)
-        self.__signal_level = signal_level
-
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-
-        object_type = str(type(self))
-        value_dict = self.as_dict()
-        value_dict['signal_level'] = self.__signal_level
-        return object_type + ": " + str(value_dict)
-
-
 class PGMDevice(Device):
     """ PGM device class definition. """
     __parent_id = None
@@ -283,4 +258,27 @@ class PGMDevice(Device):
         value_dict['parent_port'] = self.__parent_port
         return object_type + ": " + str(value_dict)
 
+
+class SmokeDevice(Device):
+    """ Smoke device class definition. """
+    __location = None
+    __soak = None
+
+    def __init__(self, device_number, device_type, enrollment_id, id, 
+                 name, partitions, preenroll, removable, renamable, 
+                 subtype, warnings, zone_type, location, soak):
+        Device.__init__(self, device_number, device_type, enrollment_id, id, 
+                 name, partitions, preenroll, removable, renamable, 
+                 subtype, warnings, zone_type)
+        self.__location = location
+        self.__soak = soak
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        value_dict = self.as_dict()
+        value_dict['location'] = self.__location
+        value_dict['soak'] = self.__soak
+        return object_type + ": " + str(value_dict)
 
