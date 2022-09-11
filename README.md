@@ -4,9 +4,27 @@
 ## Introduction
 A simple library for the Visonic PowerMaster API written in Python 3.
 
-It is built using same technique used in the Visonic-Go app. So if you can use the app to connect to your alarm system, the chances are you can use this library as well. I have developed and tested it with a Visonic PowerMaster-10 using a PowerLink 3 IP module.
+It's built using same technique used in the Visonic-Go app (a REST API). So if you can use the app to connect to your alarm system, the chances are you can use this library as well. I have developed and tested it with a Visonic PowerMaster-10 using a PowerLink 3 IP module.
 
-> The library currently only support version 4.0 of the API running on the server side. As of now that is the only version my alarm company is supporting and thus I have no other version to develop against. It seems that some alarm companies has been rolling out version 8.0 of the API (requiring username and password authentication), which will be supported in the future.
+> **Important:** The latest version of the library only has support for version 9.0 of the API running on the server side. If your alarm company still run API version 4.0 please read more below.
+
+## API version 4.0 vs. 9.0
+Finally my alarm company has upgraded their PowerManage REST API to version 9.0 so I could upgrade the Visonic Alarm library to support it.
+
+The upgrade from API version 4.0 to 9.0 was a **major upgrade** which broke more or less the entire Visonic Alarm library. I had to rewrite large portions of the code base which means that the latest version (3.x) of Visonic Alarm for Python 3 is **not backwards compatible** with the previous versions. One of the large changes is that the API now require two sets of authentication.
+1. First with **email and password** against the API server.
+2. And then the **master code** between the API server and your alarm panel.
+
+Some other changes are the way we arm and disarm the alarm system (endpoint changes). The data structures returned by the API server also differs a bit so almost all of the classes (`Status`, `Device`, `Event`, `Trouble`, `...`) have been updated to reflect these changes. See the examples in the rest of this document on how to use them.
+
+Also, if you still need to run API version 4.0 just read on.
+
+## Need support for API 4.0?
+Even though the latest version of the library no longer support API version 4.0 you can still run it, simply install a previous version:
+```
+pip install visonicalarm==2.0.1
+```
+The documentation for this version can be found [here](https://github.com/bitcanon/visonicalarm/blob/master/README_API4.0.md).
 
 ## Installation
 Install the latest version with pip3:
@@ -17,30 +35,34 @@ $ pip3 install visonicalarm
 ## Basics
 ### Setup
 Use the same settings you are using to login to the Visonic-Go app.
+
 ```python
 from visonic import alarm
 
-hostname  = 'your.alarmcompany.com'
-user_code = '1234'
-user_id   = '2d978962-daa6-4e18-a5e5-b4a99100bd3b'
-panel_id  = '123ABC'
+hostname      = 'your.alarmcompany.com'
+user_code     = '1234'
+app_id        = '00000000-0000-0000-0000-000000000000'
+panel_id      = '123ABC'
+user_email    = "firstname.lastname@email.com"
+user_password = "An.Extremely.Long.Random.and.Secure.Password!"
 
-alarm = alarm.Setup(hostname, user_code, user_id, panel_id)
+alarm = alarm.Setup(hostname, user_code, app_id, panel_id, user_email, user_password)
 ```
-The `user_id` is a GUID (Globally Unique IDentifier) that should be unique to each app communicating with the API server. You can get a GUID from [https://www.guidgen.com](https://www.guidgen.com) and paste into your code.
+The `app_id` is a UUID (**U**niversally **U**nique **ID**entifier) that should be unique to each app communicating with the API server.
 
->All of the following code assume you have completed the Setup step prior to calling any of the methods.
+Create a UUID with a simple one liner:
+```
+python3 -c "import uuid; print(uuid.uuid4())"
+```
+This will output a UUID (for example: `e9bce150-57c9-47b9-8447-129158356c63`) that can be used to replace the zeroed `app_id`.
+
+>1. It is important that you create an account in the app prior to setting up the library.
+>2. All of the following code assume you have completed the Setup step prior to calling any of the methods.
 
 ### Pre-flight checks
 Before you connect to the API server you can check which version(s) of the API your alarm company support. You do this by calling the `rest_api_version()` method.
 ```python
 print('Supported REST API version(s): ' + ', '.join(alarm.rest_api_version()))
-```
-
-You can also check if your alarm panel is registered with the alarm server by calling the `check_panel_id()` method.
-```python
-if alarm.check_panel_id(panel_id):
-    print("Panel is registed with the API server.")
 ```
 
 ### Login
@@ -55,20 +77,12 @@ This will try to login with the configuration entered in the Setup step above.
 ### Exceptions
 All of the methods callable from the library will throw exceptions on failure. A full list of exceptions can be found [here](https://github.com/bitcanon/visonicalarm/blob/master/visonic/exceptions.py).
 ```python
+from visonic.exceptions import *
+...
 try:
     alarm.login()
-except ConnectionTimeoutError:
-    print('Connection to host timed out.')
-except NotRestAPIError:
-    print('The host is not a REST API server.')
-except UnsupportedRestAPIVersionError:
-    print('Unsupported REST API version.')
-except InvalidPanelIDError:
-    print('The Panel ID is not registered with the API server.')
-except InvalidUserCodeError:
-    print('The user code supplied is invalid.')
-except LoginAttemptsLimitReachedError:
-    print('To many login attempts. Please wait a few minutes and try again.')
+except BadRequestError as e:
+    print(e)
 ```
 
 ### Printing Objects and Properties
@@ -77,13 +91,14 @@ The objects representing various entities in the alarm system can be output with
 As an example, you can output the properties of a user object by passing it to the `print()` method:
 ```python
 print(user)
-# Output: <class 'visonic.classes.User'>: {'id': 1, 'name': 'User 1', 'is_active': True}
+# Output: <class 'visonic.classes.User'>: {'id': 1, 'name': 'John Doe', 'email': 'john@doe.com', 'partitions': [1, 2, 3, 4, 5]}
 ```
 Also, the properties are easily accessed from the object:
 ```python
-print('User ID:   ' + user.id)
-print('User Name: ' + user.name)
-print('Is Active: ' + str(user.is_active))
+print('User ID:    ' + str(user.id))
+print('User Name:  ' + user.name)
+print('Email:      ' + user.email)
+print('Partitions: ' + str(user.partitions))
 ```
 ## Alarm
 
