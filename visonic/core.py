@@ -61,6 +61,38 @@ class APIv9(object):
         # Create a new session
         self.__session = requests.session()
 
+    def __raise_on_bad_request(self, error):
+        """ Raise an exception when the API returns a bad request. """
+        api = json.loads(error.decode('utf-8'))
+
+        if api['error'] == 10001: # BadRequestParams
+            for pair in api['extras']:
+                if pair['value'] == 'incorrect':
+                    if pair['key'] == 'panel_serial':
+                        raise PanelSerialIncorrectError()
+                if pair['value'] == 'required':
+                    if pair['key'] == 'panel_serial':
+                        raise PanelSerialRequiredError()
+                    elif pair['key'] == 'email':
+                        raise EmailRequiredError()
+                    elif pair['key'] == 'password':
+                        raise PasswordRequiredError()
+                    elif pair['key'] == 'app_id':
+                        raise AppIDRequiredError()
+                    elif pair['key'] == 'user_code':
+                        raise UserCodeRequiredError()
+        elif api['error'] == 10004: # WrongCombination
+            for pair in api['extras']:
+                if pair['value'] == 'wrong_combination':
+                    if pair['key'] == 'email' or pair['key'] == 'password':
+                        raise WrongUsernameOrPasswordError()
+        elif api['error'] == 10021: # WrongUserCode
+            raise UserCodeIncorrectError()
+
+        # Raise a generic BadRequestError when the library has no
+        # specific exception implemented yet.
+        raise BadRequestError(api_error=api)
+
     def __send_request(self, url, with_session_token=True, with_user_token=True, data_json=None, request_type='GET'):
         """ Send a GET or POST request to the server. Includes the Session-Token
         only if with_session_token is True. """
@@ -100,7 +132,7 @@ class APIv9(object):
             return None
         except requests.exceptions.HTTPError as e:
             if   '400 Client Error: Bad Request' in str(e):
-                raise BadRequestError(response.content)
+                self.__raise_on_bad_request(response.content)
             elif '403 Client Error: Forbidden' in str(e):
                 raise PermissionDeniedError()
             elif '404 Client Error: Not Found' in str(e):

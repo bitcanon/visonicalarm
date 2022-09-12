@@ -4,10 +4,58 @@ class Error(Exception):
     pass
 
 
-class AuthenticationFailedError(Error):
-    """ Raised when username or password are incorrect. """
-    
-    def __init__(self, message="Authentication failed. Please check the username and password."):
+class AppIDRequiredError(Error):
+    """ Raised when an AppID is not provided in the API calls. """
+    def __init__(self, message="Connection to the alarm panel failed because the app ID is missing."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class EmailRequiredError(Error):
+    """ Raised when the email address is missing in the authentication request. """
+    def __init__(self, message="Authentication failed because the email address is missing."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class PanelSerialIncorrectError(Error):
+    """ Raised when an incorrect panel serial/ID number was provided in the request. """
+    def __init__(self, message="Connection to the alarm panel failed because the panel ID is incorrect."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class PanelSerialRequiredError(Error):
+    """ Raised when a panel serial/ID number was not provided in the request. """
+    def __init__(self, message="Connection to the alarm panel failed because the panel ID is missing."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class PasswordRequiredError(Error):
+    """ Raised when the password is missing in the authentication request. """
+    def __init__(self, message="Authentication failed because the password is missing."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class UserCodeIncorrectError(Error):
+    """ Raised when the user code provided in the request is incorrect. """
+    def __init__(self, message="Connection to the alarm panel failed because the user code is incorrect."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class UserCodeRequiredError(Error):
+    """ Raised when the user code provided in the request was missing. """
+    def __init__(self, message="Connection to the alarm panel failed because the user code is missing."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class WrongUsernameOrPasswordError(Error):
+    """ Raised when the username or password is incorrect. """
+    def __init__(self, message="Authentication failed because the wrong username or password was provided."):
         self.message = message
         super().__init__(self.message)
 
@@ -15,8 +63,9 @@ class AuthenticationFailedError(Error):
 class BadRequestError(Error):
     """ Raised when server returns a 400 Bad Request error. """
     
-    def __init__(self, message="Bad Request. Check the connection details and try again."):
+    def __init__(self, message="Bad Request. Check the connection details and try again.", api_error=None):
         self.message = message
+        self.api_error = api_error
         super().__init__(self.message)
 
 
