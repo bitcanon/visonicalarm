@@ -85,7 +85,9 @@ from visonic.exceptions import *
 ...
 try:
     alarm.login()
-except BadRequestError as e:
+except UserCodeIncorrectError as e:
+    print(e)
+except WrongUsernameOrPasswordError as e:
     print(e)
 ```
 
