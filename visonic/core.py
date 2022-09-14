@@ -58,12 +58,31 @@ class APIv9(object):
         self.__url_active_users_info = self.__url_base + '/users'
         self.__url_process_status = self.__url_base + '/process_status?process_tokens='
 
+        # New Endpoints
+        self.__url_access_grant = self.__url_base + '/access/grant'                         # [ ]
+        self.__url_access_revoke = self.__url_base + '/access/revoke'                       # [ ]
+        self.__url_activate_siren = self.__url_base + '/activate_siren'                     # [ ]
+        self.__url_apptype = self.__url_base + '/apptype'                                   # [ ]
+        self.__url_cameras = self.__url_base + '/cameras'                                   # [ ]
+        self.__url_disable_siren = self.__url_base + '/disable_siren'                       # [ ]
+        self.__url_feature_set  = self.__url_base + '/feature_set'                          # [ ]
+        self.__url_home_automation_devices = self.__url_base + '/home_automation_devices'   # [ ]
+        self.__url_make_video = self.__url_base + '/make_video'                             # [ ]
+        self.__url_notifications_email = self.__url_base + '/notifications/email'           # [ ]
+        self.__url_panels = self.__url_base + '/panels'                                     # [ ]
+        self.__url_set_name = self.__url_base + '/set_name'                                 # [ ]
+        self.__url_set_user_code = self.__url_base + '/set_user_code'                       # [ ]
+        self.__url_smart_devices = self.__url_base + '/smart_devices'                       # [ ]
+        self.__url_smart_devices_settings = self.__url_base + '/smart_devices/settings'     # [ ]
+        self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'                             # [ ]
+
         # Create a new session
         self.__session = requests.session()
 
     def __raise_on_bad_request(self, error):
         """ Raise an exception when the API returns a bad request. """
         api = json.loads(error.decode('utf-8'))
+        print(api)
 
         if api['error'] == 10001: # BadRequestParams
             for pair in api['extras']:
@@ -282,8 +301,7 @@ class APIv9(object):
 
     def get_panels(self):
         """ Get a list of panels. """
-        # send_get('https://api.server.com/rest_api/9.0/panels')
-        raise NotImplementedError()
+        return self.__send_request(self.__url_panels, request_type='GET')
 
     def get_process_status(self, process_token):
         """ Get the current status of a process running on API server. """

@@ -239,6 +239,19 @@ class Setup(object):
 
         return PanelInfo(gpi['current_user'], gpi['manufacturer'], gpi['model'], gpi['serial'])
 
+    def get_panels(self):
+        """ Fetch a list of panels associated with the user. """
+        panel_list = []
+
+        for panel in self.__api.get_panels():
+            new_panel = Panel(
+                panel_serial=panel['panel_serial'],
+                alias=panel['alias'],
+            )
+            panel_list.append(new_panel)
+
+        return panel_list
+
     def get_process_status(self, process_token):
         """ Fetch the status information associated with a process token. """
         process_list = []

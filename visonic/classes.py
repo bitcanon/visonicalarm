@@ -222,6 +222,47 @@ class PanelInfo(object):
         return self.__serial
 
 
+class Panel(object):
+    """ Class definition of the general alarm system information. """
+
+    def __init__(self, panel_serial, alias):
+        """ Set the private variable values on instantiation. """
+
+        self.__panel_serial = panel_serial
+        self.__alias = alias
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+
+        class_name   = type(self).__name__
+        panel_serial = f"panel_serial = '{self.panel_serial}'"
+        alias        = f"alias = '{self.alias}'"
+
+        return f"{class_name}({panel_serial}, {alias})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'panel_serial': self.panel_serial,
+            'alias': self.alias,
+        }
+
+    # Panel properties
+    @property
+    def panel_serial(self):
+        return self.__panel_serial
+
+    @property
+    def alias(self):
+        return self.__alias
+
+
 class Partition(object):
     """ Class definition of a partition in the alarm system. """
 
