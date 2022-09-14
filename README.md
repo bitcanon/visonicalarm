@@ -176,6 +176,19 @@ Output:
 <class 'visonic.classes.PanelInfo'>: {'current_user': 'master_user', 'manufacturer': 'Visonic', 'model': 'PowerMaster 10', 'serial': '123ABC'}
 ```
 
+### Panels
+A single alarm panel is defined in the `Panel` class. Get a `list` of panels associated with your account by calling the `get_panels()` method.
+```python
+for panel in alarm.get_panels():
+    print(panel)
+```
+Output:
+```
+<class 'visonic.classes.Panel'>: {'panel_serial': '123ABC', 'alias': 'Home'}
+<class 'visonic.classes.Panel'>: {'panel_serial': '456DEF', 'alias': 'Cabin'}
+```
+>Use this information to select an alarm panel to connect to when calling `login()`.
+
 ### Process Information
 Some API methods return a **process token** as a return value. This makes it possible to find out how the call went and make you aware of potential errors that occured. The API methods returning a token seems to be the ones that change the state of the alarm system, such as `arm_home()`, `arm_away()` and `disarm()`.
 
