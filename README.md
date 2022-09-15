@@ -8,20 +8,27 @@ Hi and welcome! Click the button below if you enjoy this library and want to sup
 ## Introduction
 A simple library for the Visonic PowerMaster API written in Python 3.
 
-It's built using same technique used in the Visonic-Go app (a REST API). So if you can use the app to connect to your alarm system, the chances are you can use this library as well. I have developed and tested it with a Visonic PowerMaster-10 using a PowerLink 3 IP module.
+It's built using same technique used in the Visonic-Go app (a REST API). So if you can use the phone app to connect to your alarm system, the chances are you can use this library as well. I have developed and tested it with a Visonic PowerMaster-10 using a PowerLink 3 IP module.
 
-> **Important:** The latest version of the library only has support for version 9.0 of the API running on the server side. If your alarm company still run API version 4.0 please read more below.
+> It is probably also compatible with more devices from the PowerMaster family (PM-10, PM-30, PM-33, PM-360 and PM-360-R) but this has not been confirmed. The app also support Bentel (BW-30 and BW-64) and DSC (WP8010, WP8030 and WP8033), so these alarm system might work as well. Any feedback is welcome.
 
-## API version 4.0 vs. 9.0
+## API version support
+
 Finally my alarm company has upgraded their PowerManage REST API to version 9.0 so I could upgrade the Visonic Alarm library to support it.
 
 The upgrade from API version 4.0 to 9.0 was a **major upgrade** which broke more or less the entire Visonic Alarm library. I had to rewrite large portions of the code base which means that the latest version (3.x) of Visonic Alarm for Python 3 is **not backwards compatible** with the previous versions. One of the large changes is that the API now require two sets of authentication.
 1. First with **email and password** against the API server.
-2. And then the **master code** between the API server and your alarm panel.
+2. And then the **panel serial** and **master code** between the API server and your alarm panel.
 
 Some other changes are the way we arm and disarm the alarm system (endpoint changes). The data structures returned by the API server also differs a bit so almost all of the classes (`Status`, `Device`, `Event`, `Trouble`, `...`) have been updated to reflect these changes. See the examples in the rest of this document on how to use them.
 
->**Nevertheless**: the library is still really easy getting started with.
+Library compatibility:
+- [X] 9.0 - Compatible (this is the version the library is developed against)
+- [ ] 8.0 - Seems to be compatible when testing but needs user feedback
+- [ ] 7.0 - Seems to be compatible when testing but needs user feedback
+- [X] 4.0 - Use the previous version of the library (2.0.1), see below
+
+>**Nevertheless**, the library is still really easy getting started with.
 
 ## Need support for API 4.0?
 Even though the latest version of the library no longer support API version 4.0 you can still run it, simply install a previous version:
