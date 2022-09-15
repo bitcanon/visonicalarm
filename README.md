@@ -279,7 +279,7 @@ Output:
 ```
 
 ## Arming and Disarming
-There are two ways to arm you alarm system.
+There are two ways to arm your alarm system.
 - **Arm Home:** This will arm your perimeter protection (often doors and windows). You can still move around inside the house.
 - **Arm Away:** This will arm the entire alarm system (doors, windows, motion, cameras, etc). Moving around in the house will trigger the alarm to go off.
 
