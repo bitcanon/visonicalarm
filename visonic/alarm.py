@@ -5,7 +5,7 @@ from dateutil import parser
 from dateutil.relativedelta import *
 
 from visonic.devices import *
-from visonic.core import APIv9
+from visonic.core import API
 from visonic.exceptions import *
 from visonic.classes import *
 from pprint import pprint
@@ -17,9 +17,10 @@ class Setup(object):
     # API Connection
     __api = None
 
-    def __init__(self, hostname, app_id):
-        """ Initiate the connection to the Visonic REST API 9.0 """
-        self.__api = APIv9(hostname, app_id)
+    def __init__(self, hostname, app_id, api_version="latest"):
+        """ Initiate the connection to the REST API. """
+        self.__api = API(hostname, app_id)
+        self.set_rest_version(api_version)
 
     # System properties
     @property
@@ -27,27 +28,28 @@ class Setup(object):
         """ Return the API for direct access. """
         return self.__api
 
-    def rest_api_version(self):
-        """ Check which versions of the API that the server support. """
-        return self.api.get_version_info()['rest_versions']
+    def set_rest_version(self, version="latest"):
+        """ 
+        Fetch the supported versions from the API server and automatically 
+        configure the library to use the latest version supported by the server,
+        unless overridden in the version parameter.
+        """
+        rest_versions = self.api.get_version_info()['rest_versions']
+        rest_versions.sort(key=float)
+        if version == "latest":
+            self.__api.set_rest_version(rest_versions[-1])
+        elif version in rest_versions:
+            self.__api.set_rest_version(version)
+        else:
+            raise UnsupportedRestAPIVersionError(f'Rest API version {version} is not supported by server.')
 
     def authenticate(self, email, password):
         """ Try to authenticate against the API with an email address and password. """
-
-        # Check that the server support API version 9.0.
-        rest_versions = self.__api.get_version_info()['rest_versions']
-        if '9.0' not in rest_versions:
-            raise UnsupportedRestAPIVersionError('Rest API version 9.0 is not supported by server.')
-
-        # Try to authenticate with provided user credentials
-        self.__api.authenticate(email, password)
+        return self.__api.authenticate(email, password)
 
     def login(self, panel_serial, user_code):
         """ Establish a connection between the alarm panel and the API server. """
-
-        # Try to login and get a session token.
-        # This will raise an exception on failure.
-        self.__api.panel_login(panel_serial, user_code)
+        return self.__api.panel_login(panel_serial, user_code)
 
     def connected(self):
         """ Check if the API server is connected to the alarm panel """

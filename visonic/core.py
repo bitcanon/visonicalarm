@@ -5,7 +5,7 @@ from datetime import datetime
 
 from visonic.exceptions import *
 
-class APIv9(object):
+class API(object):
     """ Class used for communication with the Visonic API """
 
     # Client configuration
@@ -29,7 +29,13 @@ class APIv9(object):
         self.__hostname = hostname
         self.__app_id = app_id
 
-        # Visonic API URLs that should be used
+        self.render_urls()
+
+        # Create a new session
+        self.__session = requests.session()
+
+    def render_urls(self):
+        """ Configure the API endpoints. """
         self.__url_base = 'https://' + self.__hostname + '/rest_api/' + \
                           self.__rest_version
 
@@ -66,8 +72,10 @@ class APIv9(object):
         self.__url_smart_devices_settings = self.__url_base + '/smart_devices/settings'     # [ ]
         self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'                             # [ ]
 
-        # Create a new session
-        self.__session = requests.session()
+    def set_rest_version(self, version):
+        """ Set which version to use when connection to the API. """
+        self.__rest_version = version
+        self.render_urls()
 
     def __raise_on_bad_request(self, error):
         """ Raise an exception when the API returns a bad request. """
