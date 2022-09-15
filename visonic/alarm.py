@@ -43,6 +43,10 @@ class Setup(object):
         else:
             raise UnsupportedRestAPIVersionError(f'Rest API version {version} is not supported by server.')
 
+    def get_rest_versions(self):
+        """ Fetch the supported API versions. """
+        return self.api.get_version_info()['rest_versions']
+
     def authenticate(self, email, password):
         """ Try to authenticate against the API with an email address and password. """
         return self.__api.authenticate(email, password)
