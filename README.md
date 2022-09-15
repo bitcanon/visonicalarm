@@ -31,14 +31,14 @@ pip install visonicalarm==2.0.1
 The documentation for this version can be found [here](https://github.com/bitcanon/visonicalarm/blob/master/README_API4.0.md).
 
 ## Installation
-Install the latest version with pip3:
+Install the latest version with `pip`:
 ```
 pip install visonicalarm
 ```
 
 ## Basics
 ### Setup
-Use the same settings you are using to login to the Visonic-Go app.
+Use the same settings you are using when logging in to the phone app.
 
 ```python
 from visonic import alarm
@@ -47,10 +47,10 @@ hostname      = 'your.alarmcompany.com'
 user_code     = '1234'
 app_id        = '00000000-0000-0000-0000-000000000000'
 panel_id      = '123ABC'
-user_email    = "firstname.lastname@email.com"
+user_email    = "username@example.com"
 user_password = "An.Extremely.Long.Random.and.Secure.Password!"
 
-alarm = alarm.Setup(hostname, user_code, app_id, panel_id, user_email, user_password)
+alarm = alarm.Setup(hostname, app_id)
 ```
 The `app_id` is a UUID (**U**niversally **U**nique **ID**entifier) that should be unique to each app communicating with the API server.
 
@@ -58,7 +58,7 @@ Create a UUID with a simple one liner:
 ```
 python -c "import uuid; print(uuid.uuid4())"
 ```
-This will output a UUID (for example: `e9bce150-57c9-47b9-8447-129158356c63`) that can be used to replace the zeroed `app_id`.
+This will output a UUID (for example: `e9bce150-57c9-47b9-8447-129158356c63`) that can be used to replace the zeroed `app_id` in the example above.
 
 >1. It's important that you create an account in the app prior to setting up the library.
 >2. All of the following code assume you have completed the Setup step prior to calling any of the methods.
@@ -69,14 +69,22 @@ Before you connect to the API server you can check which version(s) of the API y
 print('Supported REST API version(s): ' + ', '.join(alarm.rest_api_version()))
 ```
 
-### Login
-Once the library has been setup and configured, it is time to connect to the API server.
+### Authenticate
+The next step is to **authenticate** yourself against the API server with an email address and a password. This is done using the same email and password beeing used when logging in to the phone app.
 ```python
-alarm.login()
+alarm.authenticate(user_email, user_password)
 ```
-This will try to login with the configuration entered in the Setup step above.
 
-> Note that this method will raise an exception if the login fail. See exceptions section below.
+> Note that this method will raise an exception if the authentication fails. See exceptions section below.
+
+### Login
+Once the authentication has succeeded, it's time to establish a connection between the API server and the alarm panel.
+```python
+alarm.login(panel_serial, user_code)
+```
+The `panel_serial` is the ID of the panel (a hexadecimal number like `1A2B3C`) and the `user_code` is the master code (**it's important to use the master code**).
+
+> Note that this method will raise an exception if the login fails. See exceptions section below.
 
 ### Exceptions
 All of the methods callable from the library will throw exceptions on failure. A full list of exceptions can be found [here](https://github.com/bitcanon/visonicalarm/blob/master/visonic/exceptions.py).
@@ -84,10 +92,8 @@ All of the methods callable from the library will throw exceptions on failure. A
 from visonic.exceptions import *
 ...
 try:
-    alarm.login()
+    alarm.login(panel_serial, user_code)
 except UserCodeIncorrectError as e:
-    print(e)
-except WrongUsernameOrPasswordError as e:
     print(e)
 ```
 

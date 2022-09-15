@@ -9,18 +9,12 @@ class APIv9(object):
     """ Class used for communication with the Visonic API """
 
     # Client configuration
-    __app_type = 'com.visonic.PowerMaxApp'
-    __user_agent = 'Visonic%20GO/2.8.62.91 CFNetwork/901.1 Darwin/17.6.0'
+    __app_type = 'com.visonic.powermaxapp'
+    __user_agent = 'Dart/2.10 (dart:io)'
     __rest_version = '9.0'
-    __hostname = 'visonic.tycomonitor.com'
-    __user_code = '1234'
-    __app_id = '00000000-0000-0000-0000-000000000000'
-    __user_email = 'your@email.com'
-    __user_password = 'YourSecretPassword!'
-    __user_token = None
-    __panel_id = '123456'
 
-    # API session token
+    # API tokens
+    __user_token = None
     __session_token = None
 
     # Use a session to reuse one TCP connection instead of creating a new
@@ -28,16 +22,12 @@ class APIv9(object):
     __session = None
     __timeout = 4
 
-    def __init__(self, hostname, user_code, user_id, panel_id, user_email, user_password):
+    def __init__(self, hostname, app_id):
         """ Class constructor initializes all URL variables. """
 
         # Set connection specific details
         self.__hostname = hostname
-        self.__user_code = user_code
-        self.__app_id = user_id
-        self.__panel_id = panel_id
-        self.__user_email = user_email
-        self.__user_password = user_password
+        self.__app_id = app_id
 
         # Visonic API URLs that should be used
         self.__url_base = 'https://' + self.__hostname + '/rest_api/' + \
@@ -69,7 +59,7 @@ class APIv9(object):
         self.__url_home_automation_devices = self.__url_base + '/home_automation_devices'   # [ ]
         self.__url_make_video = self.__url_base + '/make_video'                             # [ ]
         self.__url_notifications_email = self.__url_base + '/notifications/email'           # [ ]
-        self.__url_panels = self.__url_base + '/panels'                                     # [ ]
+        self.__url_panels = self.__url_base + '/panels'                                     # [X]
         self.__url_set_name = self.__url_base + '/set_name'                                 # [ ]
         self.__url_set_user_code = self.__url_base + '/set_user_code'                       # [ ]
         self.__url_smart_devices = self.__url_base + '/smart_devices'                       # [ ]
@@ -186,21 +176,6 @@ class APIv9(object):
         return self.__hostname
 
     @property
-    def user_code(self):
-        """ Property to keep track of the user code beeing used. """
-        return self.__user_code
-
-    @property
-    def user_email(self):
-        """ Property to keep track of the user email address beeing used. """
-        return self.__user_email
-
-    @property
-    def user_password(self):
-        """ Property to keep track of the user password beeing used. """
-        return self.__user_password
-
-    @property
     def user_token(self):
         """ Property to keep track of the user token beeing assigned during authentication. """
         return self.__user_token
@@ -210,11 +185,6 @@ class APIv9(object):
         """ Property to keep track of the user id (UUID) beeing used. """
         return self.__app_id
 
-    @property
-    def panel_id(self):
-        """ Property to keep track of the panel id (panel web name). """
-        return self.__panel_id
-
     def get_version_info(self):
         """ Find out which REST API versions are supported. """
         return self.__send_request(self.__url_version,
@@ -222,11 +192,11 @@ class APIv9(object):
                                        with_user_token=False,
                                        request_type='GET')
 
-    def authenticate(self):
+    def authenticate(self, email, password):
         """ Try to authenticate and get a user auth token. """
         auth_info = {
-            'email': self.__user_email,
-            'password': self.__user_password,
+            'email': email,
+            'password': password,
             'app_id': self.__app_id,
         }
 
@@ -242,13 +212,13 @@ class APIv9(object):
         else:
             return False
 
-    def login(self):
-        """ Try to login and get a session token. """
+    def panel_login(self, panel_serial, user_code):
+        """ Try to login to the alarm panel and get a session token. """
         login_info = {
-            'user_code': self.__user_code,
+            'user_code': user_code,
             'app_type': self.__app_type,
             'app_id': self.__app_id,
-            'panel_serial': self.__panel_id
+            'panel_serial': panel_serial
         }
 
         login_json = json.dumps(login_info, separators=(',', ':'))

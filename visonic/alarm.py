@@ -16,12 +16,10 @@ class Setup(object):
 
     # API Connection
     __api = None
-    __panel_id = None
 
-    def __init__(self, hostname, user_code, app_id, panel_id, user_email=None, user_password=None):
+    def __init__(self, hostname, app_id):
         """ Initiate the connection to the Visonic REST API 9.0 """
-        self.__panel_id = panel_id
-        self.__api = APIv9(hostname, user_code, app_id, panel_id, user_email, user_password)
+        self.__api = APIv9(hostname, app_id)
 
     # System properties
     @property
@@ -33,29 +31,23 @@ class Setup(object):
         """ Check which versions of the API that the server support. """
         return self.api.get_version_info()['rest_versions']
 
-    def login(self):
-        """ Connect and login to the alarm system and get the static system info. """
+    def authenticate(self, email, password):
+        """ Try to authenticate against the API with an email address and password. """
 
         # Check that the server support API version 9.0.
         rest_versions = self.__api.get_version_info()['rest_versions']
-
         if '9.0' not in rest_versions:
             raise UnsupportedRestAPIVersionError('Rest API version 9.0 is not supported by server.')
 
         # Try to authenticate with provided user credentials
-        if not self.__api.authenticate():
-            raise AuthenticationFailedError()
+        self.__api.authenticate(email, password)
+
+    def login(self, panel_serial, user_code):
+        """ Establish a connection between the alarm panel and the API server. """
 
         # Try to login and get a session token.
         # This will raise an exception on failure.
-        if not self.__api.login():
-            raise LoginFailedError()
-
-        # Get some basic alarm panel information
-        panel_info = self.get_panel_info()
-        self.__system_manufacturer = panel_info.manufacturer
-        self.__system_model = panel_info.model
-        self.__system_serial = panel_info.serial
+        self.__api.panel_login(panel_serial, user_code)
 
     def connected(self):
         """ Check if the API server is connected to the alarm panel """
