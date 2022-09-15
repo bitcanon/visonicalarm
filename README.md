@@ -70,10 +70,17 @@ This will output a UUID (for example: `e9bce150-57c9-47b9-8447-129158356c63`) th
 >1. It's important that you create an account in the app prior to setting up the library.
 >2. All of the following code assume you have completed the Setup step prior to calling any of the methods.
 
-### Pre-flight checks
-Before you connect to the API server you can check which version(s) of the API your alarm company support. You do this by calling the `rest_api_version()` method.
+### API version selection
+In the `alarm.Setup()` call the library checks which version(s) the API server support and **automatically** selects the latest version by default.
+
+The automatic version selection can be overridden by calling the `set_rest_version()` method **before** calling `authenticate()` and `login()`.
 ```python
-print('Supported REST API version(s): ' + ', '.join(alarm.rest_api_version()))
+alarm.set_rest_version("9.0")
+```
+
+Find out which version(s) of the API your alarm company support by calling the `get_rest_versions()` method.
+```python
+print('Supported REST API version(s): ' + ', '.join(alarm.get_rest_versions()))
 ```
 
 ### Authenticate
