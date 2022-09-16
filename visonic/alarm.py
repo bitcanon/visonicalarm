@@ -360,6 +360,10 @@ class Setup(object):
         )
         return sms
 
+    def set_name_user(self, id, name):
+        """ Set the name of a user by user ID. """
+        return self.__api.set_name('USER', id, name)['process_token']
+
     def arm_home(self, partition=-1):
         """ Send Arm Home command to the alarm system. """
         return self.__api.arm_home(partition)['process_token']

@@ -291,6 +291,20 @@ Output:
 <class 'visonic.classes.User'>: {'id': 2, 'name': '', 'email': '', 'partitions': [1]}
 ...
 ```
+#### Change the name of a user
+It's possible to change the name of a user by calling the `set_name_user(id, name)` method. You have to provide the `id` of the user as well as the new `name`.
+```python
+token = alarm.set_name_user(4, 'bitcanon')
+```
+Note that this method returns a **process token**. Check the status of the request with the method `get_process_status()`.
+```python
+result = alarm.get_process_status(token)
+print(result)
+```
+Output:
+```
+[Process(token = '4efc2e3a-13ef-47aa-8d25-92eb8dfa2791', status = 'succeeded', message = '', error = 'None')]
+```
 
 ### Wakeup SMS
 Get the information needed to send a wakeup SMS, which is defined in the `WakeupSMS` class. Get the `phone_number` and `message` required by calling the `get_wakeup_sms()` method.

@@ -18,6 +18,13 @@ class EmailRequiredError(Error):
         super().__init__(self.message)
 
 
+class PanelNotConnectedError(Error):
+    """ Raised when the API server is not connected to the alarm panel. """
+    def __init__(self, message="Alarm panel is not connected to the API server."):
+        self.message = message
+        super().__init__(self.message)
+
+
 class PanelSerialIncorrectError(Error):
     """ Raised when an incorrect panel serial/ID number was provided in the request. """
     def __init__(self, message="Connection to the alarm panel failed because the panel ID is incorrect."):

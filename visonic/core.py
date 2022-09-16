@@ -70,7 +70,7 @@ class API(object):
         self.__url_set_user_code = self.__url_base + '/set_user_code'                       # [ ]
         self.__url_smart_devices = self.__url_base + '/smart_devices'                       # [X]
         self.__url_smart_devices_settings = self.__url_base + '/smart_devices/settings'     # [X]
-        self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'                             # [ ]
+        self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'                             # [X]
 
     def set_rest_version(self, version):
         """ Set which version to use when connection to the API. """
@@ -105,6 +105,8 @@ class API(object):
                         raise WrongUsernameOrPasswordError()
         elif api['error'] == 10021: # WrongUserCode
             raise UserCodeIncorrectError()
+        elif api['error'] == 400 and api['error_reason_code'] == 'PanelNotConnected':
+            raise PanelNotConnectedError()
 
         # Raise a generic BadRequestError when the library has no
         # specific exception implemented yet.
@@ -309,6 +311,12 @@ class API(object):
     def get_wakeup_sms(self):
         """ Get the settings needed to wake up the alarm panel via SMS. """
         return self.__send_request(self.__url_wakeup_sms, request_type='GET')
+
+    def set_name(self, object_class, id, name):
+        """ Set the name of any type of object in the alarm system. """
+        name_data = {'class': object_class, 'id': id, 'name': name}
+        name_json = json.dumps(name_data, separators=(',', ':'))
+        return self.__send_request(self.__url_set_name, data_json=name_json, request_type='POST')
 
     def arm_home(self, partition):
         """ Arm in Home mode. """
