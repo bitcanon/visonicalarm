@@ -66,7 +66,7 @@ class API(object):
         self.__url_make_video = self.__url_base + '/make_video'                             # [ ]
         self.__url_notifications_email = self.__url_base + '/notifications/email'           # [ ]
         self.__url_panels = self.__url_base + '/panels'                                     # [X]
-        self.__url_set_name = self.__url_base + '/set_name'                                 # [ ]
+        self.__url_set_name = self.__url_base + '/set_name'                                 # [X]
         self.__url_set_user_code = self.__url_base + '/set_user_code'                       # [ ]
         self.__url_smart_devices = self.__url_base + '/smart_devices'                       # [X]
         self.__url_smart_devices_settings = self.__url_base + '/smart_devices/settings'     # [X]
@@ -249,6 +249,18 @@ class API(object):
             return True
         except requests.HTTPError:
             return False
+
+    def access_grant(self, user_id, email):
+        """ Grant a user access to the alarm panel via the API. """
+        user_data = {'user': user_id, 'email': email}
+        user_json = json.dumps(user_data, separators=(',', ':'))
+        return self.__send_request(self.__url_access_grant, data_json=user_json, request_type='POST')
+
+    def access_revoke(self, user_id):
+        """ Revoke access to the alarm panel via the API for a user. """
+        user_data = {'user': user_id}
+        user_json = json.dumps(user_data, separators=(',', ':'))
+        return self.__send_request(self.__url_access_revoke, data_json=user_json, request_type='POST')
 
     def get_active_user_info(self):
         """ Get information about the active users.
