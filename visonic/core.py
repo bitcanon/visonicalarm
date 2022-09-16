@@ -68,8 +68,8 @@ class API(object):
         self.__url_panels = self.__url_base + '/panels'                                     # [X]
         self.__url_set_name = self.__url_base + '/set_name'                                 # [ ]
         self.__url_set_user_code = self.__url_base + '/set_user_code'                       # [ ]
-        self.__url_smart_devices = self.__url_base + '/smart_devices'                       # [ ]
-        self.__url_smart_devices_settings = self.__url_base + '/smart_devices/settings'     # [ ]
+        self.__url_smart_devices = self.__url_base + '/smart_devices'                       # [X]
+        self.__url_smart_devices_settings = self.__url_base + '/smart_devices/settings'     # [X]
         self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'                             # [ ]
 
     def set_rest_version(self, version):
@@ -269,6 +269,10 @@ class API(object):
         """ Get the alarm panel events. """
         return self.__send_request(self.__url_events, request_type='GET')
 
+    def get_feature_set(self):
+        """ Get the alarm panel feature set. """
+        return self.__send_request(self.__url_feature_set, request_type='GET')
+
     def get_locations(self):
         """ Get all locations in the alarm system. """
         return self.__send_request(self.__url_locations, request_type='GET')
@@ -285,6 +289,14 @@ class API(object):
         """ Get the current status of a process running on API server. """
         url = self.__url_process_status + process_token
         return self.__send_request(url, request_type='GET')
+
+    def get_smart_devices(self):
+        """ Get a list of smart devices. """
+        return self.__send_request(self.__url_smart_devices, request_type='GET')
+
+    def get_smart_devices_settings(self):
+        """ Get a list of smart devices settings. """
+        return self.__send_request(self.__url_smart_devices_settings, request_type='GET')
 
     def get_status(self):
         """ Get the current status of the alarm system. """

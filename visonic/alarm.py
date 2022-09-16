@@ -224,6 +224,28 @@ class Setup(object):
 
         return event_list
 
+    def get_feature_set(self):
+        """ Fetch the locations associated with the alarm system. """
+        feature_set = self.__api.get_feature_set()
+        features = FeatureSet(
+            events_enabled=feature_set['events']['is_enabled'],
+            datetime_enabled=feature_set['datetime']['is_enabled'],
+            partitions_enabled=feature_set['partitions']['is_enabled'],
+            partitions_has_labels=feature_set['partitions']['is_labels_enabled'],
+            partitions_max_count=feature_set['partitions']['max_partitions'],
+            devices_enabled=feature_set['devices']['is_enabled'],
+            sirens_can_enable=feature_set['sirens']['can_enable'],
+            sirens_can_disable=feature_set['sirens']['can_disable'],
+            home_automation_devices_enabled=feature_set['home_automation_devices']['is_enabled'],
+            state_enabled=feature_set['state']['is_enabled'],
+            state_can_set=feature_set['state']['can_set'],
+            state_can_get=feature_set['state']['can_get'],
+            faults_enabled=feature_set['faults']['is_enabled'],
+            diagnostic_enabled=feature_set['diagnostic']['is_enabled'],
+            wifi_enabled=feature_set['wifi']['is_enabled'],
+        )
+        return features
+
     def get_locations(self):
         """ Fetch the locations associated with the alarm system. """
         location_list = []

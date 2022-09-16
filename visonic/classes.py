@@ -115,6 +115,139 @@ class Event(object):
         return self.__name
 
 
+class FeatureSet(object):
+    """ Class definition of an event in the alarm system. """
+
+    def __init__(self, events_enabled, datetime_enabled, partitions_enabled, partitions_has_labels, partitions_max_count, devices_enabled, sirens_can_enable, sirens_can_disable, home_automation_devices_enabled, state_enabled, state_can_set, state_can_get, faults_enabled, diagnostic_enabled, wifi_enabled):
+        """ Set the private variable values on instantiation. """
+
+        self.__events_enabled = events_enabled
+        self.__datetime_enabled = datetime_enabled
+        self.__partitions_enabled = partitions_enabled
+        self.__partitions_has_labels = partitions_has_labels
+        self.__partitions_max_count = partitions_max_count
+        self.__devices_enabled = devices_enabled
+        self.__sirens_can_enable = sirens_can_enable
+        self.__sirens_can_disable = sirens_can_disable
+        self.__home_automation_devices_enabled = home_automation_devices_enabled
+        self.__state_enabled = state_enabled
+        self.__state_can_set = state_can_set
+        self.__state_can_get = state_can_get
+        self.__faults_enabled = faults_enabled
+        self.__diagnostic_enabled = diagnostic_enabled
+        self.__wifi_enabled = wifi_enabled
+
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+
+        class_name  = type(self).__name__
+        events_enabled = f"events_enabled = {self.events_enabled}"
+        datetime_enabled = f"datetime_enabled = {self.datetime_enabled}"
+        partitions_enabled = f"partitions_enabled = {self.partitions_enabled}"
+        partitions_has_labels = f"partitions_has_labels = {self.partitions_has_labels}"
+        partitions_max_count = f"partitions_max_count = {self.partitions_max_count}"
+        devices_enabled = f"devices_enabled = {self.devices_enabled}"
+        sirens_can_enable = f"sirens_can_enable = {self.sirens_can_enable}"
+        sirens_can_disable = f"sirens_can_disable = {self.sirens_can_disable}"
+        home_automation_devices_enabled = f"home_automation_devices_enabled = {self.home_automation_devices_enabled}"
+        state_enabled = f"state_enabled = {self.state_enabled}"
+        state_can_set = f"state_can_set = {self.state_can_set}"
+        state_can_get = f"state_can_get = {self.state_can_get}"
+        faults_enabled = f"faults_enabled = {self.faults_enabled}"
+        diagnostic_enabled = f"diagnostic_enabled = {self.diagnostic_enabled}"
+        wifi_enabled = f"wifi_enabled = {self.wifi_enabled}"
+
+        return f"{class_name}({events_enabled}, {datetime_enabled}, {partitions_enabled}, {partitions_has_labels}, {partitions_max_count}, {devices_enabled}, {sirens_can_enable}, {sirens_can_disable}, {home_automation_devices_enabled}, {state_enabled}, {state_can_set}, {state_can_get}, {faults_enabled}, {diagnostic_enabled}, {wifi_enabled})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'events_enabled': self.events_enabled,
+            'datetime_enabled': self.datetime_enabled,
+            'partitions_enabled': self.partitions_enabled,
+            'partitions_has_labels': self.partitions_has_labels,
+            'partitions_max_count': self.partitions_max_count,
+            'devices_enabled': self.devices_enabled,
+            'sirens_can_enable': self.sirens_can_enable,
+            'sirens_can_disable': self.sirens_can_disable,
+            'home_automation_devices_enabled': self.home_automation_devices_enabled,
+            'state_enabled': self.state_enabled,
+            'state_can_set': self.state_can_set,
+            'state_can_get': self.state_can_get,
+            'faults_enabled': self.faults_enabled,
+            'diagnostic_enabled': self.diagnostic_enabled,
+            'wifi_enabled': self.wifi_enabled,
+        }
+
+   # Event properties
+    @property
+    def events_enabled(self):
+        return self.__events_enabled
+
+    @property
+    def datetime_enabled(self):
+        return self.__datetime_enabled
+
+    @property
+    def partitions_enabled(self):
+        return self.__partitions_enabled
+
+    @property
+    def partitions_has_labels(self):
+        return self.__partitions_has_labels
+
+    @property
+    def partitions_max_count(self):
+        return self.__partitions_max_count
+
+    @property
+    def devices_enabled(self):
+        return self.__devices_enabled
+
+    @property
+    def sirens_can_enable(self):
+        return self.__sirens_can_enable
+
+    @property
+    def sirens_can_disable(self):
+        return self.__sirens_can_disable
+
+    @property
+    def home_automation_devices_enabled(self):
+        return self.__home_automation_devices_enabled
+
+    @property
+    def state_enabled(self):
+        return self.__state_enabled
+
+    @property
+    def state_can_set(self):
+        return self.__state_can_set
+
+    @property
+    def state_can_get(self):
+        return self.__state_can_get
+
+    @property
+    def faults_enabled(self):
+        return self.__faults_enabled
+
+    @property
+    def diagnostic_enabled(self):
+        return self.__diagnostic_enabled
+
+    @property
+    def wifi_enabled(self):
+        return self.__wifi_enabled
+
+
 class Location(object):
     """ Class definition of a location in the alarm system. """
 
