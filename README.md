@@ -172,6 +172,20 @@ Output:
 ...
 ```
 
+### Features
+Check with features are enabled and available for interaction via the API. Among other things you can find out if your alarm system has partitions enabled and if you can turn the siren on or off.
+
+The features of the alarm system is defined in the `FeatureSet` class. Get the available features by calling the `get_feature_set()` method.
+```python
+features = alarm.get_feature_set()
+print(features)
+```
+Output:
+```
+<class 'visonic.classes.FeatureSet'>: {'events_enabled': True, 'datetime_enabled': False, 'partitions_enabled': False, 'partitions_has_labels': False, 'partitions_max_count': 3, 'devices_enabled': True, 'sirens_can_enable': True, 'sirens_can_disable': True, 'home_automation_devices_enabled': True, 'state_enabled': True, 'state_can_set': True, 'state_can_get': True, 'faults_enabled': True, 'diagnostic_enabled': False, 'wifi_enabled': False}
+```
+>**Hint:** Check `alarm.get_feature_set().partitions_enabled` to see if the alarm system is partitioned.
+
 ### Locations
 A location is defined in the `Location` class. Get a `list` of all locations by calling the `get_locations()` method.
 ```python
