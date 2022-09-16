@@ -61,7 +61,7 @@ class API(object):
         self.__url_apptype = self.__url_base + '/apptype'                                   # [ ]
         self.__url_cameras = self.__url_base + '/cameras'                                   # [ ]
         self.__url_disable_siren = self.__url_base + '/disable_siren'                       # [ ]
-        self.__url_feature_set  = self.__url_base + '/feature_set'                          # [ ]
+        self.__url_feature_set  = self.__url_base + '/feature_set'                          # [X]
         self.__url_home_automation_devices = self.__url_base + '/home_automation_devices'   # [ ]
         self.__url_make_video = self.__url_base + '/make_video'                             # [ ]
         self.__url_notifications_email = self.__url_base + '/notifications/email'           # [ ]
@@ -306,10 +306,9 @@ class API(object):
         """ Get the current troubles. """
         return self.__send_request(self.__url_troubles, request_type='GET')
 
-    def wakeup_sms(self):
-        """ Send a wakeup SMS to the alarm panel. """
-        # send_get('https://api.server.com/rest_api/9.0/wakeup_sms')
-        raise NotImplementedError()
+    def get_wakeup_sms(self):
+        """ Get the settings needed to wake up the alarm panel via SMS. """
+        return self.__send_request(self.__url_wakeup_sms, request_type='GET')
 
     def arm_home(self, partition):
         """ Arm in Home mode. """

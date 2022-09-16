@@ -766,3 +766,44 @@ class User(object):
     def partitions(self):
         """ Device is active. """
         return self.__partitions
+
+
+class WakeupSMS(object):
+    """ Class definition of a wakeup SMS in the alarm system. """
+
+    def __init__(self, phone_number, message):
+        """ Set the private variable values on instantiation. """
+        self.__phone_number = phone_number
+        self.__message = message
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+        class_name   = type(self).__name__
+        phone_number = f"phone_number = {self.phone_number}"
+        message      = f"message = {self.message}"
+
+        return f"{class_name}({phone_number}, {message})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'phone_number': self.phone_number,
+            'message': self.message,
+        }
+
+   # Wakeup SMS properties
+    @property
+    def phone_number(self):
+        return self.__phone_number
+
+    @property
+    def message(self):
+        return self.__message
+
+
+

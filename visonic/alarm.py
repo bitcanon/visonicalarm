@@ -351,6 +351,15 @@ class Setup(object):
 
         return user_list
 
+    def get_wakeup_sms(self):
+        """ Fetch a list of users in the alarm system. """
+        wakeup_sms = self.__api.get_wakeup_sms()
+        sms = WakeupSMS(
+            phone_number=wakeup_sms['phone'],
+            message=wakeup_sms['sms'],
+        )
+        return sms
+
     def arm_home(self, partition=-1):
         """ Send Arm Home command to the alarm system. """
         return self.__api.arm_home(partition)['process_token']

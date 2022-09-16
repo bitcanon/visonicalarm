@@ -292,6 +292,18 @@ Output:
 ...
 ```
 
+### Wakeup SMS
+Get the information needed to send a wakeup SMS, which is defined in the `WakeupSMS` class. Get the `phone_number` and `message` required by calling the `get_wakeup_sms()` method.
+
+```python
+sms = alarm.get_wakeup_sms()
+print(sms)
+```
+Output:
+```
+<class 'visonic.classes.WakeupSMS'>: {'phone_number': '+467190123456789', 'message': 'CONNECT;ABCD;AB-1;SEQ-1234;'}
+```
+
 ## Arming and Disarming
 There are two ways to arm your alarm system.
 - **Arm Home:** This will arm your perimeter protection (often doors and windows). You can still move around inside the house.
