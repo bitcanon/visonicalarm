@@ -129,16 +129,6 @@ print('Partitions: ' + str(user.partitions))
 This is the same for all object classes in the library: Users, devices, events, locations, troubles, and so on...
 ## Alarm
 
-### Alarm Panel
-After calling the `login()` method it takes a few moments for the API server to connect to the alarm panel in your house. To check of the connection has been made, call the `connected()` method:
-```python
-if alarm.connected():
-    print('Alarm Panel connected')
-else:
-    print('Alarm Panel disconnected')
-```
->Use the `connected()` method to make sure you are connected to the alarm panel before calling arm/disarm methods to avoid exceptions.
-
 ### Access Control
 In order for a user to login to the alarm system we have to **grant** the user access to it. Also, if we want to prevent a currently active user from logging in we can **revoke** its access.
 
@@ -151,6 +141,32 @@ Revoke access by calling `access_revoke(user_id)`, where `user_id` is the ID of 
 alarm.access_revoke(3)
 ```
 >Read more about how to find user account information [here](#users).
+
+### Alarm Panel
+After calling the `login()` method it takes a few moments for the API server to connect to the alarm panel in your house. To check of the connection has been made, call the `connected()` method:
+```python
+if alarm.connected():
+    print('Alarm Panel connected')
+else:
+    print('Alarm Panel disconnected')
+```
+>Use the `connected()` method to make sure you are connected to the alarm panel before calling arm/disarm methods to avoid exceptions.
+
+### Cameras
+A camera is defined in the `Camera` class and contains some basic information.
+
+Get a `list` of all cameras by calling the `get_cameras()` method.
+```python
+for camera in alarm.get_cameras():
+    print(camera)
+```
+Output:
+```
+<class 'visonic.classes.Camera'>: {'location': 'Basement', 'partitions': [1], 'preenroll': False, 'preview_path': None, 'status': 'FAILED', 'timestamp': None, 'zone': 4, 'zone_name': 'Basement'}
+<class 'visonic.classes.Camera'>: {'location': 'Garage', 'partitions': [1], 'preenroll': False, 'preview_path': None, 'status': 'FAILED', 'timestamp': None, 'zone': 9, 'zone_name': 'Garage'}
+...
+```
+>It's not fully clear what this information should be used for, but I suspect it's used for downloading images. Sadly this functions is locked on my alarm system so I can't test it.
 
 ### Devices
 These are the devices connected to your alarm system (contacts, cameras, keypads, and so on).

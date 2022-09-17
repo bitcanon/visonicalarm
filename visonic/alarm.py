@@ -67,6 +67,27 @@ class Setup(object):
         """ Revoke access to the alarm panel via the API for a user. """
         return self.__api.access_revoke(user_id)
 
+    def get_cameras(self):
+        """ Fetch all the devices that are available. """
+        camera_list = []
+
+        cameras = self.__api.get_cameras()
+
+        for camera in cameras:
+            new_camera = Camera(
+                location=camera['location'].capitalize(),
+                partitions=camera['partitions'],
+                preenroll=camera['preenroll'],
+                preview_path=camera['preview_path'],
+                status=camera['status'],
+                timestamp=camera['timestamp'],
+                zone=camera['zone'],
+                zone_name=camera['zone_name'].capitalize(),
+            )
+            camera_list.append(new_camera)
+
+        return camera_list
+
     def get_devices(self):
         """ Fetch all the devices that are available. """
         device_list = []

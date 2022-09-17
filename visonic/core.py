@@ -59,7 +59,7 @@ class API(object):
         self.__url_access_revoke = self.__url_base + '/access/revoke'                       # [X]
         self.__url_activate_siren = self.__url_base + '/activate_siren'                     # [ ]
         self.__url_apptype = self.__url_base + '/apptype'                                   # [-]
-        self.__url_cameras = self.__url_base + '/cameras'                                   # [ ]
+        self.__url_cameras = self.__url_base + '/cameras'                                   # [X]
         self.__url_disable_siren = self.__url_base + '/disable_siren'                       # [ ]
         self.__url_feature_set  = self.__url_base + '/feature_set'                          # [X]
         self.__url_home_automation_devices = self.__url_base + '/home_automation_devices'   # [ ]
@@ -301,6 +301,10 @@ class API(object):
     def get_alerts(self):
         """ Get the current alerts. """
         return self.__send_request(self.__url_alerts, request_type='GET')
+
+    def get_cameras(self):
+        """ Get the cameras in the system. """
+        return self.__send_request(self.__url_cameras, request_type='GET')
 
     def get_devices(self):
         """ Get all device specific information. """

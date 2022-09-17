@@ -1,3 +1,84 @@
+class Camera(object):
+    """ Class definition of an event in the alarm system. """
+
+    def __init__(self, location, partitions, preenroll, preview_path, status, timestamp, zone, zone_name):
+        """ Set the private variable values on instantiation. """
+        self.__location = location
+        self.__partitions = partitions
+        self.__preenroll = preenroll
+        self.__preview_path = preview_path
+        self.__status = status
+        self.__timestamp = timestamp
+        self.__zone = zone
+        self.__zone_name = zone_name
+
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+        object_type = str(type(self))
+        return object_type + ": " + str(self.as_dict())
+
+    def __repr__(self):
+        """ Define how the object is represented on output to console. """
+        class_name   = type(self).__name__
+        location     = f"location = {self.location}"
+        partitions   = f"partitions = {self.partitions}"
+        preenroll    = f"preenroll = {self.preenroll}"
+        preview_path = f"preview_path = {self.preview_path}"
+        status       = f"status = {self.status}"
+        timestamp    = f"timestamp = {self.timestamp}"
+        zone         = f"zone = {self.zone}"
+        zone_name    = f"zone_name = {self.zone_name}"
+
+        return f"{class_name}({location}, {partitions}, {preenroll}, {preview_path}, {status}, {timestamp}, {zone}, {zone_name})"
+
+    def as_dict(self):
+        """ Return the object properties in a dictionary. """
+        return {
+            'location': self.location,
+            'partitions': self.partitions,
+            'preenroll': self.preenroll,
+            'preview_path': self.preview_path,
+            'status': self.status,
+            'timestamp': self.timestamp,
+            'zone': self.zone,
+            'zone_name': self.zone_name,
+        }
+
+    # Camera properties
+    @property
+    def location(self):
+        return self.__location
+
+    @property
+    def partitions(self):
+        return self.__partitions
+
+    @property
+    def preenroll(self):
+        return self.__preenroll
+
+    @property
+    def preview_path(self):
+        return self.__preview_path
+
+    @property
+    def status(self):
+        return self.__status
+
+    @property
+    def timestamp(self):
+        return self.__timestamp
+
+    @property
+    def zone(self):
+        return self.__zone
+
+    @property
+    def zone_name(self):
+        return self.__zone_name
+
+
 class Event(object):
     """ Class definition of an event in the alarm system. """
 
@@ -37,7 +118,7 @@ class Event(object):
         device_type = f"device_type = '{self.device_type}'"
         zone        = f"zone = {self.zone}"
         partitions  = f"partitions = {str(self.partitions)}"
-        name  = f"partitions = {str(self.name)}"
+        name        = f"name = {str(self.name)}"
 
         return f"{class_name}({id}, {type_id}, {label}, {description}, {appointment}, \
             {datetime}, {video}, {device_type}, {zone}, {partitions}, {name})"
