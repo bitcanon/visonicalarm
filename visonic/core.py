@@ -54,11 +54,11 @@ class API(object):
         self.__url_active_users_info = self.__url_base + '/users'
         self.__url_process_status = self.__url_base + '/process_status?process_tokens='
 
-        # New Endpoints
-        self.__url_access_grant = self.__url_base + '/access/grant'                         # [ ]
-        self.__url_access_revoke = self.__url_base + '/access/revoke'                       # [ ]
+        # New Endpoints ([X] = Implemented, [-] = Skip)
+        self.__url_access_grant = self.__url_base + '/access/grant'                         # [X]
+        self.__url_access_revoke = self.__url_base + '/access/revoke'                       # [X]
         self.__url_activate_siren = self.__url_base + '/activate_siren'                     # [ ]
-        self.__url_apptype = self.__url_base + '/apptype'                                   # [ ]
+        self.__url_apptype = self.__url_base + '/apptype'                                   # [-]
         self.__url_cameras = self.__url_base + '/cameras'                                   # [ ]
         self.__url_disable_siren = self.__url_base + '/disable_siren'                       # [ ]
         self.__url_feature_set  = self.__url_base + '/feature_set'                          # [X]
@@ -147,6 +147,7 @@ class API(object):
             'Accept': '*/*',
             'User-Agent': self.__user_agent,
             'Accept-Language': 'en-us',
+            'Accept-Encoding': 'gzip',
         }
 
         # Only needed for POST requests
