@@ -69,7 +69,10 @@ class API(object):
         self.__url_wakeup_sms               = self.__url_base + '/wakeup_sms'
 
         # To be implemented
-        self.__url_set_user_code = self.__url_base + '/set_user_code'
+        self.__url_panel_add                = self.__url_base + '/panel/add'
+        self.__url_panel_rename             = self.__url_base + '/panel/rename'
+        self.__url_panel_unlink             = self.__url_base + '/panel/unlink'
+        self.__url_set_user_code            = self.__url_base + '/set_user_code'
 
         # Will not be implemented
         self.__url_apptype = self.__url_base + '/apptype'
