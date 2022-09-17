@@ -59,6 +59,14 @@ class Setup(object):
         """ Check if the API server is connected to the alarm panel """
         return self.get_status().connected
 
+    def access_grant(self, user_id, email):
+        """ Grant a user access to the alarm panel via the API. """
+        return self.__api.access_grant(user_id, email)
+
+    def access_revoke(self, user_id):
+        """ Revoke access to the alarm panel via the API for a user. """
+        return self.__api.access_revoke(user_id)
+
     def get_devices(self):
         """ Fetch all the devices that are available. """
         device_list = []
@@ -359,6 +367,14 @@ class Setup(object):
             message=wakeup_sms['sms'],
         )
         return sms
+
+    def password_reset(self, email):
+        """ Send a password reset link to the email address provided in the email argument. """
+        return self.__api.password_reset(email)
+
+    def password_reset_complete(self, reset_password_code, new_password):
+        """ Complete the password reset by entering the reset code received in the email and a new password. """
+        return self.__api.password_reset_complete(reset_password_code, new_password)['user_token']
 
     def set_name_user(self, id, name):
         """ Set the name of a user by user ID. """

@@ -66,6 +66,8 @@ class API(object):
         self.__url_make_video = self.__url_base + '/make_video'                             # [ ]
         self.__url_notifications_email = self.__url_base + '/notifications/email'           # [ ]
         self.__url_panels = self.__url_base + '/panels'                                     # [X]
+        self.__url_password_reset = self.__url_base + '/password/reset'                     # [X]
+        self.__url_password_reset_complete = self.__url_base + '/password/reset/complete'   # [X]
         self.__url_set_name = self.__url_base + '/set_name'                                 # [X]
         self.__url_set_user_code = self.__url_base + '/set_user_code'                       # [ ]
         self.__url_smart_devices = self.__url_base + '/smart_devices'                       # [X]
@@ -87,6 +89,8 @@ class API(object):
                 if pair['value'] == 'incorrect':
                     if pair['key'] == 'panel_serial':
                         raise PanelSerialIncorrectError()
+                    elif pair['key'] == 'reset_password_code':
+                        raise ResetPasswordCodeIncorrectError()
                 if pair['value'] == 'required':
                     if pair['key'] == 'panel_serial':
                         raise PanelSerialRequiredError()
@@ -98,6 +102,14 @@ class API(object):
                         raise AppIDRequiredError()
                     elif pair['key'] == 'user_code':
                         raise UserCodeRequiredError()
+                    elif pair['key'] == 'new_password':
+                        raise PasswordRequiredError()
+                if pair['value'] == 'already_granted':
+                    raise AlreadyGrantedError()
+                if pair['value'] == 'already_linked':
+                    raise AlreadyLinkedError()
+                if pair['key'] == 'new_password':
+                    raise NewPasswordStrengthError()
         elif api['error'] == 10004: # WrongCombination
             for pair in api['extras']:
                 if pair['value'] == 'wrong_combination':
@@ -108,9 +120,21 @@ class API(object):
         elif api['error'] == 400 and api['error_reason_code'] == 'PanelNotConnected':
             raise PanelNotConnectedError()
 
-        # Raise a generic BadRequestError when the library has no
+        # Raise a generic error when the library has no
         # specific exception implemented yet.
-        raise BadRequestError(api_error=api)
+        raise UndefinedBadRequestError(str(api))
+
+    def __raise_on_forbidden(self, error):
+        """ Raise an exception when the API returns a forbidden error. """
+        api = json.loads(error.decode('utf-8'))
+        print(api)
+
+        if api['error'] == 10010: # NotAllowed
+            raise NotAllowedError()
+
+        # Raise a generic error when the library has no
+        # specific exception implemented yet.
+        raise UndefinedForbiddenError(str(api))
 
     def __send_request(self, url, with_session_token=True, with_user_token=True, data_json=None, request_type='GET'):
         """ Send a GET or POST request to the server. Includes the Session-Token
@@ -150,10 +174,12 @@ class API(object):
             raise ConnectionTimeoutError(f"Connection to '{self.__hostname}' timed out after {str(self.__timeout)} seconds.")
             return None
         except requests.exceptions.HTTPError as e:
+            api = json.loads(response.content.decode('utf-8'))
+            print(api)
             if   '400 Client Error: Bad Request' in str(e):
                 self.__raise_on_bad_request(response.content)
             elif '403 Client Error: Forbidden' in str(e):
-                raise PermissionDeniedError()
+                self.__raise_on_forbidden(response.content)
             elif '404 Client Error: Not Found' in str(e):
                 raise NotFoundError()
             elif '440 Client Error: Session token not found' in str(e):
@@ -323,6 +349,18 @@ class API(object):
     def get_wakeup_sms(self):
         """ Get the settings needed to wake up the alarm panel via SMS. """
         return self.__send_request(self.__url_wakeup_sms, request_type='GET')
+
+    def password_reset(self, email):
+        """ Request a password reset email. An email will be sent to the email address provided. """
+        reset_data = {'email': email}
+        reset_json = json.dumps(reset_data, separators=(',', ':'))
+        return self.__send_request(self.__url_password_reset, data_json=reset_json, request_type='POST')
+
+    def password_reset_complete(self, reset_password_code, new_password):
+        """ Complete the password reset request. """
+        reset_data = {'reset_password_code': reset_password_code, 'new_password': new_password, 'app_id': self.__app_id}
+        reset_json = json.dumps(reset_data, separators=(',', ':'))
+        return self.__send_request(self.__url_password_reset_complete, data_json=reset_json, request_type='POST')
 
     def set_name(self, object_class, id, name):
         """ Set the name of any type of object in the alarm system. """

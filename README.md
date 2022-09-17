@@ -139,6 +139,19 @@ else:
 ```
 >Use the `connected()` method to make sure you are connected to the alarm panel before calling arm/disarm methods to avoid exceptions.
 
+### Access Control
+In order for a user to login to the alarm system we have to **grant** the user access to it. Also, if we want to prevent a currently active user from logging in we can **revoke** its access.
+
+Grant access by calling `access_grant(user_id, email)`, where `user_id` is the ID of the user and `email` is the email address the user will be using to login to the system.
+```python
+alarm.access_grant(3, 'user@example.com')
+```
+Revoke access by calling `access_revoke(user_id)`, where `user_id` is the ID of the user that we no longer want to access the system.
+```python
+alarm.access_revoke(3)
+```
+>Read more about how to find user account information [here](#users).
+
 ### Devices
 These are the devices connected to your alarm system (contacts, cameras, keypads, and so on).
 
@@ -222,6 +235,25 @@ Output:
 <class 'visonic.classes.Panel'>: {'panel_serial': '456DEF', 'alias': 'Cabin'}
 ```
 >Use this information to select an alarm panel to connect to when calling `login()`.
+
+### Password
+The password of a user can be reset using the API as well. This is done in two steps.
+#### Step 1
+Call the `password_reset(email)` method which takes an `email` address as the only parameter. A password reset email will be sent to this address in which a **password reset code** is provided.
+```python
+alarm.password_reset('username@example.com')
+```
+#### Step 2
+Call the `password_reset_complete(reset_password_code, new_password)` method which takes two arguments. The `reset_password_code` is the code you received in the email message and `new_password` is the new password to set on the user account. Make sure the password is complex, otherwise an `NewPasswordStrengthError()` exception will be raised.
+```python
+token = alarm.password_reset_complete('ADQRSESA54', 'This.is.a.Super.Mega.s3cure.p@ssw0rd!')
+print(f"User-Token: '{token}'")
+```
+Output:
+```
+User-Token: '125840b4-3028-4176-8a4f-6c705bcbbcaa'
+```
+>The `password_reset_complete()` method will return a new **user token** which I suspect should be used if you are changing the password of the user you are currently logged in with.
 
 ### Process Information
 Some API methods return a **process token** as a return value. This makes it possible to find out how the call went and make you aware of potential errors that occured. The API methods returning a token seems to be the ones that change the state of the alarm system, such as `arm_home()`, `arm_away()` and `disarm()`.

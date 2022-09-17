@@ -4,6 +4,20 @@ class Error(Exception):
     pass
 
 
+class AlreadyGrantedError(Error):
+    """ Raised when trying to grant access to a user that has already been granted access. """
+    def __init__(self, message="The user has already been granted access."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class AlreadyLinkedError(Error):
+    """ Raised when trying grant an already linked email address. """
+    def __init__(self, message="The email address has already been linked to a user."):
+        self.message = message
+        super().__init__(self.message)
+
+
 class AppIDRequiredError(Error):
     """ Raised when an AppID is not provided in the API calls. """
     def __init__(self, message="Connection to the alarm panel failed because the app ID is missing."):
@@ -14,6 +28,20 @@ class AppIDRequiredError(Error):
 class EmailRequiredError(Error):
     """ Raised when the email address is missing in the authentication request. """
     def __init__(self, message="Authentication failed because the email address is missing."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class NewPasswordStrengthError(Error):
+    """ Raised when the password is missing in the authentication request. """
+    def __init__(self, message="New password is not strong enough. Please enter a complex password containing letters, digits and special characters."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class NotAllowedError(Error):
+    """ Raised when the request is not allowed. """
+    def __init__(self, message="The request is not allowed."):
         self.message = message
         super().__init__(self.message)
 
@@ -41,7 +69,29 @@ class PanelSerialRequiredError(Error):
 
 class PasswordRequiredError(Error):
     """ Raised when the password is missing in the authentication request. """
-    def __init__(self, message="Authentication failed because the password is missing."):
+    def __init__(self, message="Request failed because the password is missing."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class ResetPasswordCodeIncorrectError(Error):
+    """ Raised when the password reset code obtained via email is incorrect. """
+    def __init__(self, message="Reset password code is incorrect. Check you email or try to resend the password reset request."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class UndefinedBadRequestError(Error):
+    """ Raised when an undefined 400 Bad Request error occurs. """
+    
+    def __init__(self, message="Bad Request. Check the connection details and try again."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class UndefinedForbiddenError(Error):
+    """ Raised when an undefined 403 Client Error occurs. """
+    def __init__(self, message="The request is forbidden."):
         self.message = message
         super().__init__(self.message)
 
@@ -64,15 +114,6 @@ class WrongUsernameOrPasswordError(Error):
     """ Raised when the username or password is incorrect. """
     def __init__(self, message="Authentication failed because the wrong username or password was provided."):
         self.message = message
-        super().__init__(self.message)
-
-
-class BadRequestError(Error):
-    """ Raised when server returns a 400 Bad Request error. """
-    
-    def __init__(self, message="Bad Request. Check the connection details and try again.", api_error=None):
-        self.message = message
-        self.api_error = api_error
         super().__init__(self.message)
 
 
@@ -144,14 +185,6 @@ class NotSupportedError(Error):
     """ Raised when trying to call a method not supported in the current API version. """
     
     def __init__(self, message="Method is not supported in the selected version of the API."):
-        self.message = message
-        super().__init__(self.message)
-
-
-class PermissionDeniedError(Error):
-    """ Raised when not authenticated with master credentials. """
-    
-    def __init__(self, message="Insufficient credentials. Please connect with master user."):
         self.message = message
         super().__init__(self.message)
 
