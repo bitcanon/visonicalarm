@@ -8,7 +8,6 @@ from visonic.devices import *
 from visonic.core import API
 from visonic.exceptions import *
 from visonic.classes import *
-from pprint import pprint
 
 
 class Setup(object):
@@ -28,37 +27,6 @@ class Setup(object):
         """ Return the API for direct access. """
         return self.__api
 
-    def set_rest_version(self, version='latest'):
-        """ 
-        Fetch the supported versions from the API server and automatically 
-        configure the library to use the latest version supported by the server,
-        unless overridden in the version parameter.
-        """
-        rest_versions = self.api.get_version_info()['rest_versions']
-        rest_versions.sort(key=float)
-        if version == "latest":
-            self.__api.set_rest_version(rest_versions[-1])
-        elif version in rest_versions:
-            self.__api.set_rest_version(version)
-        else:
-            raise UnsupportedRestAPIVersionError(f'Rest API version {version} is not supported by server.')
-
-    def get_rest_versions(self):
-        """ Fetch the supported API versions. """
-        return self.api.get_version_info()['rest_versions']
-
-    def authenticate(self, email, password):
-        """ Try to authenticate against the API with an email address and password. """
-        return self.__api.authenticate(email, password)
-
-    def login(self, panel_serial, user_code):
-        """ Establish a connection between the alarm panel and the API server. """
-        return self.__api.panel_login(panel_serial, user_code)
-
-    def connected(self):
-        """ Check if the API server is connected to the alarm panel """
-        return self.get_status().connected
-
     def access_grant(self, user_id, email):
         """ Grant a user access to the alarm panel via the API. """
         return self.__api.access_grant(user_id, email)
@@ -71,9 +39,29 @@ class Setup(object):
         """ Activate the siren (sound the alarm). """
         return self.__api.activate_siren()['process_token']
 
+    def arm_home(self, partition=-1):
+        """ Send Arm Home command to the alarm system. """
+        return self.__api.arm_home(partition)['process_token']
+
+    def arm_away(self, partition=-1):
+        """ Send Arm Away command to the alarm system. """
+        return self.__api.arm_away(partition)['process_token']
+
+    def authenticate(self, email, password):
+        """ Try to authenticate against the API with an email address and password. """
+        return self.__api.authenticate(email, password)
+
+    def connected(self):
+        """ Check if the API server is connected to the alarm panel """
+        return self.get_status().connected
+
     def disable_siren(self, mode='all'):
         """ Disable the siren (mute the alarm). """
         return self.__api.disable_siren(mode=mode)['process_token']
+
+    def disarm(self, partition=-1):
+        """ Send Disarm command to the alarm system. """
+        return self.__api.disarm(partition)['process_token']
 
     def get_cameras(self):
         """ Fetch all the devices that are available. """
@@ -322,6 +310,10 @@ class Setup(object):
             process_list.append(new_process)
         return process_list
 
+    def get_rest_versions(self):
+        """ Fetch the supported API versions. """
+        return self.api.get_version_info()['rest_versions']
+
     def get_status(self):
         """ Fetch the current state of the alarm system. """
 
@@ -396,6 +388,10 @@ class Setup(object):
         )
         return sms
 
+    def login(self, panel_serial, user_code):
+        """ Establish a connection between the alarm panel and the API server. """
+        return self.__api.panel_login(panel_serial, user_code)
+
     def password_reset(self, email):
         """ Send a password reset link to the email address provided in the email argument. """
         return self.__api.password_reset(email)
@@ -408,14 +404,18 @@ class Setup(object):
         """ Set the name of a user by user ID. """
         return self.__api.set_name('USER', id, name)['process_token']
 
-    def arm_home(self, partition=-1):
-        """ Send Arm Home command to the alarm system. """
-        return self.__api.arm_home(partition)['process_token']
+    def set_rest_version(self, version='latest'):
+        """ 
+        Fetch the supported versions from the API server and automatically 
+        configure the library to use the latest version supported by the server,
+        unless overridden in the version parameter.
+        """
+        rest_versions = self.api.get_version_info()['rest_versions']
+        rest_versions.sort(key=float)
+        if version == "latest":
+            self.__api.set_rest_version(rest_versions[-1])
+        elif version in rest_versions:
+            self.__api.set_rest_version(version)
+        else:
+            raise UnsupportedRestAPIVersionError(f'Rest API version {version} is not supported by server.')
 
-    def arm_away(self, partition=-1):
-        """ Send Arm Away command to the alarm system. """
-        return self.__api.arm_away(partition)['process_token']
-
-    def disarm(self, partition=-1):
-        """ Send Disarm command to the alarm system. """
-        return self.__api.disarm(partition)['process_token']
