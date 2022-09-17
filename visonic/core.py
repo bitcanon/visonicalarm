@@ -75,9 +75,9 @@ class API(object):
         self.__url_set_user_code            = self.__url_base + '/set_user_code'
 
         # Will not be implemented
-        self.__url_apptype = self.__url_base + '/apptype'
-        self.__url_home_automation_devices = self.__url_base + '/home_automation_devices'
-        self.__url_make_video = self.__url_base + '/make_video'
+        self.__url_apptype                  = self.__url_base + '/apptype'
+        self.__url_home_automation_devices  = self.__url_base + '/home_automation_devices'
+        self.__url_make_video               = self.__url_base + '/make_video'
 
     def set_rest_version(self, version):
         """ Set which version to use when connection to the API. """
@@ -120,6 +120,8 @@ class API(object):
                 if pair['value'] == 'wrong_combination':
                     if pair['key'] == 'email' or pair['key'] == 'password':
                         raise WrongUsernameOrPasswordError()
+                    if pair['key'] == 'panel_serial' or pair['key'] == 'master_user_code':
+                        raise WrongPanelSerialOrMasterUserCodeError()
         elif api['error'] == 10021: # WrongUserCode
             raise UserCodeIncorrectError()
         elif api['error'] == 400 and api['error_reason_code'] == 'PanelNotConnected':
@@ -254,26 +256,6 @@ class API(object):
         else:
             return False
 
-    def panel_login(self, panel_serial, user_code):
-        """ Try to login to the alarm panel and get a session token. """
-        login_info = {
-            'user_code': user_code,
-            'app_type': self.__app_type,
-            'app_id': self.__app_id,
-            'panel_serial': panel_serial
-        }
-
-        login_json = json.dumps(login_info, separators=(',', ':'))
-        res = self.__send_request(self.__url_panel_login,
-                                       with_session_token=False,
-                                       data_json=login_json,
-                                       request_type='POST')
-        if res is not None:
-            self.__session_token = res['session_token']
-            return True
-        else:
-            return False
-
     def is_logged_in(self):
         """ Check if the session token is still valid. """
         try:
@@ -376,6 +358,56 @@ class API(object):
         """ Get the settings needed to wake up the alarm panel via SMS. """
         return self.__send_request(self.__url_wakeup_sms, request_type='GET')
 
+    def panel_add(self, alias, panel_serial, access_proof, master_user_code):
+        """ Add a new alarm panel to the user account. A master user code is required. """
+        panel_data = {
+            'alias': alias, 
+            'panel_serial': panel_serial, 
+            'access_proof': access_proof, 
+            'master_user_code': master_user_code
+        }
+        panel_json = json.dumps(panel_data, separators=(',', ':'))
+        return self.__send_request(self.__url_panel_add, data_json=panel_json, request_type='POST')
+
+    def panel_login(self, panel_serial, user_code):
+        """ Try to login to the alarm panel and get a session token. """
+        login_info = {
+            'user_code': user_code,
+            'app_type': self.__app_type,
+            'app_id': self.__app_id,
+            'panel_serial': panel_serial
+        }
+
+        login_json = json.dumps(login_info, separators=(',', ':'))
+        res = self.__send_request(self.__url_panel_login,
+                                       with_session_token=False,
+                                       data_json=login_json,
+                                       request_type='POST')
+        if res is not None:
+            self.__session_token = res['session_token']
+            return True
+        else:
+            return False
+
+    def panel_rename(self, alias, panel_serial):
+        """ Rename an alarm panel. """
+        panel_data = {
+            'panel_serial': panel_serial, 
+            'alias': alias, 
+        }
+        panel_json = json.dumps(panel_data, separators=(',', ':'))
+        return self.__send_request(self.__url_panel_rename, data_json=panel_json, request_type='POST')
+
+    def panel_unlink(self, panel_serial, password, app_id):
+        """ Unlink an alarm panel from the user account. """
+        panel_data = {
+            'panel_serial': panel_serial, 
+            'password': password, 
+            'app_id': app_id, 
+        }
+        panel_json = json.dumps(panel_data, separators=(',', ':'))
+        return self.__send_request(self.__url_panel_unlink, data_json=panel_json, request_type='POST')
+
     def password_reset(self, email):
         """ Request a password reset email. An email will be sent to the email address provided. """
         reset_data = {'email': email}
@@ -399,6 +431,12 @@ class API(object):
         name_data = {'class': object_class, 'id': id, 'name': name}
         name_json = json.dumps(name_data, separators=(',', ':'))
         return self.__send_request(self.__url_set_name, data_json=name_json, request_type='POST')
+
+    def set_user_code(self, user_code, user_id):
+        """ Set the code of a user in the alarm system. """
+        code_data = {'user_code': user_code, 'user_id': user_id}
+        code_json = json.dumps(code_data, separators=(',', ':'))
+        return self.__send_request(self.__url_set_name, data_json=code_json, request_type='POST')
 
     def arm_home(self, partition):
         """ Arm in Home mode. """

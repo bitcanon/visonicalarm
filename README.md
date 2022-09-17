@@ -54,8 +54,8 @@ hostname      = 'your.alarmcompany.com'
 user_code     = '1234'
 app_id        = '00000000-0000-0000-0000-000000000000'
 panel_id      = '123ABC'
-user_email    = "username@example.com"
-user_password = "An.Extremely.Long.Random.and.Secure.Password!"
+user_email    = 'user@example.com'
+user_password = 'An.Extremely.Long.Random.and.Secure.Password!'
 
 alarm = alarm.Setup(hostname, app_id)
 ```
@@ -94,7 +94,7 @@ alarm.authenticate(user_email, user_password)
 ### Login
 Once the authentication has succeeded, it's time to establish a connection between the API server and the alarm panel.
 ```python
-alarm.login(panel_serial, user_code)
+alarm.panel_login(panel_serial, user_code)
 ```
 The `panel_serial` is the ID of the panel (a hexadecimal number like `1A2B3C`) and the `user_code` is the master code (**it's important to use the master code**).
 
@@ -106,7 +106,7 @@ All of the methods callable from the library will throw exceptions on failure. A
 from visonic.exceptions import *
 ...
 try:
-    alarm.login(panel_serial, user_code)
+    alarm.panel_login(panel_serial, user_code)
 except UserCodeIncorrectError as e:
     print(e)
 ```
@@ -127,7 +127,42 @@ print('Email:      ' + user.email)
 print('Partitions: ' + str(user.partitions))
 ```
 This is the same for all object classes in the library: Users, devices, events, locations, troubles, and so on...
-## Alarm
+
+## Panel Initialization
+Before connecting to an alarm panel it is necessary to associate it to your user account. If you want to know which panels are already associated with your account your can call the `get_panels()` method. There are methods to add, rename and delete (unlink) alarm panels.
+
+### Add a panel
+To add a new panel to your account, call the `panel_add()` method. You have to provide a valid **panel serial** number and the **master user code** in order for the process to complete successfully.
+```python
+alias            = 'My House'
+panel_serial     = '123ABC'
+master_user_code = '1234'
+
+alarm.panel_add(alias, panel_serial, master_user_code)
+```
+>**Important:** You must use the **master user code** for this to work.
+
+### Rename a panel
+To rename an existing alarm panel, use the `panel_rename()` method.
+```python
+panel_serial = '123ABC'
+alias        = 'House'
+
+alarm.panel_rename(panel_serial, alias)
+```
+
+### Unlink a panel
+To remove or unlink an alarm panel from your user account you use the `panel_unlink()` method.
+```python
+panel_serial  = '123ABC'
+user_password = 'An.Extremely.Long.Random.and.Secure.Password!'
+app_id        = '00000000-0000-0000-0000-000000000000'
+
+alarm.panel_unlink(panel_serial, user_password, app_id)
+```
+>This only removes the link between your alarm system and the API server. Establish the link again by calling `panel_add()`.
+
+## Panel Control
 
 ### Access Control
 In order for a user to login to the alarm system we have to **grant** the user access to it. Also, if we want to prevent a currently active user from logging in we can **revoke** its access.

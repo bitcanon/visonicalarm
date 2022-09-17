@@ -117,6 +117,13 @@ class WrongUsernameOrPasswordError(Error):
         super().__init__(self.message)
 
 
+class WrongPanelSerialOrMasterUserCodeError(Error):
+    """ Raised when the panel serial or master user code is incorrect. """
+    def __init__(self, message="The wrong combination of panel serial and/or master user code was provided."):
+        self.message = message
+        super().__init__(self.message)
+
+
 class ConnectionTimeoutError(Error):
     """ Raised when connection to the REST API Server timed out. """
     

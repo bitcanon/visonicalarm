@@ -388,9 +388,21 @@ class Setup(object):
         )
         return sms
 
-    def login(self, panel_serial, user_code):
+    def panel_login(self, panel_serial, user_code):
         """ Establish a connection between the alarm panel and the API server. """
         return self.__api.panel_login(panel_serial, user_code)
+
+    def panel_add(self, alias, panel_serial, master_user_code, access_proof=None):
+        """ Add a new alarm panel to the user account. A master user code is required. """
+        return self.__api.panel_add(alias, panel_serial, access_proof, master_user_code)
+
+    def panel_rename(self, alias, panel_serial):
+        """ Rename an alarm panel. """
+        return self.__api.panel_rename(alias, panel_serial)
+
+    def panel_unlink(self, panel_serial, password, app_id):
+        """ Unlink an alarm panel from the user account. """
+        return self.__api.panel_unlink(panel_serial, password, app_id)
 
     def password_reset(self, email):
         """ Send a password reset link to the email address provided in the email argument. """
