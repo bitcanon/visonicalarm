@@ -377,9 +377,8 @@ class Setup(object):
 
     def get_users(self):
         """ Fetch a list of users in the alarm system. """
-        users_info = self.__api.get_active_user_info()
+        users_info = self.__api.get_users()
 
-        #print(users_info)
         user_list = []
 
         for user in users_info['users']:

@@ -36,43 +36,45 @@ class API(object):
 
     def render_urls(self):
         """ Configure the API endpoints. """
-        self.__url_base = 'https://' + self.__hostname + '/rest_api/' + \
-                          self.__rest_version
-
+        self.__url_base = 'https://' + self.__hostname + '/rest_api/' + self.__rest_version
         self.__url_version = 'https://' + self.__hostname + '/rest_api/version'
-        self.__url_auth = self.__url_base + '/auth'
-        self.__url_login = self.__url_base + '/panel/login'
-        self.__url_status = self.__url_base + '/status'
+
+        # API endpoints
+        self.__url_access_grant = self.__url_base + '/access/grant'
+        self.__url_access_revoke = self.__url_base + '/access/revoke'
+        self.__url_activate_siren = self.__url_base + '/activate_siren'
         self.__url_alarms = self.__url_base + '/alarms'
         self.__url_alerts = self.__url_base + '/alerts'
-        self.__url_troubles = self.__url_base + '/troubles'
-        self.__url_panel_info = self.__url_base + '/panel_info'
-        self.__url_events = self.__url_base + '/events'
+        self.__url_auth = self.__url_base + '/auth'
+        self.__url_cameras = self.__url_base + '/cameras'
         self.__url_devices = self.__url_base + '/devices'
-        self.__url_set_state = self.__url_base + '/set_state'
+        self.__url_disable_siren = self.__url_base + '/disable_siren'
+        self.__url_events = self.__url_base + '/events'
+        self.__url_feature_set  = self.__url_base + '/feature_set'
         self.__url_locations = self.__url_base + '/locations'
-        self.__url_active_users_info = self.__url_base + '/users'
+        self.__url_panel_login = self.__url_base + '/panel/login'
+        self.__url_panel_info = self.__url_base + '/panel_info'
+        self.__url_panels = self.__url_base + '/panels'
+        self.__url_password_reset = self.__url_base + '/password/reset'
+        self.__url_password_reset_complete = self.__url_base + '/password/reset/complete'
         self.__url_process_status = self.__url_base + '/process_status?process_tokens='
+        self.__url_set_name = self.__url_base + '/set_name'
+        self.__url_set_state = self.__url_base + '/set_state'
+        self.__url_smart_devices = self.__url_base + '/smart_devices'
+        self.__url_smart_devices_settings = self.__url_base + '/smart_devices/settings'
+        self.__url_status = self.__url_base + '/status'
+        self.__url_troubles = self.__url_base + '/troubles'
+        self.__url_users = self.__url_base + '/users'
+        self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'
 
-        # New Endpoints ([X] = Implemented, [-] = Skip)
-        self.__url_access_grant = self.__url_base + '/access/grant'                         # [X]
-        self.__url_access_revoke = self.__url_base + '/access/revoke'                       # [X]
-        self.__url_activate_siren = self.__url_base + '/activate_siren'                     # [X]
-        self.__url_apptype = self.__url_base + '/apptype'                                   # [-]
-        self.__url_cameras = self.__url_base + '/cameras'                                   # [X]
-        self.__url_disable_siren = self.__url_base + '/disable_siren'                       # [X]
-        self.__url_feature_set  = self.__url_base + '/feature_set'                          # [X]
-        self.__url_home_automation_devices = self.__url_base + '/home_automation_devices'   # [-]
-        self.__url_make_video = self.__url_base + '/make_video'                             # [-]
-        self.__url_notifications_email = self.__url_base + '/notifications/email'           # [ ]
-        self.__url_panels = self.__url_base + '/panels'                                     # [X]
-        self.__url_password_reset = self.__url_base + '/password/reset'                     # [X]
-        self.__url_password_reset_complete = self.__url_base + '/password/reset/complete'   # [X]
-        self.__url_set_name = self.__url_base + '/set_name'                                 # [X]
-        self.__url_set_user_code = self.__url_base + '/set_user_code'                       # [ ]
-        self.__url_smart_devices = self.__url_base + '/smart_devices'                       # [X]
-        self.__url_smart_devices_settings = self.__url_base + '/smart_devices/settings'     # [X]
-        self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'                             # [X]
+        # To be implemented
+        self.__url_notifications_email = self.__url_base + '/notifications/email'
+        self.__url_set_user_code = self.__url_base + '/set_user_code'
+
+        # Will not be implemented
+        self.__url_apptype = self.__url_base + '/apptype'
+        self.__url_home_automation_devices = self.__url_base + '/home_automation_devices'
+        self.__url_make_video = self.__url_base + '/make_video'
 
     def set_rest_version(self, version):
         """ Set which version to use when connection to the API. """
@@ -259,7 +261,7 @@ class API(object):
         }
 
         login_json = json.dumps(login_info, separators=(',', ':'))
-        res = self.__send_request(self.__url_login,
+        res = self.__send_request(self.__url_panel_login,
                                        with_session_token=False,
                                        data_json=login_json,
                                        request_type='POST')
@@ -300,11 +302,6 @@ class API(object):
         siren_data = {'mode': mode}
         siren_json = json.dumps(siren_data, separators=(',', ':'))
         return self.__send_request(self.__url_disable_siren, data_json=siren_json, request_type='POST')
-
-    def get_active_user_info(self):
-        """ Get information about the active users.
-        Note: Only master users can see the active_user_ids! """
-        return self.__send_request(self.__url_active_users_info, request_type='GET')
 
     def get_alarms(self):
         """ Get the current alarms. """
@@ -362,6 +359,11 @@ class API(object):
     def get_troubles(self):
         """ Get the current troubles. """
         return self.__send_request(self.__url_troubles, request_type='GET')
+
+    def get_users(self):
+        """ Get information about the active users.
+        Note: Only master users can see the active_user_ids! """
+        return self.__send_request(self.__url_users, request_type='GET')
 
     def get_wakeup_sms(self):
         """ Get the settings needed to wake up the alarm panel via SMS. """
