@@ -886,5 +886,3 @@ class WakeupSMS(object):
     def message(self):
         return self.__message
 
-
-
