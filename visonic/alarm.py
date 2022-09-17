@@ -17,7 +17,7 @@ class Setup(object):
     # API Connection
     __api = None
 
-    def __init__(self, hostname, app_id, api_version="latest"):
+    def __init__(self, hostname, app_id, api_version='latest'):
         """ Initiate the connection to the REST API. """
         self.__api = API(hostname, app_id)
         self.set_rest_version(api_version)
@@ -28,7 +28,7 @@ class Setup(object):
         """ Return the API for direct access. """
         return self.__api
 
-    def set_rest_version(self, version="latest"):
+    def set_rest_version(self, version='latest'):
         """ 
         Fetch the supported versions from the API server and automatically 
         configure the library to use the latest version supported by the server,
@@ -66,6 +66,14 @@ class Setup(object):
     def access_revoke(self, user_id):
         """ Revoke access to the alarm panel via the API for a user. """
         return self.__api.access_revoke(user_id)
+
+    def activate_siren(self):
+        """ Activate the siren (sound the alarm). """
+        return self.__api.activate_siren()['process_token']
+
+    def disable_siren(self, mode='all'):
+        """ Disable the siren (mute the alarm). """
+        return self.__api.disable_siren(mode=mode)['process_token']
 
     def get_cameras(self):
         """ Fetch all the devices that are available. """

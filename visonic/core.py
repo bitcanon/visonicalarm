@@ -57,13 +57,13 @@ class API(object):
         # New Endpoints ([X] = Implemented, [-] = Skip)
         self.__url_access_grant = self.__url_base + '/access/grant'                         # [X]
         self.__url_access_revoke = self.__url_base + '/access/revoke'                       # [X]
-        self.__url_activate_siren = self.__url_base + '/activate_siren'                     # [ ]
+        self.__url_activate_siren = self.__url_base + '/activate_siren'                     # [X]
         self.__url_apptype = self.__url_base + '/apptype'                                   # [-]
         self.__url_cameras = self.__url_base + '/cameras'                                   # [X]
-        self.__url_disable_siren = self.__url_base + '/disable_siren'                       # [ ]
+        self.__url_disable_siren = self.__url_base + '/disable_siren'                       # [X]
         self.__url_feature_set  = self.__url_base + '/feature_set'                          # [X]
-        self.__url_home_automation_devices = self.__url_base + '/home_automation_devices'   # [ ]
-        self.__url_make_video = self.__url_base + '/make_video'                             # [ ]
+        self.__url_home_automation_devices = self.__url_base + '/home_automation_devices'   # [-]
+        self.__url_make_video = self.__url_base + '/make_video'                             # [-]
         self.__url_notifications_email = self.__url_base + '/notifications/email'           # [ ]
         self.__url_panels = self.__url_base + '/panels'                                     # [X]
         self.__url_password_reset = self.__url_base + '/password/reset'                     # [X]
@@ -288,6 +288,18 @@ class API(object):
         user_data = {'user': user_id}
         user_json = json.dumps(user_data, separators=(',', ':'))
         return self.__send_request(self.__url_access_revoke, data_json=user_json, request_type='POST')
+
+    def activate_siren(self):
+        """ Activate the siren (sound the alarm). """
+        siren_data = {}
+        siren_json = json.dumps(siren_data, separators=(',', ':'))
+        return self.__send_request(self.__url_activate_siren, data_json=siren_json, request_type='POST')
+
+    def disable_siren(self, mode):
+        """ Disable the siren (mute the alarm). """
+        siren_data = {'mode': mode}
+        siren_json = json.dumps(siren_data, separators=(',', ':'))
+        return self.__send_request(self.__url_disable_siren, data_json=siren_json, request_type='POST')
 
     def get_active_user_info(self):
         """ Get information about the active users.

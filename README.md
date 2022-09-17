@@ -285,6 +285,15 @@ Output:
 <class 'visonic.classes.Process'>: {'token': '346eca73-1316-4a1e-b922-4b2061d79b71', 'status': 'start', 'message': '', 'error': None}
 ```
 
+### Siren
+You can turn on and off the siren connected to the alarm system by calling the `activate_siren()` and `disable_siren()` methods. Both methods return a **process token** which can be inspected with the `get_process_status()` method.
+```python
+alarm.activate_siren()
+...
+alarm.disable_siren()
+```
+>**Warning:** Make sure the building is empty before testing the `activate_siren()` method since it will **make a lot of noise**!
+
 ### Status
 The status of the alarm system is defined in the `Status` class. Get the current status by calling the `get_status()` method.
 
