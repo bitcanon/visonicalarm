@@ -384,7 +384,7 @@ Output:
 ...
 ```
 #### Change the name of a user
-It's possible to change the name of a user by calling the `set_name_user(id, name)` method. You have to provide the `id` of the user as well as the new `name`.
+It's possible to change the name of a user by calling the `set_name_user(user_id, name)` method. You have to provide the `id` of the user as well as the new `name`.
 ```python
 token = alarm.set_name_user(4, 'bitcanon')
 ```
@@ -396,6 +396,19 @@ print(result)
 Output:
 ```
 [Process(token = '4efc2e3a-13ef-47aa-8d25-92eb8dfa2791', status = 'succeeded', message = '', error = 'None')]
+```
+#### Set the user code
+To set or change a user code you use the `set_user_code(user_id, user_code)` method. This method has several usages; of course to change the code of a user, but also to _add and remove a user_. There is a finite number of user accounts in the alarm panel (8 in my case) and they are considered to exist if they have a user code **not** equal to `0000`. So in short, add a user by setting a user code, and remove a user by setting the user code to `0000`.
+
+Note that this method returns a **process token**. Check the status of the request with the method `get_process_status()`.
+
+Add user or change user code: 
+```python
+token = alarm.set_user_code(4, '8675')
+```
+Remove user:
+```python
+token = alarm.set_user_code(4, '0000')
 ```
 
 ### Wakeup SMS

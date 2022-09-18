@@ -412,9 +412,9 @@ class Setup(object):
         """ Complete the password reset by entering the reset code received in the email and a new password. """
         return self.__api.password_reset_complete(reset_password_code, new_password)['user_token']
 
-    def set_name_user(self, id, name):
+    def set_name_user(self, user_id, name):
         """ Set the name of a user by user ID. """
-        return self.__api.set_name('USER', id, name)['process_token']
+        return self.__api.set_name('USER', user_id, name)['process_token']
 
     def set_rest_version(self, version='latest'):
         """ 
@@ -431,7 +431,7 @@ class Setup(object):
         else:
             raise UnsupportedRestAPIVersionError(f'Rest API version {version} is not supported by server.')
 
-    def set_user_code(self, user_code, user_id):
+    def set_user_code(self, user_id, user_code):
         """ Set the code of a user by user ID. """
         return self.__api.set_user_code(user_code, user_id)['process_token']
 
