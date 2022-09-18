@@ -171,6 +171,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-/test.py
+/test*.py
+/example*.py
 /api_notes.txt
 /upload.sh
