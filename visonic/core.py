@@ -55,12 +55,16 @@ class API(object):
         self.__url_notifications_email      = self.__url_base + '/notifications/email'
         self.__url_panel_login              = self.__url_base + '/panel/login'
         self.__url_panel_info               = self.__url_base + '/panel_info'
+        self.__url_panel_add                = self.__url_base + '/panel/add'
+        self.__url_panel_rename             = self.__url_base + '/panel/rename'
+        self.__url_panel_unlink             = self.__url_base + '/panel/unlink'
         self.__url_panels                   = self.__url_base + '/panels'
         self.__url_password_reset           = self.__url_base + '/password/reset'
         self.__url_password_reset_complete  = self.__url_base + '/password/reset/complete'
         self.__url_process_status           = self.__url_base + '/process_status?process_tokens='
         self.__url_set_name                 = self.__url_base + '/set_name'
         self.__url_set_state                = self.__url_base + '/set_state'
+        self.__url_set_user_code            = self.__url_base + '/set_user_code'
         self.__url_smart_devices            = self.__url_base + '/smart_devices'
         self.__url_smart_devices_settings   = self.__url_base + '/smart_devices/settings'
         self.__url_status                   = self.__url_base + '/status'
@@ -69,10 +73,6 @@ class API(object):
         self.__url_wakeup_sms               = self.__url_base + '/wakeup_sms'
 
         # To be implemented
-        self.__url_panel_add                = self.__url_base + '/panel/add'
-        self.__url_panel_rename             = self.__url_base + '/panel/rename'
-        self.__url_panel_unlink             = self.__url_base + '/panel/unlink'
-        self.__url_set_user_code            = self.__url_base + '/set_user_code'
 
         # Will not be implemented
         self.__url_apptype                  = self.__url_base + '/apptype'
@@ -436,7 +436,7 @@ class API(object):
         """ Set the code of a user in the alarm system. """
         code_data = {'user_code': user_code, 'user_id': user_id}
         code_json = json.dumps(code_data, separators=(',', ':'))
-        return self.__send_request(self.__url_set_name, data_json=code_json, request_type='POST')
+        return self.__send_request(self.__url_set_user_code, data_json=code_json, request_type='POST')
 
     def arm_home(self, partition):
         """ Arm in Home mode. """

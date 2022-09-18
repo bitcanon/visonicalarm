@@ -388,13 +388,13 @@ class Setup(object):
         )
         return sms
 
-    def panel_login(self, panel_serial, user_code):
-        """ Establish a connection between the alarm panel and the API server. """
-        return self.__api.panel_login(panel_serial, user_code)
-
     def panel_add(self, alias, panel_serial, master_user_code, access_proof=None):
         """ Add a new alarm panel to the user account. A master user code is required. """
         return self.__api.panel_add(alias, panel_serial, access_proof, master_user_code)
+
+    def panel_login(self, panel_serial, user_code):
+        """ Establish a connection between the alarm panel and the API server. """
+        return self.__api.panel_login(panel_serial, user_code)
 
     def panel_rename(self, alias, panel_serial):
         """ Rename an alarm panel. """
@@ -430,4 +430,8 @@ class Setup(object):
             self.__api.set_rest_version(version)
         else:
             raise UnsupportedRestAPIVersionError(f'Rest API version {version} is not supported by server.')
+
+    def set_user_code(self, user_code, user_id):
+        """ Set the code of a user by user ID. """
+        return self.__api.set_user_code(user_code, user_id)['process_token']
 
