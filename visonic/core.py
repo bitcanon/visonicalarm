@@ -62,6 +62,7 @@ class API(object):
         self.__url_password_reset           = self.__url_base + '/password/reset'
         self.__url_password_reset_complete  = self.__url_base + '/password/reset/complete'
         self.__url_process_status           = self.__url_base + '/process_status?process_tokens='
+        self.__url_set_bypass_zone          = self.__url_base + '/set_bypass_zone'
         self.__url_set_name                 = self.__url_base + '/set_name'
         self.__url_set_state                = self.__url_base + '/set_state'
         self.__url_set_user_code            = self.__url_base + '/set_user_code'
@@ -425,6 +426,12 @@ class API(object):
         notification_data = {'mode': mode}
         notification_json = json.dumps(notification_data, separators=(',', ':'))
         return self.__send_request(self.__url_notifications_email, data_json=notification_json, request_type='POST')
+
+    def set_bypass_zone(self, zone, set_enabled):
+        """ Enable or disable bypass mode for a zone. """
+        bypass_data = {'zone': zone, 'set': set_enabled}
+        bypass_json = json.dumps(bypass_data, separators=(',', ':'))
+        return self.__send_request(self.__url_set_bypass_zone, data_json=bypass_json, request_type='POST')
 
     def set_name(self, object_class, id, name):
         """ Set the name of any type of object in the alarm system. """
