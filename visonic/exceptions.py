@@ -89,6 +89,14 @@ class UndefinedBadRequestError(Error):
         super().__init__(self.message)
 
 
+class UnauthorizedError(Error):
+    """ Raised when a 401 Client Error occurs. """
+
+    def __init__(self, message="Unauthorized to access API endpoint."):
+        self.message = message
+        super().__init__(self.message)
+
+
 class UndefinedForbiddenError(Error):
     """ Raised when an undefined 403 Client Error occurs. """
     def __init__(self, message="The request is forbidden."):

@@ -144,6 +144,14 @@ class API(object):
         # specific exception implemented yet.
         raise UndefinedForbiddenError(str(api))
 
+    def __raise_on_unauthorized(self, error):
+        """ Raise an exception when the API returns a unauthorized error. """
+        api = json.loads(error.decode('utf-8'))
+        print(api)
+
+        # Raise an exception when we are not authorized to access the endpoint
+        raise UnauthorizedError(str(api))
+
     def __send_request(self, url, with_session_token=True, with_user_token=True, data_json=None, request_type='GET'):
         """ Send a GET or POST request to the server. Includes the Session-Token
         only if with_session_token is True. """
@@ -187,6 +195,8 @@ class API(object):
             print(api)
             if   '400 Client Error: Bad Request' in str(e):
                 self.__raise_on_bad_request(response.content)
+            elif '401 Client Error: Unauthorized' in str(e):
+                self.__raise_on_unauthorized(response.content)
             elif '403 Client Error: Forbidden' in str(e):
                 self.__raise_on_forbidden(response.content)
             elif '404 Client Error: Not Found' in str(e):
