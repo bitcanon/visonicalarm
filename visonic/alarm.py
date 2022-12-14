@@ -106,8 +106,8 @@ class Setup(object):
                     subtype=device['subtype'],
                     warnings=device['warnings'],
                     zone_type=device['zone_type'],
-                    location=device['traits']['location']['name'].capitalize(),
-                    soak=device['traits']['soak']['enabled'],
+                    location=device['traits']['location']['name'].capitalize() if 'location' in device['traits'] else None,
+                    soak=device['traits']['soak']['enabled'] if 'soak' in device['traits'] else False,
                 )
                 device_list.append(contact_device)
             elif device['subtype'] == 'MOTION_CAMERA':
@@ -125,9 +125,9 @@ class Setup(object):
                     subtype=device['subtype'],
                     warnings=device['warnings'],
                     zone_type=device['zone_type'],
-                    location=device['traits']['location']['name'].capitalize(),
-                    soak=device['traits']['soak']['enabled'],
-                    vod=device['traits']['vod'],
+                    location=device['traits']['location']['name'].capitalize() if 'location' in device['traits'] else None,
+                    soak=device['traits']['soak']['enabled'] if 'soak' in device['traits'] else False,
+                    vod=device['traits']['vod'] if 'vod' in device['traits'] else None,
                 )
                 device_list.append(contact_device)
             elif device['subtype'] == 'SMOKE':
@@ -145,8 +145,8 @@ class Setup(object):
                     subtype=device['subtype'],
                     warnings=device['warnings'],
                     zone_type=device['zone_type'],
-                    location=device['traits']['location']['name'].capitalize(),
-                    soak=device['traits']['soak']['enabled'],
+                    location=device['traits']['location']['name'].capitalize() if 'location' in device['traits'] else None,
+                    soak=device['traits']['soak']['enabled'] if 'soak' in device['traits'] else False,
                 )
                 device_list.append(contact_device)
             elif device['subtype'] == 'BASIC_KEYFOB':
@@ -164,8 +164,8 @@ class Setup(object):
                     subtype=device['subtype'],
                     warnings=device['warnings'],
                     zone_type=device['zone_type'],
-                    owner_id=device['traits']['owner']['id'],
-                    owner_name=device['traits']['owner']['name'],
+                    owner_id=device['traits']['owner']['id'] if 'owner' in device['traits'] else None,
+                    owner_name=device['traits']['owner']['name'] if 'owner' in device['traits'] else None,
                 )
                 device_list.append(contact_device)
             elif device['device_type'] == 'GSM':
@@ -201,8 +201,8 @@ class Setup(object):
                     subtype=device['subtype'],
                     warnings=device['warnings'],
                     zone_type=device['zone_type'],
-                    parent_id=device['traits']['parent']['id'],
-                    parent_port=device['traits']['parent']['port'],
+                    parent_id=device['traits']['parent']['id'] if 'parent' in device['traits'] else None,
+                    parent_port=device['traits']['parent']['port'] if 'parent' in device['traits'] else None,
                 )
                 device_list.append(contact_device)
             else:
