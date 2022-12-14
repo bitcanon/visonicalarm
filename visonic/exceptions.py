@@ -32,6 +32,13 @@ class EmailRequiredError(Error):
         super().__init__(self.message)
 
 
+class LoginTemporaryBlockedError(Error):
+    """ Raised when the password is missing in the authentication request. """
+    def __init__(self, message="Login is temporary blocked due to too many failed login attempts."):
+        self.message = message
+        super().__init__(self.message)
+
+
 class NewPasswordStrengthError(Error):
     """ Raised when the password is missing in the authentication request. """
     def __init__(self, message="New password is not strong enough. Please enter a complex password containing letters, digits and special characters."):
@@ -100,6 +107,13 @@ class UnauthorizedError(Error):
 class UndefinedForbiddenError(Error):
     """ Raised when an undefined 403 Client Error occurs. """
     def __init__(self, message="The request is forbidden."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class UserAuthRequiredError(Error):
+    """ Raised when a forbidden error occurs due to not being authenticated. """
+    def __init__(self, message="User authentication required."):
         self.message = message
         super().__init__(self.message)
 

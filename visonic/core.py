@@ -88,7 +88,7 @@ class API(object):
     def __raise_on_bad_request(self, error):
         """ Raise an exception when the API returns a bad request. """
         api = json.loads(error.decode('utf-8'))
-        print(api)
+        # print(api)
 
         if api['error'] == 10001: # BadRequestParams
             for pair in api['extras']:
@@ -135,10 +135,12 @@ class API(object):
     def __raise_on_forbidden(self, error):
         """ Raise an exception when the API returns a forbidden error. """
         api = json.loads(error.decode('utf-8'))
-        print(api)
+        # print(api)
 
         if api['error'] == 10010: # NotAllowed
             raise NotAllowedError()
+        elif api['error'] == 10002: # UserAuthRequired
+            raise UserAuthRequiredError()
 
         # Raise a generic error when the library has no
         # specific exception implemented yet.
@@ -147,7 +149,7 @@ class API(object):
     def __raise_on_unauthorized(self, error):
         """ Raise an exception when the API returns a unauthorized error. """
         api = json.loads(error.decode('utf-8'))
-        print(api)
+        # print(api)
 
         # Raise an exception when we are not authorized to access the endpoint
         raise UnauthorizedError(str(api))
@@ -192,7 +194,6 @@ class API(object):
             return None
         except requests.exceptions.HTTPError as e:
             api = json.loads(response.content.decode('utf-8'))
-            print(api)
             if   '400 Client Error: Bad Request' in str(e):
                 self.__raise_on_bad_request(response.content)
             elif '401 Client Error: Unauthorized' in str(e):
@@ -201,6 +202,10 @@ class API(object):
                 self.__raise_on_forbidden(response.content)
             elif '404 Client Error: Not Found' in str(e):
                 raise NotFoundError()
+            elif '420 Client Error:' in str(e):
+                # TODO: {'error': 10020, 'error_message': 'Login temporary blocked', 'error_reason_code': 'LoginTemporaryBlocked', 'extras': [{'key': 'timeout', 'value': 44}]} // 44 = seconds to unblocked
+                # print(api)
+                raise LoginTemporaryBlockedError(f"Login is temporary blocked due to too many failed login attempts ({api['extras'][0]['value']} seconds remaining).")
             elif '440 Client Error: Session token not found' in str(e):
                 raise SessionTokenError()
             elif '442 Client Error: Login attempts limit reached' in str(e):
@@ -208,6 +213,7 @@ class API(object):
             elif '444 Client Error: Wrong user code' in str(e):
                 raise InvalidUserCodeError('Authentication failed due to wrong user code.')
             else:
+                print(api)
                 raise
 
         # Check HTTP response code
