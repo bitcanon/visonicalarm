@@ -93,6 +93,7 @@ class Setup(object):
         for device in devices:
             if device['subtype'] == 'CONTACT':
                 contact_device = ContactDevice(
+                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
                     device_number=device['device_number'],
                     device_type=device['device_type'],
                     enrollment_id=device['enrollment_id'],
@@ -111,6 +112,7 @@ class Setup(object):
                 device_list.append(contact_device)
             elif device['subtype'] == 'MOTION_CAMERA':
                 contact_device = CameraDevice(
+                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
                     device_number=device['device_number'],
                     device_type=device['device_type'],
                     enrollment_id=device['enrollment_id'],
@@ -130,6 +132,7 @@ class Setup(object):
                 device_list.append(contact_device)
             elif device['subtype'] == 'SMOKE':
                 contact_device = SmokeDevice(
+                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
                     device_number=device['device_number'],
                     device_type=device['device_type'],
                     enrollment_id=device['enrollment_id'],
@@ -148,6 +151,7 @@ class Setup(object):
                 device_list.append(contact_device)
             elif device['subtype'] == 'BASIC_KEYFOB':
                 contact_device = KeyFobDevice(
+                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
                     device_number=device['device_number'],
                     device_type=device['device_type'],
                     enrollment_id=device['enrollment_id'],
@@ -166,6 +170,7 @@ class Setup(object):
                 device_list.append(contact_device)
             elif device['device_type'] == 'GSM':
                 contact_device = GSMDevice(
+                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
                     device_number=device['device_number'],
                     device_type=device['device_type'],
                     enrollment_id=device['enrollment_id'],
@@ -178,11 +183,12 @@ class Setup(object):
                     subtype=device['subtype'],
                     warnings=device['warnings'],
                     zone_type=device['zone_type'],
-                    signal_level=device['traits']['signal_level']['level'],
+                    signal_level=device['traits']['signal_level']['level'] if 'signal_level' in device['traits'] else None,
                 )
                 device_list.append(contact_device)
             elif device['device_type'] == 'PGM':
                 contact_device = PGMDevice(
+                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
                     device_number=device['device_number'],
                     device_type=device['device_type'],
                     enrollment_id=device['enrollment_id'],
@@ -201,6 +207,7 @@ class Setup(object):
                 device_list.append(contact_device)
             else:
                 generic_device = GenericDevice(
+                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
                     device_number=device['device_number'],
                     device_type=device['device_type'],
                     enrollment_id=device['enrollment_id'],
@@ -215,7 +222,6 @@ class Setup(object):
                     zone_type=device['zone_type'],
                 )
                 device_list.append(generic_device)
-
         return device_list
 
     def get_events(self, timestamp_hour_offset=2):

@@ -2,6 +2,7 @@ class Device(object):
     """ Base class definition of a device in the alarm system. """
 
     # Property variables
+    __bypass = None
     __device_number = None
     __device_type = None
     __enrollment_id = None
@@ -15,11 +16,12 @@ class Device(object):
     __warnings = None
     __zone_type = None
 
-    def __init__(self, device_number, device_type, enrollment_id, id, 
+    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type):
         """ Set the private variable values on instantiation. """
 
+        self.__bypass = bypass
         self.__device_number = device_number
         self.__device_type = device_type
         self.__enrollment_id = enrollment_id
@@ -42,6 +44,7 @@ class Device(object):
         """ Define how the object is represented when output to console. """
 
         class_name          = type(self).__name__
+        bypass              = f"bypass = '{self.bypass}'"
         device_number       = f"device_number = '{self.device_number}'"
         device_type         = f"device_type = {self.device_type}"
         enrollment_id       = f"enrollment_id = '{self.enrollment_id}'"
@@ -55,11 +58,12 @@ class Device(object):
         warnings            = f"warnings = {self.warnings}"
         zone_type           = f"zone_type = {self.zone_type}"
 
-        return f"{class_name}({device_number}, {device_type}, {enrollment_id}, {id}, {name}, {partitions}, {preenroll}, {removable}, {renamable}, {subtype}, {warnings}, {zone_type})"
+        return f"{class_name}({bypass}, {device_number}, {device_type}, {enrollment_id}, {id}, {name}, {partitions}, {preenroll}, {removable}, {renamable}, {subtype}, {warnings}, {zone_type})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """
         return {
+            'bypass': self.bypass,
             'device_number': self.device_number,
             'device_type': self.device_type,
             'enrollment_id': self.enrollment_id,
@@ -75,6 +79,10 @@ class Device(object):
         }
 
     # Device properties
+    @property
+    def bypass(self):
+        return self.__bypass
+
     @property
     def device_number(self):
         return self.__device_number
@@ -130,10 +138,10 @@ class CameraDevice(Device):
     __soak = None
     __vod = None
 
-    def __init__(self, device_number, device_type, enrollment_id, id, 
+    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type, location, soak, vod):
-        Device.__init__(self, device_number, device_type, enrollment_id, id, 
+        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type)
         self.__location = location
@@ -157,10 +165,10 @@ class ContactDevice(Device):
     __location = None
     __soak = None
 
-    def __init__(self, device_number, device_type, enrollment_id, id, 
+    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type, location, soak):
-        Device.__init__(self, device_number, device_type, enrollment_id, id, 
+        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type)
         self.__location = location
@@ -194,10 +202,10 @@ class GSMDevice(Device):
     """ GSM device class definition. """
     __signal_level = None
 
-    def __init__(self, device_number, device_type, enrollment_id, id, 
+    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type, signal_level):
-        Device.__init__(self, device_number, device_type, enrollment_id, id, 
+        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type)
         self.__signal_level = signal_level
@@ -216,10 +224,10 @@ class KeyFobDevice(Device):
     __owner_id = None
     __owner_name = None
 
-    def __init__(self, device_number, device_type, enrollment_id, id, 
+    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type, owner_id, owner_name):
-        Device.__init__(self, device_number, device_type, enrollment_id, id, 
+        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type)
         self.__owner_id = owner_id
@@ -240,10 +248,10 @@ class PGMDevice(Device):
     __parent_id = None
     __parent_port = None
 
-    def __init__(self, device_number, device_type, enrollment_id, id, 
+    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type, parent_id, parent_port):
-        Device.__init__(self, device_number, device_type, enrollment_id, id, 
+        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type)
         self.__parent_id = parent_id
@@ -264,10 +272,10 @@ class SmokeDevice(Device):
     __location = None
     __soak = None
 
-    def __init__(self, device_number, device_type, enrollment_id, id, 
+    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type, location, soak):
-        Device.__init__(self, device_number, device_type, enrollment_id, id, 
+        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
                  name, partitions, preenroll, removable, renamable, 
                  subtype, warnings, zone_type)
         self.__location = location
