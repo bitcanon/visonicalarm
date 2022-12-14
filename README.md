@@ -220,6 +220,20 @@ Output:
 <class 'visonic.devices.SmokeDevice'>:   {'device_number': 16, 'device_type': 'ZONE', 'enrollment_id': '300-3546', 'id': 12343, 'name': '', 'partitions': [1], 'preenroll': False, 'removable': True, 'renamable': True, 'subtype': 'SMOKE', 'warnings': None, 'zone_type': 'FIRE', 'location': 'Vardagsrum', 'soak': False}
 ...
 ```
+#### Zone Bypassing
+A device with a `device_type` of **ZONE** can be **bypassed** (which basically disables the sensor and prevent it from triggering) by calling the `set_bypass_zone(zone, set_enabled)` method. The `zone` parameter refers to the device number of the device and `set_enabled` is used to enable or disable the bypass functionality.
+
+> This method only works if the alarm panel has zone bypassing enabled and the device supports it.
+
+Enable zone bypass for device number 1: 
+```python
+token = alarm.set_bypass_zone(1, True)
+```
+Disable zone bypass for device number 1::
+```python
+token = alarm.set_bypass_zone(1, False)
+```
+Note that this method returns a **process token**. Check the status of the request with the method `get_process_status()`.
 
 ### Events
 Events are generated when the alarm system is armed, disarmed, phone line changes (GSM), and so on.
