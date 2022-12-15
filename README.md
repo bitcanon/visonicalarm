@@ -251,7 +251,7 @@ Output:
 ```
 
 ### Features
-Check with features are enabled and available for interaction via the API. Among other things you can find out if your alarm system has partitions enabled and if you can turn the siren on or off.
+Check which features are enabled and available for interaction via the API. Among other things you can find out if your alarm system has partitions enabled and if you can turn the siren on or off.
 
 The features of the alarm system is defined in the `FeatureSet` class. Get the available features by calling the `get_feature_set()` method.
 ```python
