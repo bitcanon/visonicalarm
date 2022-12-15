@@ -17,7 +17,7 @@ Here is a small command-line demo application showing the most basic options tha
 
 ![Alarm Control CLI Demo](https://github.com/bitcanon/visonicalarm/blob/master/docs/img/demo-cli-application.gif)
 
-Check out the source code to the demo here.
+Check out the source code to the demo here: [alarm-control-demo.py](https://github.com/bitcanon/visonicalarm/blob/master/examples/alarm-control-demo.py).
 
 ## API version support
 
@@ -995,3 +995,4 @@ alarm.get_status().partitions[0].state  # Output: 'DISARM'
 ## Examples
 
 Find more examples here: [/visonicalarm/examples](https://github.com/bitcanon/visonicalarm/tree/master/examples)
+
