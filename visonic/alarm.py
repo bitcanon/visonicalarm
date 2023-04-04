@@ -341,10 +341,10 @@ class Setup(object):
         # Create the status
         new_status = Status(
             connected=status['connected'],
-            bba_connected=status['connected_status']['bba']['is_connected'],
-            bba_state=status['connected_status']['bba']['state'],
-            gprs_connected=status['connected_status']['gprs']['is_connected'],
-            gprs_state=status['connected_status']['gprs']['state'],
+            bba_connected=status['connected_status']['bba']['is_connected'] if 'bba' in status['connected_status'] else False,
+            bba_state=status['connected_status']['bba']['state'] if 'bba' in status['connected_status'] else 'unknown',
+            gprs_connected=status['connected_status']['gprs']['is_connected'] if 'gprs' in status['connected_status'] else False,
+            gprs_state=status['connected_status']['gprs']['state'] if 'gprs' in status['connected_status'] else 'unknown',
             discovery_completed=status['discovery']['completed'],
             discovery_stages=status['discovery']['stages'],
             discovery_in_queue=status['discovery']['in_queue'],
