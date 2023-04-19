@@ -98,7 +98,7 @@ class Device(object):
     @property
     def id(self):
         return self.__id
-
+    
     @property
     def name(self):
         return self.__name
@@ -191,6 +191,50 @@ class ContactDevice(Device):
         for warning in self.warnings:
             if warning['type'] == 'OPENED':
                 return 'OPENED'
+
+class MotionDevice(Device):
+    """ Motion sensor device class definition. """
+    __location = None
+    __temperature = None
+    __brightness = None
+    __soak = None
+    __vod = None
+
+    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
+                 name, partitions, preenroll, removable, renamable, 
+                 subtype, warnings, zone_type, location, temperature, brightness, soak, vod):
+        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
+                 name, partitions, preenroll, removable, renamable, 
+                 subtype, warnings, zone_type)
+        self.__location = location
+        self.__temperature = temperature
+        self.__brightness = brightness
+        self.__soak = soak
+        self.__vod = vod
+
+    def __str__(self):
+        """ Define how the print() method should print the object. """
+
+        object_type = str(type(self))
+        value_dict = self.as_dict()
+        value_dict['location'] = self.__location
+        value_dict['temperature'] = self.__temperature
+        value_dict['brightness'] = self.__brightness
+        value_dict['soak'] = self.__soak
+        value_dict['vod'] = self.__vod
+        return object_type + ": " + str(value_dict)
+    
+    @property
+    def location(self):
+        return self.__location
+    
+    @property
+    def temperature(self):
+        return self.__temperature
+    
+    @property
+    def brightness(self):
+        return self.__brightness
 
 
 class GenericDevice(Device):

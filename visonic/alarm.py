@@ -205,6 +205,28 @@ class Setup(object):
                     parent_port=device['traits']['parent']['port'] if 'parent' in device['traits'] else None,
                 )
                 device_list.append(contact_device)
+            elif device['subtype'] == 'FLAT_PIR_SMART':
+                contact_device = MotionDevice(
+                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
+                    device_number=device['device_number'],
+                    device_type=device['device_type'],
+                    enrollment_id=device['enrollment_id'],
+                    id=device['id'],
+                    name=device['name'],
+                    partitions=device['partitions'],
+                    preenroll=device['preenroll'],
+                    removable=device['removable'],
+                    renamable=device['renamable'],
+                    subtype=device['subtype'],
+                    warnings=device['warnings'],
+                    zone_type=device['zone_type'],
+                    location=device['traits']['location']['name'].capitalize() if 'location' in device['traits'] else None,
+                    temperature=device['traits']['meteo_info']['temperature']['value'] if 'meteo_info' in device['traits'] else None,
+                    brightness=device['traits']['meteo_info']['brightness']['value'] if 'meteo_info' in device['traits'] else None,
+                    soak=device['traits']['soak']['enabled'] if 'soak' in device['traits'] else False,
+                    vod=device['traits']['vod'] if 'vod' in device['traits'] else None,
+                )
+                device_list.append(contact_device)
             else:
                 generic_device = GenericDevice(
                     bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
