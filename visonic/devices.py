@@ -4,7 +4,7 @@ from .classes import BaseClass
 
 
 @dataclass
-class BaseDevice(BaseClass):
+class Device(BaseClass):
     """Base class definition of a device in the alarm system."""
 
     _device: dict
@@ -84,12 +84,12 @@ class BaseDevice(BaseClass):
 
 
 @dataclass
-class CameraDevice(BaseDevice):
+class CameraDevice(Device):
     """Camera device class definition."""
 
 
 @dataclass
-class ContactDevice(BaseDevice):
+class ContactDevice(Device):
     """Contact device class definition."""
 
     @property
@@ -103,7 +103,7 @@ class ContactDevice(BaseDevice):
 
 
 @dataclass
-class MotionDevice(BaseDevice):
+class MotionDevice(Device):
     """Motion sensor device class definition."""
 
     @property
@@ -124,12 +124,12 @@ class MotionDevice(BaseDevice):
 
 
 @dataclass
-class GenericDevice(BaseDevice):
+class GenericDevice(Device):
     """Smoke device class definition."""
 
 
 @dataclass
-class GSMDevice(BaseDevice):
+class GSMDevice(Device):
     """GSM device class definition."""
 
     @property
@@ -142,7 +142,7 @@ class GSMDevice(BaseDevice):
 
 
 @dataclass
-class KeyFobDevice(BaseDevice):
+class KeyFobDevice(Device):
     """KeyFob device class definition."""
 
     @property
@@ -163,7 +163,7 @@ class KeyFobDevice(BaseDevice):
 
 
 @dataclass
-class PGMDevice(BaseDevice):
+class PGMDevice(Device):
     """PGM device class definition."""
 
     @property
@@ -184,5 +184,5 @@ class PGMDevice(BaseDevice):
 
 
 @dataclass
-class SmokeDevice(BaseDevice):
+class SmokeDevice(Device):
     """Smoke device class definition."""
