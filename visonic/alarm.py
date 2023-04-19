@@ -13,9 +13,6 @@ from visonic.classes import *
 class Setup(object):
     """Class definition of the main alarm system."""
 
-    # API Connection
-    __api = None
-
     def __init__(self, hostname, app_id, api_version="latest"):
         """Initiate the connection to the REST API."""
         self.__api = API(hostname, app_id)
@@ -65,29 +62,12 @@ class Setup(object):
 
     def get_cameras(self):
         """Fetch all the devices that are available."""
-        camera_list = []
-
         cameras = self.__api.get_cameras()
-
-        for camera in cameras:
-            new_camera = Camera(
-                location=camera["location"].capitalize(),
-                partitions=camera["partitions"],
-                preenroll=camera["preenroll"],
-                preview_path=camera["preview_path"],
-                status=camera["status"],
-                timestamp=camera["timestamp"],
-                zone=camera["zone"],
-                zone_name=camera["zone_name"].capitalize(),
-            )
-            camera_list.append(new_camera)
-
-        return camera_list
+        return [Camera(camera) for camera in cameras]
 
     def get_devices(self):
         """Fetch all the devices that are available."""
         device_list = []
-
         devices = self.__api.get_devices()
 
         for device in devices:
@@ -112,105 +92,33 @@ class Setup(object):
 
     def get_events(self, timestamp_hour_offset=2):
         """Get the last couple of events (60 events on my system)."""
-        event_list = []
-
         events = self.__api.get_events()
-
-        for event in events:
-            # Event timestamp
-            dt = parser.parse(event["datetime"])
-            dt = dt + relativedelta(hours=timestamp_hour_offset)
-            timestamp = dt.strftime("%Y-%m-%d %H:%M:%S")
-            event["datetime"] = timestamp
-
-            new_event = Event(
-                id=event["event"],
-                type_id=event["type_id"],
-                label=event["label"],
-                description=event["description"],
-                appointment=event["appointment"],
-                datetime=event["datetime"],
-                video=event["video"],
-                device_type=event["device_type"],
-                zone=event["zone"],
-                partitions=event["partitions"],
-                name=event["name"],
-            )
-
-            event_list.append(new_event)
-
-        return event_list
+        return [Event(event) for event in events]
 
     def get_feature_set(self):
         """Fetch the locations associated with the alarm system."""
         feature_set = self.__api.get_feature_set()
-        features = FeatureSet(
-            events_enabled=feature_set["events"]["is_enabled"],
-            datetime_enabled=feature_set["datetime"]["is_enabled"],
-            partitions_enabled=feature_set["partitions"]["is_enabled"],
-            partitions_has_labels=feature_set["partitions"]["is_labels_enabled"],
-            partitions_max_count=feature_set["partitions"]["max_partitions"],
-            devices_enabled=feature_set["devices"]["is_enabled"],
-            sirens_can_enable=feature_set["sirens"]["can_enable"],
-            sirens_can_disable=feature_set["sirens"]["can_disable"],
-            home_automation_devices_enabled=feature_set["home_automation_devices"][
-                "is_enabled"
-            ],
-            state_enabled=feature_set["state"]["is_enabled"],
-            state_can_set=feature_set["state"]["can_set"],
-            state_can_get=feature_set["state"]["can_get"],
-            faults_enabled=feature_set["faults"]["is_enabled"],
-            diagnostic_enabled=feature_set["diagnostic"]["is_enabled"],
-            wifi_enabled=feature_set["wifi"]["is_enabled"],
-        )
-        return features
+        return FeatureSet(feature_set)
 
     def get_locations(self):
         """Fetch the locations associated with the alarm system."""
-        location_list = []
-        for location in self.__api.get_locations():
-            location_list.append(
-                Location(
-                    location["hel_id"],
-                    location["name"].capitalize(),
-                    location["is_editable"],
-                )
-            )
-        return location_list
+        locations = self.__api.get_locations()
+        return [Location(location) for location in locations]
 
     def get_panel_info(self):
         """Fetch basic information about the alarm system."""
         gpi = self.__api.get_panel_info()
-
-        return PanelInfo(
-            gpi["current_user"], gpi["manufacturer"], gpi["model"], gpi["serial"]
-        )
+        return PanelInfo(gpi)
 
     def get_panels(self):
         """Fetch a list of panels associated with the user."""
-        panel_list = []
-
-        for panel in self.__api.get_panels():
-            new_panel = Panel(
-                panel_serial=panel["panel_serial"],
-                alias=panel["alias"],
-            )
-            panel_list.append(new_panel)
-
-        return panel_list
+        panels = self.__api.get_panels()
+        return [Panel(panel) for panel in panels]
 
     def get_process_status(self, process_token):
         """Fetch the status information associated with a process token."""
-        process_list = []
-        for process in self.__api.get_process_status(process_token):
-            new_process = Process(
-                token=process["token"],
-                status=process["status"],
-                message=process["message"],
-                error=process["error"],
-            )
-            process_list.append(new_process)
-        return process_list
+        processes = self.__api.get_process_status(process_token)
+        return [Process(process) for process in processes]
 
     def get_rest_versions(self):
         """Fetch the supported API versions."""
@@ -220,83 +128,22 @@ class Setup(object):
         """Fetch the current state of the alarm system."""
 
         status = self.__api.get_status()
-
-        partition_list = []
-
-        # Create the partitions
-        for partition in status["partitions"]:
-            new_part = Partition(
-                id=partition["id"],
-                state=partition["state"],
-                status=partition["status"],
-                ready=partition["ready"],
-                options=partition["options"],
-            )
-            partition_list.append(new_part)
-
-        # Create the status
-        new_status = Status(
-            connected=status["connected"],
-            bba_connected=status["connected_status"]["bba"]["is_connected"]
-            if "bba" in status["connected_status"]
-            else False,
-            bba_state=status["connected_status"]["bba"]["state"]
-            if "bba" in status["connected_status"]
-            else "unknown",
-            gprs_connected=status["connected_status"]["gprs"]["is_connected"]
-            if "gprs" in status["connected_status"]
-            else False,
-            gprs_state=status["connected_status"]["gprs"]["state"]
-            if "gprs" in status["connected_status"]
-            else "unknown",
-            discovery_completed=status["discovery"]["completed"],
-            discovery_stages=status["discovery"]["stages"],
-            discovery_in_queue=status["discovery"]["in_queue"],
-            discovery_triggered=status["discovery"]["triggered"],
-            partitions=partition_list,
-            rssi_level=status["rssi"]["level"],
-            rssi_network=status["rssi"]["network"],
-        )
-
-        return new_status
+        return Status(status)
 
     def get_troubles(self):
         """Fetch all the troubles that are available."""
-        trouble_list = []
-        for trouble in self.__api.get_troubles():
-            new_trouble = Trouble(
-                device_type=trouble["device_type"],
-                location=trouble["location"],
-                partitions=trouble["partitions"],
-                trouble_type=trouble["trouble_type"],
-                zone=trouble["zone"],
-                zone_name=trouble["zone_name"],
-                zone_type=trouble["zone_type"],
-            )
-
-            trouble_list.append(new_trouble)
-        return trouble_list
+        troubles = self.__api.get_troubles()
+        return [Trouble(trouble) for trouble in troubles]
 
     def get_users(self):
         """Fetch a list of users in the alarm system."""
-        users_info = self.__api.get_users()
-
-        user_list = []
-
-        for user in users_info["users"]:
-            user = User(user["id"], user["name"], user["email"], user["partitions"])
-            user_list.append(user)
-
-        return user_list
+        users = self.__api.get_users()
+        return [User(user) for user in users]
 
     def get_wakeup_sms(self):
         """Fetch a list of users in the alarm system."""
         wakeup_sms = self.__api.get_wakeup_sms()
-        sms = WakeupSMS(
-            phone_number=wakeup_sms["phone"],
-            message=wakeup_sms["sms"],
-        )
-        return sms
+        return WakeupSMS(wakeup_sms)
 
     def panel_add(self, alias, panel_serial, master_user_code, access_proof=None):
         """Add a new alarm panel to the user account. A master user code is required."""
