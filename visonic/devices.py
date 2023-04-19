@@ -108,7 +108,7 @@ class MotionDevice(BaseDevice):
     def brightness(self) -> int | None:
         return (
             self._device["traits"]["meteo_info"]["brightness"]["value"]
-            if "meteo_info" in self._device["traits"].get("meteo_info")
+            if "brightness" in self._device["traits"].get("meteo_info")
             else None
         )
 
@@ -116,7 +116,7 @@ class MotionDevice(BaseDevice):
     def temperature(self) -> float | None:
         return (
             self._device["traits"]["meteo_info"]["temperature"]["value"]
-            if "meteo_info" in self._device["traits"].get("meteo_info")
+            if "temperature" in self._device["traits"].get("meteo_info")
             else None
         )
 
