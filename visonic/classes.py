@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import inspect
 
 
@@ -438,7 +438,7 @@ class Trouble(BaseClass):
 class User(BaseClass):
     """Class definition of a user in the alarm system."""
 
-    _user: dict = field(repr=False)
+    _user: dict
 
     # User properties
     @property
