@@ -157,6 +157,10 @@ class CameraDevice(Device):
         value_dict['soak'] = self.__soak
         value_dict['vod'] = self.__vod
         return object_type + ": " + str(value_dict)
+    
+    @property
+    def location(self):
+        return self.__location
 
 
 class ContactDevice(Device):
@@ -182,6 +186,10 @@ class ContactDevice(Device):
         value_dict['location'] = self.__location
         value_dict['soak'] = self.__soak
         return object_type + ": " + str(value_dict)
+    
+    @property
+    def location(self):
+        return self.__location
 
     @property
     def state(self):
@@ -333,4 +341,8 @@ class SmokeDevice(Device):
         value_dict['location'] = self.__location
         value_dict['soak'] = self.__soak
         return object_type + ": " + str(value_dict)
+    
+    @property
+    def location(self):
+        return self.__location
 
