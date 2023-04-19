@@ -97,7 +97,7 @@ class Setup(object):
                 device_list.append(CameraDevice(device))
             elif device["subtype"] == "SMOKE":
                 device_list.append(SmokeDevice(device))
-            elif device["subtype"] == "BASIC_KEYFOB":
+            elif device["subtype"] in ["BASIC_KEYFOB", "KEYFOB_ARM_LED"]:
                 device_list.append(KeyFobDevice(device))
             elif device["device_type"] == "GSM":
                 device_list.append(GSMDevice(device))
