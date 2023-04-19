@@ -92,158 +92,22 @@ class Setup(object):
 
         for device in devices:
             if device['subtype'] in ['CONTACT', 'MC303_VANISH']:
-                contact_device = ContactDevice(
-                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
-                    device_number=device['device_number'],
-                    device_type=device['device_type'],
-                    enrollment_id=device['enrollment_id'],
-                    id=device['id'],
-                    name=device['name'],
-                    partitions=device['partitions'],
-                    preenroll=device['preenroll'],
-                    removable=device['removable'],
-                    renamable=device['renamable'],
-                    subtype=device['subtype'],
-                    warnings=device['warnings'],
-                    zone_type=device['zone_type'],
-                    location=device['traits']['location']['name'].capitalize() if 'location' in device['traits'] else None,
-                    soak=device['traits']['soak']['enabled'] if 'soak' in device['traits'] else False,
-                )
-                device_list.append(contact_device)
+                device_list.append(ContactDevice(device))
             elif device['subtype'] == 'MOTION_CAMERA':
-                contact_device = CameraDevice(
-                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
-                    device_number=device['device_number'],
-                    device_type=device['device_type'],
-                    enrollment_id=device['enrollment_id'],
-                    id=device['id'],
-                    name=device['name'],
-                    partitions=device['partitions'],
-                    preenroll=device['preenroll'],
-                    removable=device['removable'],
-                    renamable=device['renamable'],
-                    subtype=device['subtype'],
-                    warnings=device['warnings'],
-                    zone_type=device['zone_type'],
-                    location=device['traits']['location']['name'].capitalize() if 'location' in device['traits'] else None,
-                    soak=device['traits']['soak']['enabled'] if 'soak' in device['traits'] else False,
-                    vod=device['traits']['vod'] if 'vod' in device['traits'] else None,
-                )
-                device_list.append(contact_device)
+                 device_list.append(CameraDevice(device))
             elif device['subtype'] == 'SMOKE':
-                contact_device = SmokeDevice(
-                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
-                    device_number=device['device_number'],
-                    device_type=device['device_type'],
-                    enrollment_id=device['enrollment_id'],
-                    id=device['id'],
-                    name=device['name'],
-                    partitions=device['partitions'],
-                    preenroll=device['preenroll'],
-                    removable=device['removable'],
-                    renamable=device['renamable'],
-                    subtype=device['subtype'],
-                    warnings=device['warnings'],
-                    zone_type=device['zone_type'],
-                    location=device['traits']['location']['name'].capitalize() if 'location' in device['traits'] else None,
-                    soak=device['traits']['soak']['enabled'] if 'soak' in device['traits'] else False,
-                )
-                device_list.append(contact_device)
+                device_list.append(SmokeDevice(device))
             elif device['subtype'] == 'BASIC_KEYFOB':
-                contact_device = KeyFobDevice(
-                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
-                    device_number=device['device_number'],
-                    device_type=device['device_type'],
-                    enrollment_id=device['enrollment_id'],
-                    id=device['id'],
-                    name=device['name'],
-                    partitions=device['partitions'],
-                    preenroll=device['preenroll'],
-                    removable=device['removable'],
-                    renamable=device['renamable'],
-                    subtype=device['subtype'],
-                    warnings=device['warnings'],
-                    zone_type=device['zone_type'],
-                    owner_id=device['traits']['owner']['id'] if 'owner' in device['traits'] else None,
-                    owner_name=device['traits']['owner']['name'] if 'owner' in device['traits'] else None,
-                )
-                device_list.append(contact_device)
+                device_list.append(KeyFobDevice(device))
             elif device['device_type'] == 'GSM':
-                contact_device = GSMDevice(
-                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
-                    device_number=device['device_number'],
-                    device_type=device['device_type'],
-                    enrollment_id=device['enrollment_id'],
-                    id=device['id'],
-                    name=device['name'],
-                    partitions=device['partitions'],
-                    preenroll=device['preenroll'],
-                    removable=device['removable'],
-                    renamable=device['renamable'],
-                    subtype=device['subtype'],
-                    warnings=device['warnings'],
-                    zone_type=device['zone_type'],
-                    signal_level=device['traits']['signal_level']['level'] if 'signal_level' in device['traits'] else None,
-                )
-                device_list.append(contact_device)
+                device_list.append(GSMDevice(device))
             elif device['device_type'] == 'PGM':
-                contact_device = PGMDevice(
-                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
-                    device_number=device['device_number'],
-                    device_type=device['device_type'],
-                    enrollment_id=device['enrollment_id'],
-                    id=device['id'],
-                    name=device['name'],
-                    partitions=device['partitions'],
-                    preenroll=device['preenroll'],
-                    removable=device['removable'],
-                    renamable=device['renamable'],
-                    subtype=device['subtype'],
-                    warnings=device['warnings'],
-                    zone_type=device['zone_type'],
-                    parent_id=device['traits']['parent']['id'] if 'parent' in device['traits'] else None,
-                    parent_port=device['traits']['parent']['port'] if 'parent' in device['traits'] else None,
-                )
-                device_list.append(contact_device)
+                device_list.append(PGMDevice(device))
             elif device['subtype'] == 'FLAT_PIR_SMART':
-                contact_device = MotionDevice(
-                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
-                    device_number=device['device_number'],
-                    device_type=device['device_type'],
-                    enrollment_id=device['enrollment_id'],
-                    id=device['id'],
-                    name=device['name'],
-                    partitions=device['partitions'],
-                    preenroll=device['preenroll'],
-                    removable=device['removable'],
-                    renamable=device['renamable'],
-                    subtype=device['subtype'],
-                    warnings=device['warnings'],
-                    zone_type=device['zone_type'],
-                    location=device['traits']['location']['name'].capitalize() if 'location' in device['traits'] else None,
-                    temperature=device['traits']['meteo_info']['temperature']['value'] if 'meteo_info' in device['traits'] else None,
-                    brightness=device['traits']['meteo_info']['brightness']['value'] if 'meteo_info' in device['traits'] else None,
-                    soak=device['traits']['soak']['enabled'] if 'soak' in device['traits'] else False,
-                    vod=device['traits']['vod'] if 'vod' in device['traits'] else None,
-                )
-                device_list.append(contact_device)
+                device_list.append(MotionDevice(device))
             else:
-                generic_device = GenericDevice(
-                    bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
-                    device_number=device['device_number'],
-                    device_type=device['device_type'],
-                    enrollment_id=device['enrollment_id'],
-                    id=device['id'],
-                    name=device['name'],
-                    partitions=device['partitions'],
-                    preenroll=device['preenroll'],
-                    removable=device['removable'],
-                    renamable=device['renamable'],
-                    subtype=device['subtype'],
-                    warnings=device['warnings'],
-                    zone_type=device['zone_type'],
-                )
-                device_list.append(generic_device)
+                device_list.append(GenericDevice(device))
+
         return device_list
 
     def get_events(self, timestamp_hour_offset=2):

@@ -1,348 +1,186 @@
-class Device(object):
-    """ Base class definition of a device in the alarm system. """
+from dataclasses import dataclass
 
-    # Property variables
-    __bypass = None
-    __device_number = None
-    __device_type = None
-    __enrollment_id = None
-    __id = None
-    __name = None
-    __partitions = None
-    __preenroll = None
-    __removable = None
-    __renamable = None
-    __subtype = None
-    __warnings = None
-    __zone_type = None
 
-    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type):
-        """ Set the private variable values on instantiation. """
+@dataclass
+class BaseDevice:
+    """Base class definition of a device in the alarm system."""
 
-        self.__bypass = bypass
-        self.__device_number = device_number
-        self.__device_type = device_type
-        self.__enrollment_id = enrollment_id
-        self.__id = id
-        self.__name = name
-        self.__partitions = partitions
-        self.__preenroll = preenroll
-        self.__removable = removable
-        self.__renamable = renamable
-        self.__subtype = subtype
-        self.__warnings = warnings
-        self.__zone_type = zone_type
-
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-        object_type = str(type(self))
-        return object_type + ": " + str(self.as_dict())
-
-    def __repr__(self):
-        """ Define how the object is represented when output to console. """
-
-        class_name          = type(self).__name__
-        bypass              = f"bypass = '{self.bypass}'"
-        device_number       = f"device_number = '{self.device_number}'"
-        device_type         = f"device_type = {self.device_type}"
-        enrollment_id       = f"enrollment_id = '{self.enrollment_id}'"
-        id                  = f"id = '{self.id}'"
-        name                = f"name = '{self.name}'"
-        partitions          = f"partitions = '{self.partitions}'"
-        preenroll           = f"preenroll = {self.preenroll}"
-        removable           = f"removable = {self.removable}"
-        renamable           = f"renamable = {self.renamable}"
-        subtype             = f"subtype = {self.subtype}"
-        warnings            = f"warnings = {self.warnings}"
-        zone_type           = f"zone_type = {self.zone_type}"
-
-        return f"{class_name}({bypass}, {device_number}, {device_type}, {enrollment_id}, {id}, {name}, {partitions}, {preenroll}, {removable}, {renamable}, {subtype}, {warnings}, {zone_type})"
-
-    def as_dict(self):
-        """ Return the object properties in a dictionary. """
-        return {
-            'bypass': self.bypass,
-            'device_number': self.device_number,
-            'device_type': self.device_type,
-            'enrollment_id': self.enrollment_id,
-            'id': self.id,
-            'name': self.name,
-            'partitions': self.partitions,
-            'preenroll': self.preenroll,
-            'removable': self.removable,
-            'renamable': self.renamable,
-            'subtype': self.subtype,
-            'warnings': self.warnings,
-            'zone_type': self.zone_type,
-        }
+    _device: dict
 
     # Device properties
     @property
-    def bypass(self):
-        return self.__bypass
+    def bypass(self) -> bool:
+        return (
+            self._device["traits"]["bypass"]["enabled"]
+            if "bypass" in self._device["traits"]
+            else False
+        )
 
     @property
-    def device_number(self):
-        return self.__device_number
+    def device_number(self) -> int:
+        return self._device["device_number"]
 
     @property
-    def device_type(self):
-        return self.__device_type
+    def device_type(self) -> str:
+        return self._device["device_type"]
 
     @property
-    def enrollment_id(self):
-        return self.__enrollment_id
+    def enrollment_id(self) -> str:
+        return self._device["enrollment_id"]
 
     @property
-    def id(self):
-        return self.__id
-    
-    @property
-    def name(self):
-        return self.__name
+    def id(self) -> int:
+        return self._device["id"]
 
     @property
-    def partitions(self):
-        return self.__partitions
+    def location(self) -> str | None:
+        return (
+            self._device["traits"]["location"]["name"].capitalize()
+            if "location" in self._device["traits"]
+            else None
+        )
 
     @property
-    def preenroll(self):
-        return self.__preenroll
+    def name(self) -> str:
+        return self._device["name"]
 
     @property
-    def removable(self):
-        return self.__removable
+    def partitions(self) -> list:
+        return self._device["partitions"]
 
     @property
-    def renamable(self):
-        return self.__renamable
+    def preenroll(self) -> bool:
+        return self._device["preenroll"]
 
     @property
-    def subtype(self):
-        return self.__subtype
+    def removable(self) -> bool:
+        return self._device["removable"]
 
     @property
-    def warnings(self):
-        return self.__warnings
+    def renamable(self) -> bool:
+        return self._device["renamable"]
 
     @property
-    def zone_type(self):
-        return self.__zone_type
-
-
-class CameraDevice(Device):
-    """ Camera device class definition. """
-    __location = None
-    __soak = None
-    __vod = None
-
-    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type, location, soak, vod):
-        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type)
-        self.__location = location
-        self.__soak = soak
-        self.__vod = vod
-
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-
-        object_type = str(type(self))
-        value_dict = self.as_dict()
-        value_dict['location'] = self.__location
-        value_dict['soak'] = self.__soak
-        value_dict['vod'] = self.__vod
-        return object_type + ": " + str(value_dict)
-    
-    @property
-    def location(self):
-        return self.__location
-
-
-class ContactDevice(Device):
-    """ Contact device class definition. """
-
-    __location = None
-    __soak = None
-
-    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type, location, soak):
-        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type)
-        self.__location = location
-        self.__soak = soak
-
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-
-        object_type = str(type(self))
-        value_dict = self.as_dict()
-        value_dict['location'] = self.__location
-        value_dict['soak'] = self.__soak
-        return object_type + ": " + str(value_dict)
-    
-    @property
-    def location(self):
-        return self.__location
+    def soak(self) -> bool:
+        return (
+            self._device["traits"]["soak"]["enabled"]
+            if "soak" in self._device["traits"]
+            else False
+        )
 
     @property
-    def state(self):
-        """ Returns the current state of the contact. """
+    def subtype(self) -> str:
+        return self._device["subtype"]
+
+    @property
+    def warnings(self) -> list | None:
+        return self._device["warnings"]
+
+    @property
+    def zone_type(self) -> str:
+        return self._device["zone_type"]
+
+
+@dataclass
+class CameraDevice(BaseDevice):
+    """Camera device class definition."""
+
+
+@dataclass
+class ContactDevice(BaseDevice):
+    """Contact device class definition."""
+
+    @property
+    def state(self) -> str | None:
+        """Returns the current state of the contact."""
         if self.warnings is None:
-            return 'CLOSED'
+            return "CLOSED"
         for warning in self.warnings:
-            if warning['type'] == 'OPENED':
-                return 'OPENED'
+            if warning["type"] == "OPENED":
+                return "OPENED"
 
-class MotionDevice(Device):
-    """ Motion sensor device class definition. """
-    __location = None
-    __temperature = None
-    __brightness = None
-    __soak = None
-    __vod = None
 
-    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type, location, temperature, brightness, soak, vod):
-        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type)
-        self.__location = location
-        self.__temperature = temperature
-        self.__brightness = brightness
-        self.__soak = soak
-        self.__vod = vod
+@dataclass
+class MotionDevice(BaseDevice):
+    """Motion sensor device class definition."""
 
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-
-        object_type = str(type(self))
-        value_dict = self.as_dict()
-        value_dict['location'] = self.__location
-        value_dict['temperature'] = self.__temperature
-        value_dict['brightness'] = self.__brightness
-        value_dict['soak'] = self.__soak
-        value_dict['vod'] = self.__vod
-        return object_type + ": " + str(value_dict)
-    
     @property
-    def location(self):
-        return self.__location
-    
+    def brightness(self) -> int | None:
+        return (
+            self._device["traits"]["meteo_info"]["brightness"]["value"]
+            if "meteo_info" in self._device["traits"].get("meteo_info")
+            else None
+        )
+
     @property
-    def temperature(self):
-        return self.__temperature
-    
+    def temperature(self) -> float | None:
+        return (
+            self._device["traits"]["meteo_info"]["temperature"]["value"]
+            if "meteo_info" in self._device["traits"].get("meteo_info")
+            else None
+        )
+
+
+@dataclass
+class GenericDevice(BaseDevice):
+    """Smoke device class definition."""
+
+
+@dataclass
+class GSMDevice(BaseDevice):
+    """GSM device class definition."""
+
     @property
-    def brightness(self):
-        return self.__brightness
+    def signal_level(self) -> str | None:
+        return (
+            self._device["traits"]["signal_level"]["level"]
+            if "signal_level" in self._device["traits"].get("signal_level")
+            else None
+        )
 
 
-class GenericDevice(Device):
-    """ Smoke device class definition. """
-    pass
+@dataclass
+class KeyFobDevice(BaseDevice):
+    """KeyFob device class definition."""
 
-
-class GSMDevice(Device):
-    """ GSM device class definition. """
-    __signal_level = None
-
-    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type, signal_level):
-        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type)
-        self.__signal_level = signal_level
-
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-
-        object_type = str(type(self))
-        value_dict = self.as_dict()
-        value_dict['signal_level'] = self.__signal_level
-        return object_type + ": " + str(value_dict)
-
-
-class KeyFobDevice(Device):
-    """ KeyFob device class definition. """
-    __owner_id = None
-    __owner_name = None
-
-    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type, owner_id, owner_name):
-        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type)
-        self.__owner_id = owner_id
-        self.__owner_name = owner_name
-
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-
-        object_type = str(type(self))
-        value_dict = self.as_dict()
-        value_dict['owner_id'] = self.__owner_id
-        value_dict['owner_name'] = self.__owner_name
-        return object_type + ": " + str(value_dict)
-
-
-class PGMDevice(Device):
-    """ PGM device class definition. """
-    __parent_id = None
-    __parent_port = None
-
-    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type, parent_id, parent_port):
-        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type)
-        self.__parent_id = parent_id
-        self.__parent_port = parent_port
-
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-
-        object_type = str(type(self))
-        value_dict = self.as_dict()
-        value_dict['parent_id'] = self.__parent_id
-        value_dict['parent_port'] = self.__parent_port
-        return object_type + ": " + str(value_dict)
-
-
-class SmokeDevice(Device):
-    """ Smoke device class definition. """
-    __location = None
-    __soak = None
-
-    def __init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type, location, soak):
-        Device.__init__(self, bypass, device_number, device_type, enrollment_id, id,
-                 name, partitions, preenroll, removable, renamable, 
-                 subtype, warnings, zone_type)
-        self.__location = location
-        self.__soak = soak
-
-    def __str__(self):
-        """ Define how the print() method should print the object. """
-
-        object_type = str(type(self))
-        value_dict = self.as_dict()
-        value_dict['location'] = self.__location
-        value_dict['soak'] = self.__soak
-        return object_type + ": " + str(value_dict)
-    
     @property
-    def location(self):
-        return self.__location
+    def owner_id(self) -> int | None:
+        return (
+            self._device["traits"]["owner"]["id"]
+            if "owner" in self._device["traits"].get("owner")
+            else None
+        )
 
+    @property
+    def owner_name(self) -> str | None:
+        return (
+            self._device["traits"]["owner"]["name"]
+            if "owner" in self._device["traits"].get("owner")
+            else None
+        )
+
+
+@dataclass
+class PGMDevice(BaseDevice):
+    """PGM device class definition."""
+
+    @property
+    def parent_id(self) -> int | None:
+        return (
+            self._device["traits"]["parent"]["id"]
+            if "parent" in self._device["traits"].get("parent")
+            else None
+        )
+
+    @property
+    def parent_port(self) -> int | None:
+        return (
+            self._device["traits"]["parent"]["port"]
+            if "parent" in self._device["traits"].get("parent")
+            else None
+        )
+
+
+@dataclass
+class SmokeDevice(BaseDevice):
+    """Smoke device class definition."""
