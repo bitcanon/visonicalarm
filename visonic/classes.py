@@ -1,8 +1,36 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+import inspect
+
+
+class BaseClass:
+    def __repr__(self):
+        r = ""
+        attrs = inspect.getmembers(self, lambda a: not (inspect.isroutine(a)))
+        for i, a in enumerate([attr for attr in attrs if self._is_property(attr)]):
+            if i:
+                r = r + ", "
+            r = r + f"{a[0]} = {getattr(self, a[0])}"
+        return f"{type(self).__name__}({r})"
+
+    def __str__(self):
+        r = {}
+        attrs = inspect.getmembers(self, lambda a: not (inspect.isroutine(a)))
+        for a in [attr for attr in attrs if self._is_property(attr)]:
+            r[a[0]] = getattr(self, a[0])
+        return f"{str(type(self))}: {r}"
+
+    def _is_property(self, attr) -> bool:
+        if not (
+            attr[0].startswith("__")
+            and attr[0].endswith("__")
+            or attr[0].startswith("_")
+        ):
+            return True
+        return False
 
 
 @dataclass
-class Camera(object):
+class Camera(BaseClass):
     """Class definition of an event in the alarm system."""
 
     _camera: dict
@@ -42,7 +70,7 @@ class Camera(object):
 
 
 @dataclass
-class Event(object):
+class Event(BaseClass):
     """Class definition of an event in the alarm system."""
 
     _event: dict
@@ -105,7 +133,7 @@ class Event(object):
 
 
 @dataclass
-class FeatureSet(object):
+class FeatureSet(BaseClass):
     """Class definition of an event in the alarm system."""
 
     _feature_set: dict
@@ -173,7 +201,7 @@ class FeatureSet(object):
 
 
 @dataclass
-class Location(object):
+class Location(BaseClass):
     """Class definition of a location in the alarm system."""
 
     _location: dict
@@ -196,7 +224,7 @@ class Location(object):
 
 
 @dataclass
-class PanelInfo(object):
+class PanelInfo(BaseClass):
     """Class definition of the general alarm system information."""
 
     _gpi: dict
@@ -224,7 +252,7 @@ class PanelInfo(object):
 
 
 @dataclass
-class Panel(object):
+class Panel(BaseClass):
     """Class definition of the general alarm system information."""
 
     _panel: dict
@@ -240,7 +268,7 @@ class Panel(object):
 
 
 @dataclass
-class Partition(object):
+class Partition(BaseClass):
     """Class definition of a partition in the alarm system."""
 
     _partition: dict
@@ -268,7 +296,7 @@ class Partition(object):
 
 
 @dataclass
-class Process(object):
+class Process(BaseClass):
     """Class definition of a process in the alarm system."""
 
     _process: dict
@@ -292,7 +320,7 @@ class Process(object):
 
 
 @dataclass
-class Status(object):
+class Status(BaseClass):
     """Class definition representing the status of the alarm system."""
 
     _status: dict
@@ -364,7 +392,7 @@ class Status(object):
 
 
 @dataclass
-class Trouble(object):
+class Trouble(BaseClass):
     """Class definition of a trouble in the alarm system."""
 
     _trouble: dict
@@ -407,10 +435,10 @@ class Trouble(object):
 
 
 @dataclass
-class User(object):
+class User(BaseClass):
     """Class definition of a user in the alarm system."""
 
-    _user: dict
+    _user: dict = field(repr=False)
 
     # User properties
     @property
@@ -435,7 +463,7 @@ class User(object):
 
 
 @dataclass
-class WakeupSMS(object):
+class WakeupSMS(BaseClass):
     """Class definition of a wakeup SMS in the alarm system."""
 
     _wakeup_sms: dict
