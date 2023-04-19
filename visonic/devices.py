@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+import inspect
+import json
 
 
 @dataclass
@@ -6,6 +8,31 @@ class BaseDevice:
     """Base class definition of a device in the alarm system."""
 
     _device: dict
+
+    def __repr__(self):
+        r = ""
+        attrs = inspect.getmembers(self, lambda a: not (inspect.isroutine(a)))
+        for i, a in enumerate([attr for attr in attrs if self._is_property(attr)]):
+            if i:
+                r = r + ", "
+            r = r + f"{a[0]} = {getattr(self, a[0])}"
+        return f"{type(self).__name__}({r})"
+
+    def __str__(self):
+        r = {}
+        attrs = inspect.getmembers(self, lambda a: not (inspect.isroutine(a)))
+        for a in [attr for attr in attrs if self._is_property(attr)]:
+            r[a[0]] = getattr(self, a[0])
+        return f"{str(type(self))}: {r}"
+
+    def _is_property(self, attr) -> bool:
+        if not (
+            attr[0].startswith("__")
+            and attr[0].endswith("__")
+            or attr[0].startswith("_")
+        ):
+            return True
+        return False
 
     # Device properties
     @property
