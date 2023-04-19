@@ -1,9 +1,7 @@
 import json
 import requests
 
-from datetime import datetime
-
-from visonic.exceptions import *
+from .exceptions import *
 
 
 class API(object):
