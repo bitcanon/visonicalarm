@@ -91,7 +91,7 @@ class Setup(object):
         devices = self.__api.get_devices()
 
         for device in devices:
-            if device['subtype'] == 'CONTACT':
+            if device['subtype'] in ['CONTACT', 'MC303_VANISH']:
                 contact_device = ContactDevice(
                     bypass=device['traits']['bypass']['enabled'] if 'bypass' in device['traits'] else False,
                     device_number=device['device_number'],
