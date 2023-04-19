@@ -138,7 +138,7 @@ class Setup(object):
     def get_users(self):
         """Fetch a list of users in the alarm system."""
         users = self.__api.get_users()
-        return [User(user) for user in users]
+        return [User(user) for user in users["users"]]
 
     def get_wakeup_sms(self):
         """Fetch a list of users in the alarm system."""
