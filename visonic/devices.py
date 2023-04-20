@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from visonic.const import TEXT_CLOSED, TEXT_OPEN, TEXT_UNKNOWN
+from .const import TEXT_CLOSED, TEXT_OPEN, TEXT_UNKNOWN
 from .classes import BaseClass
 
 

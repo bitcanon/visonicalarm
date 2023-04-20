@@ -1,4 +1,3 @@
-from .const import DEVICE_SUBTYPES, DEVICE_TYPES
 from .classes import (
     Camera,
     Event,
@@ -13,16 +12,8 @@ from .classes import (
     WakeupSMS,
 )
 from .core import API
-from .devices import (
-    ContactDevice,
-    CameraDevice,
-    KeyFobDevice,
-    MotionDevice,
-    SmokeDevice,
-    GenericDevice,
-    GSMDevice,
-    PGMDevice,
-)
+from .device_mapping import DEVICE_SUBTYPES, DEVICE_TYPES
+from .devices import GenericDevice
 from .exceptions import UnsupportedRestAPIVersionError
 
 
