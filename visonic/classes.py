@@ -1,8 +1,14 @@
 from dataclasses import dataclass
+import functools
 import inspect
 
 
+@dataclass
 class BaseClass:
+    """Base class"""
+
+    _data: dict
+
     def __repr__(self):
         r = ""
         attrs = inspect.getmembers(self, lambda a: not (inspect.isroutine(a)))
@@ -28,451 +34,436 @@ class BaseClass:
             return True
         return False
 
+    def _get_nested_key(self, path, *default):
+        """Get key value in json by dotted notation or return default"""
+        try:
+            return functools.reduce(lambda x, y: x[y], path.split("."), self._data)
+        except KeyError:
+            if default:
+                return default[0]
+            return None
+
 
 @dataclass
 class Camera(BaseClass):
     """Class definition of an event in the alarm system."""
 
-    _camera: dict
-
     # Camera properties
     @property
     def location(self):
-        return self._camera["location"].capitalize()
+        return self._data["location"].capitalize()
 
     @property
     def partitions(self):
-        return self._camera["partitions"]
+        return self._data["partitions"]
 
     @property
     def preenroll(self):
-        return self._camera["preenroll"]
+        return self._data["preenroll"]
 
     @property
     def preview_path(self):
-        return self._camera["preview_path"]
+        return self._data["preview_path"]
 
     @property
     def status(self):
-        return self._camera["status"]
+        return self._data["status"]
 
     @property
     def timestamp(self):
-        return self._camera["timestamp"]
+        return self._data["timestamp"]
 
     @property
     def zone(self):
-        return self._camera["zone"]
+        return self._data["zone"]
 
     @property
     def zone_name(self):
-        return self._camera["zone_name"].capitalize()
+        return self._data["zone_name"].capitalize()
 
 
 @dataclass
 class Event(BaseClass):
     """Class definition of an event in the alarm system."""
 
-    _event: dict
-
     # Event properties
     @property
     def id(self):
         """User ID."""
-        return self._event["event"]
+        return self._data["event"]
 
     @property
     def type_id(self):
         """Event type ID."""
-        return self._event["type_id"]
+        return self._data["type_id"]
 
     @property
     def label(self):
         """Event label."""
-        return self._event["label"]
+        return self._data["label"]
 
     @property
     def description(self):
         """Event description."""
-        return self._event["description"]
+        return self._data["description"]
 
     @property
     def appointment(self):
         """Event appointment."""
-        return self._event["appointment"]
+        return self._data["appointment"]
 
     @property
     def datetime(self):
         """Event datetime."""
-        return self._event["datetime"]
+        return self._data["datetime"]
 
     @property
     def video(self):
         """Event has video."""
-        return self._event["video"]
+        return self._data["video"]
 
     @property
     def device_type(self):
         """Event device type."""
-        return self._event["device_type"]
+        return self._data["device_type"]
 
     @property
     def zone(self):
         """Event zone."""
-        return self._event["zone"]
+        return self._data["zone"]
 
     @property
     def partitions(self):
         """Event partitions."""
-        return self._event["partitions"]
+        return self._data["partitions"]
 
     @property
     def name(self):
         """Event name."""
-        return self._event["name"]
+        return self._data["name"]
 
 
 @dataclass
 class FeatureSet(BaseClass):
     """Class definition of an event in the alarm system."""
 
-    _feature_set: dict
-
     # Event properties
     @property
     def events_enabled(self):
-        return self._feature_set["events"]["is_enabled"]
+        return self._data["events"]["is_enabled"]
 
     @property
     def datetime_enabled(self):
-        return self._feature_set["datetime"]["is_enabled"]
+        return self._data["datetime"]["is_enabled"]
 
     @property
     def partitions_enabled(self):
-        return self._feature_set["partitions"]["is_enabled"]
+        return self._data["partitions"]["is_enabled"]
 
     @property
     def partitions_has_labels(self):
-        return self._feature_set["partitions"]["is_labels_enabled"]
+        return self._data["partitions"]["is_labels_enabled"]
 
     @property
     def partitions_max_count(self):
-        return self._feature_set["partitions"]["max_partitions"]
+        return self._data["partitions"]["max_partitions"]
 
     @property
     def devices_enabled(self):
-        return self._feature_set["devices"]["is_enabled"]
+        return self._data["devices"]["is_enabled"]
 
     @property
     def sirens_can_enable(self):
-        return self._feature_set["sirens"]["can_enable"]
+        return self._data["sirens"]["can_enable"]
 
     @property
     def sirens_can_disable(self):
-        return self._feature_set["sirens"]["can_disable"]
+        return self._data["sirens"]["can_disable"]
 
     @property
     def home_automation_devices_enabled(self):
-        return (self._feature_set["home_automation_devices"]["is_enabled"],)
+        return (self._data["home_automation_devices"]["is_enabled"],)
 
     @property
     def state_enabled(self):
-        return self._feature_set["state"]["is_enabled"]
+        return self._data["state"]["is_enabled"]
 
     @property
     def state_can_set(self):
-        return self._feature_set["state"]["can_set"]
+        return self._data["state"]["can_set"]
 
     @property
     def state_can_get(self):
-        return self._feature_set["state"]["can_get"]
+        return self._data["state"]["can_get"]
 
     @property
     def faults_enabled(self):
-        return self._feature_set["faults"]["is_enabled"]
+        return self._data["faults"]["is_enabled"]
 
     @property
     def diagnostic_enabled(self):
-        return self._feature_set["diagnostic"]["is_enabled"]
+        return self._data["diagnostic"]["is_enabled"]
 
     @property
     def wifi_enabled(self):
-        return self._feature_set["wifi"]["is_enabled"]
+        return self._data["wifi"]["is_enabled"]
 
 
 @dataclass
 class Location(BaseClass):
     """Class definition of a location in the alarm system."""
 
-    _location: dict
-
     # Location properties
     @property
     def id(self):
         """Location ID."""
-        return self._location["hel_id"]
+        return self._data["hel_id"]
 
     @property
     def name(self):
         """Location name."""
-        return self._location["name"].capitalize()
+        return self._data["name"].capitalize()
 
     @property
     def is_editable(self):
         """Location is editable."""
-        return self._location["is_editable"]
+        return self._data["is_editable"]
 
 
 @dataclass
 class PanelInfo(BaseClass):
     """Class definition of the general alarm system information."""
 
-    _gpi: dict
-
     # PanelInfo properties
     @property
     def current_user(self):
         """Current User"""
-        return self._gpi["current_user"]
+        return self._data["current_user"]
 
     @property
     def manufacturer(self):
         """Manufacturer"""
-        return self._gpi["manufacturer"]
+        return self._data["manufacturer"]
 
     @property
     def model(self):
         """Model name"""
-        return self._gpi["model"]
+        return self._data["model"]
 
     @property
     def serial(self):
         """Serial no"""
-        return self._gpi["serial"]
+        return self._data["serial"]
 
 
 @dataclass
 class Panel(BaseClass):
     """Class definition of the general alarm system information."""
 
-    _panel: dict
-
     # Panel properties
     @property
     def panel_serial(self):
-        return self._panel["panel_serial"]
+        return self._data["panel_serial"]
 
     @property
     def alias(self):
-        return self._panel["alias"]
+        return self._data["alias"]
 
 
 @dataclass
 class Partition(BaseClass):
     """Class definition of a partition in the alarm system."""
 
-    _partition: dict
-
     # Partition properties
     @property
     def id(self):
-        return self._partition["id"]
+        return self._data["id"]
 
     @property
     def state(self):
-        return self._partition["state"]
+        return self._data["state"]
 
     @property
     def status(self):
-        return self._partition["status"]
+        return self._data["status"]
 
     @property
     def ready(self):
-        return self._partition["ready"]
+        return self._data["ready"]
 
     @property
     def options(self):
-        return self._partition["options"]
+        return self._data["options"]
 
 
 @dataclass
 class Process(BaseClass):
     """Class definition of a process in the alarm system."""
 
-    _process: dict
-
     # Partition properties
     @property
     def token(self):
-        return self._process["token"]
+        return self._data["token"]
 
     @property
     def status(self):
-        return self._process["status"]
+        return self._data["status"]
 
     @property
     def message(self):
-        return self._process["message"]
+        return self._data["message"]
 
     @property
     def error(self):
-        return self._process["error"]
+        return self._data["error"]
 
 
 @dataclass
 class Status(BaseClass):
     """Class definition representing the status of the alarm system."""
 
-    _status: dict
-
     # Status properties
     @property
     def connected(self):
-        return self._status["connected"]
+        return self._data["connected"]
 
     @property
     def bba_connected(self):
         return (
-            self._status["connected_status"]["bba"]["is_connected"]
-            if "bba" in self._status["connected_status"]
+            self._data["connected_status"]["bba"]["is_connected"]
+            if "bba" in self._data["connected_status"]
             else False
         )
 
     @property
     def bba_state(self):
         return (
-            self._status["connected_status"]["bba"]["state"]
-            if "bba" in self._status["connected_status"]
+            self._data["connected_status"]["bba"]["state"]
+            if "bba" in self._data["connected_status"]
             else "unknown"
         )
 
     @property
     def gprs_connected(self):
         return (
-            self._status["connected_status"]["gprs"]["is_connected"]
-            if "gprs" in self._status["connected_status"]
+            self._data["connected_status"]["gprs"]["is_connected"]
+            if "gprs" in self._data["connected_status"]
             else False
         )
 
     @property
     def gprs_state(self):
         return (
-            self._status["connected_status"]["gprs"]["state"]
-            if "gprs" in self._status["connected_status"]
+            self._data["connected_status"]["gprs"]["state"]
+            if "gprs" in self._data["connected_status"]
             else "unknown"
         )
 
     @property
     def discovery_completed(self):
-        return self._status["discovery"]["completed"]
+        return self._data["discovery"]["completed"]
 
     @property
     def discovery_stages(self):
-        return self._status["discovery"]["stages"]
+        return self._data["discovery"]["stages"]
 
     @property
     def discovery_in_queue(self):
-        return self._status["discovery"]["in_queue"]
+        return self._data["discovery"]["in_queue"]
 
     @property
     def discovery_triggered(self):
-        return self._status["discovery"]["triggered"]
+        return self._data["discovery"]["triggered"]
 
     @property
     def partitions(self):
-        return [Partition(partition) for partition in self._status["partitions"]]
+        return [Partition(partition) for partition in self._data["partitions"]]
 
     @property
     def rssi_level(self):
-        return self._status["rssi"]["level"]
+        return self._data["rssi"]["level"]
 
     @property
     def rssi_network(self):
-        return self._status["rssi"]["network"]
+        return self._data["rssi"]["network"]
 
 
 @dataclass
 class Trouble(BaseClass):
     """Class definition of a trouble in the alarm system."""
 
-    _trouble: dict
-
     # Trouble properties
     @property
     def device_type(self):
         """Device type."""
-        return self._trouble["device_type"]
+        return self._data["device_type"]
 
     @property
     def location(self):
         """Location."""
-        return self._trouble["location"]
+        return self._data["location"]
 
     @property
     def partitions(self):
         """Partitions."""
-        return self._trouble["partitions"]
+        return self._data["partitions"]
 
     @property
     def trouble_type(self):
         """Trouble type."""
-        return self._trouble["trouble_type"]
+        return self._data["trouble_type"]
 
     @property
     def zone(self):
         """Zone ID."""
-        return self._trouble["zone"]
+        return self._data["zone"]
 
     @property
     def zone_name(self):
         """Zone type."""
-        return self._trouble["zone_name"]
+        return self._data["zone_name"]
 
     @property
     def zone_type(self):
         """Zone type."""
-        return self._trouble["zone_type"]
+        return self._data["zone_type"]
 
 
 @dataclass
 class User(BaseClass):
     """Class definition of a user in the alarm system."""
 
-    _user: dict
-
     # User properties
     @property
     def id(self):
         """User ID."""
-        return self._user["id"]
+        return self._data["id"]
 
     @property
     def name(self):
         """User name."""
-        return self._user["name"]
+        return self._data["name"]
 
     @property
     def email(self):
         """User email."""
-        return self._user["email"]
+        return self._data["email"]
 
     @property
     def partitions(self):
         """Device is active."""
-        return self._user["partitions"]
+        return self._data["partitions"]
 
 
 @dataclass
 class WakeupSMS(BaseClass):
     """Class definition of a wakeup SMS in the alarm system."""
 
-    _wakeup_sms: dict
-
     # Wakeup SMS properties
     @property
     def phone_number(self):
-        return self._wakeup_sms["phone"]
+        return self._data["phone"]
 
     @property
     def message(self):
-        return self._wakeup_sms["sms"]
+        return self._data["sms"]
