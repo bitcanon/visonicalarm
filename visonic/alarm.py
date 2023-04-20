@@ -1,3 +1,4 @@
+from .const import DEVICE_SUBTYPES, DEVICE_TYPES
 from .classes import (
     Camera,
     Event,
@@ -86,20 +87,10 @@ class Setup(object):
         devices = self.__api.get_devices()
 
         for device in devices:
-            if device["subtype"] in ["CONTACT", "MC303_VANISH"]:
-                device_list.append(ContactDevice(device))
-            elif device["subtype"] == "MOTION_CAMERA":
-                device_list.append(CameraDevice(device))
-            elif device["subtype"] == "SMOKE":
-                device_list.append(SmokeDevice(device))
-            elif device["subtype"] in ["BASIC_KEYFOB", "KEYFOB_ARM_LED"]:
-                device_list.append(KeyFobDevice(device))
-            elif device["device_type"] == "GSM":
-                device_list.append(GSMDevice(device))
-            elif device["device_type"] == "PGM":
-                device_list.append(PGMDevice(device))
-            elif device["subtype"] == "FLAT_PIR_SMART":
-                device_list.append(MotionDevice(device))
+            if DeviceClass := DEVICE_SUBTYPES.get(device["subtype"]):
+                device_list.append(DeviceClass(device))
+            elif DeviceClass := DEVICE_TYPES.get(device["device_type"]):
+                device_list.append(DeviceClass(device))
             else:
                 device_list.append(GenericDevice(device))
 
