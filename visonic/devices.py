@@ -1,85 +1,75 @@
 from dataclasses import dataclass
 from .classes import BaseClass
 
+TEXT_UNKNOWN = "Unknown"
+TEXT_OPEN = "Open"
+TEXT_CLOSED = "Closed"
+
 
 @dataclass
 class Device(BaseClass):
     """Base class definition of a device in the alarm system."""
 
-    _device: dict
-
     # Device properties
     @property
     def bypass(self) -> bool:
-        return (
-            self._device["traits"]["bypass"]["enabled"]
-            if "bypass" in self._device["traits"]
-            else False
-        )
+        return self._get_nested_key("traits.bypass.enabled", False)
 
     @property
     def device_number(self) -> int:
-        return self._device["device_number"]
+        return self._data.get("device_number", 0)
 
     @property
     def device_type(self) -> str:
-        return self._device["device_type"]
+        return self._data.get("device_type", TEXT_UNKNOWN)
 
     @property
     def enrollment_id(self) -> str:
-        return self._device["enrollment_id"]
+        return self._data.get("enrollment_id", TEXT_UNKNOWN)
 
     @property
     def id(self) -> int:
-        return self._device["id"]
+        return self._data.get("id", 0)
 
     @property
-    def location(self) -> str | None:
-        return (
-            self._device["traits"]["location"]["name"].capitalize()
-            if "location" in self._device["traits"]
-            else None
-        )
+    def location(self) -> str:
+        return self._get_nested_key("traits.location.name", TEXT_UNKNOWN).capitalize()
 
     @property
     def name(self) -> str:
-        return self._device["name"]
+        return self._data.get("name", TEXT_UNKNOWN)
 
     @property
     def partitions(self) -> list:
-        return self._device["partitions"]
+        return self._data.get("partitions", [])
 
     @property
     def preenroll(self) -> bool:
-        return self._device["preenroll"]
+        return self._data.get("preenroll", False)
 
     @property
     def removable(self) -> bool:
-        return self._device["removable"]
+        return self._data.get("removable", False)
 
     @property
     def renamable(self) -> bool:
-        return self._device["renamable"]
+        return self._data.get("renamable", False)
 
     @property
     def soak(self) -> bool:
-        return (
-            self._device["traits"]["soak"]["enabled"]
-            if "soak" in self._device["traits"]
-            else False
-        )
+        return self._get_nested_key("traits.soak.enabled", False)
 
     @property
     def subtype(self) -> str:
-        return self._device["subtype"]
+        return self._data.get("subtype", TEXT_UNKNOWN)
 
     @property
-    def warnings(self) -> list | None:
-        return self._device["warnings"]
+    def warnings(self) -> list:
+        return self._data.get("warnings", [])
 
     @property
     def zone_type(self) -> str:
-        return self._device["zone_type"]
+        return self._data.get("zone_type", TEXT_UNKNOWN)
 
 
 @dataclass
@@ -92,13 +82,13 @@ class ContactDevice(Device):
     """Contact device class definition."""
 
     @property
-    def state(self) -> str | None:
+    def state(self) -> str:
         """Returns the current state of the contact."""
-        if self.warnings is None:
-            return "CLOSED"
+        if not self.warnings:
+            return TEXT_CLOSED
         for warning in self.warnings:
-            if warning["type"] == "OPENED":
-                return "OPENED"
+            if warning["type"] == TEXT_OPEN:
+                return TEXT_OPEN
 
 
 @dataclass
@@ -106,20 +96,12 @@ class MotionDevice(Device):
     """Motion sensor device class definition."""
 
     @property
-    def brightness(self) -> int | None:
-        return (
-            self._device["traits"]["meteo_info"]["brightness"]["value"]
-            if "brightness" in self._device["traits"].get("meteo_info")
-            else None
-        )
+    def brightness(self) -> int:
+        return self._get_nested_key("traits.meteo_info.brightness.value")
 
     @property
-    def temperature(self) -> float | None:
-        return (
-            self._device["traits"]["meteo_info"]["temperature"]["value"]
-            if "temperature" in self._device["traits"].get("meteo_info")
-            else None
-        )
+    def temperature(self) -> float:
+        return self._get_nested_key("traits.meteo_info.temperature.value")
 
 
 @dataclass
@@ -133,11 +115,7 @@ class GSMDevice(Device):
 
     @property
     def signal_level(self) -> str | None:
-        return (
-            self._device["traits"]["signal_level"]["level"]
-            if "signal_level" in self._device["traits"].get("signal_level")
-            else None
-        )
+        return self._get_nested_key("traits.signal_level.level")
 
 
 @dataclass
@@ -145,20 +123,12 @@ class KeyFobDevice(Device):
     """KeyFob device class definition."""
 
     @property
-    def owner_id(self) -> int | None:
-        return (
-            self._device["traits"]["owner"]["id"]
-            if "owner" in self._device["traits"].get("owner")
-            else None
-        )
+    def owner_id(self) -> int:
+        return self._get_nested_key("traits.owner.id", 0)
 
     @property
-    def owner_name(self) -> str | None:
-        return (
-            self._device["traits"]["owner"]["name"]
-            if "owner" in self._device["traits"].get("owner")
-            else None
-        )
+    def owner_name(self) -> str:
+        return self._get_nested_key("traits.owner.name", TEXT_UNKNOWN)
 
 
 @dataclass
@@ -166,20 +136,12 @@ class PGMDevice(Device):
     """PGM device class definition."""
 
     @property
-    def parent_id(self) -> int | None:
-        return (
-            self._device["traits"]["parent"]["id"]
-            if "parent" in self._device["traits"].get("parent")
-            else None
-        )
+    def parent_id(self) -> int:
+        return self._get_nested_key("traits.parent.id", 0)
 
     @property
-    def parent_port(self) -> int | None:
-        return (
-            self._device["traits"]["parent"]["port"]
-            if "parent" in self._device["traits"].get("parent")
-            else None
-        )
+    def parent_port(self) -> int:
+        return self._get_nested_key("traits.parent.port", 0)
 
 
 @dataclass
