@@ -1,9 +1,7 @@
 from dataclasses import dataclass
-from .classes import BaseClass
 
-TEXT_UNKNOWN = "Unknown"
-TEXT_OPEN = "Open"
-TEXT_CLOSED = "Closed"
+from visonic.const import TEXT_CLOSED, TEXT_OPEN, TEXT_UNKNOWN
+from .classes import BaseClass
 
 
 @dataclass

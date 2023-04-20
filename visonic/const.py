@@ -9,6 +9,11 @@ from visonic.devices import (
     SmokeDevice,
 )
 
+
+TEXT_UNKNOWN = "Unknown"
+TEXT_OPEN = "Open"
+TEXT_CLOSED = "Closed"
+
 DEVICE_TYPES = {
     "GSM": GSMDevice,
     "PGM": PGMDevice,
