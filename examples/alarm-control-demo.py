@@ -5,12 +5,12 @@ from time import sleep
 from visonic import alarm
 from visonic.exceptions import *
 
-hostname = "your.alarmcompany.com"
-user_code = None
-app_id = "00000000-0000-0000-0000-000000000000"
-panel_id = "123ABC"
-user_email = "user@example.com"
-user_password = "An.Extremely.Long.Random.and.Secure.Password!"
+hostname = "visonic.tycomonitor.com"
+user_code = "3180"
+app_id = "a11e5472-def1-11ed-b5ea-0242ac120002"
+panel_id = "2A4CC3"
+user_email = "msparker@sky.com"
+user_password = "Bethanyp99!"
 
 alarm = alarm.Setup(hostname, app_id)
 
@@ -112,6 +112,7 @@ def print_class_list(class_list):
             class_list = [class_list]
 
         for item in class_list:
+            print(item._data)
             print(f"{''.ljust(60,'-')}")
             print(f"Class : {type(item)}")
             print(f"{''.ljust(60,'-')}")
@@ -122,9 +123,21 @@ def print_class_list(class_list):
                     and a[0].endswith("__")
                     or a[0].startswith("_")
                 ):
-                    print(
-                        f"{str(a[0]).replace('_',' ',-1).title().ljust(35,' ')} : {getattr(item, str(a[0]))}"
-                    )
+                    if (
+                        type(getattr(item, str(a[0]))) == list
+                        and getattr(item, str(a[0]))
+                        and type(getattr(item, str(a[0]))[0]) not in [int, str]
+                    ):
+                        print(str(a[0]).title())
+                        for i, entry in enumerate(getattr(item, str(a[0]))):
+                            label = f"    [{i}]"
+                            print(
+                                f"{label.ljust(35,' ')} : {getattr(item, str(a[0]))[i]}"
+                            )
+                    else:
+                        print(
+                            f"{str(a[0]).replace('_',' ',-1).title().ljust(35,' ')} : {getattr(item, str(a[0]))}"
+                        )
     else:
         print(f"{''.ljust(20,'-')}")
         print(f"No Data")
@@ -211,6 +224,9 @@ def main():
         print("  [7] Show Locations")
         print("  [8] Show Troubles")
         print("  [9] Show Users")
+        print("  [I] Panels Info")
+        print("  [P] Panels")
+        print("  [S] Status")
         print("  [0] Exit")
         print()
         action = input("  Enter Number: ")
@@ -234,6 +250,12 @@ def main():
             print_class_list(alarm.get_troubles())
         elif action == "9":
             print_class_list(alarm.get_users())
+        elif action.lower() == "i":
+            print_class_list(alarm.get_panel_info())
+        elif action.lower() == "p":
+            print_class_list(alarm.get_panels())
+        elif action.lower() == "s":
+            print_class_list(alarm.get_status())
         elif action == "0":
             print("Connection to the API server was terminated...")
             break

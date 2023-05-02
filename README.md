@@ -1,57 +1,38 @@
 # Visonic Alarm Library
-Hi and welcome! Click the button below if you enjoy this library and want to support my work. A lot of coffee is consumed as a software developer you know 😁
-
-<a href="https://www.buymeacoffee.com/bitcanon" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
-
->Needless to say, this is completely voluntary.
+A fork from https://github.com/bitcanon/visonicalarm with much cudos for the work that has gone into this.  The fork adds further functionality and streamlines the code.  Likely it will become an async library by version 1.0.0.  It is written to support a Home Assistant integration and will change based on the need of that integration.
 
 ## Introduction
 A simple library for the Visonic PowerMaster API written in Python 3.
 
-It's built using same technique used in the Visonic-Go app (a REST API). So if you can use the phone app to connect to your alarm system, the chances are you can use this library as well. I have developed and tested it with a Visonic PowerMaster-10 using a PowerLink 3 IP module.
+It's built using same technique used in the Visonic-Go app (a REST API). So if you can use the phone app to connect to your alarm system, the chances are you can use this library as well. I have developed and tested it with a Visonic PowerMaster-10 and PowerMaster-30 using a PowerLink 3 IP module.
 
 > It is probably also compatible with more devices from the PowerMaster family (PM-10, PM-30, PM-33, PM-360 and PM-360-R) but this has not been confirmed. The app also support Bentel (BW-30 and BW-64) and DSC (WP8010, WP8030 and WP8033), so these alarm system might work as well. Any feedback is welcome.
 
 ## Demo
 Here is a small command-line demo application showing the most basic options that this library support. It allows you to arm and disarm the alarm system as well as show a list of devices and detailed status information.
 
-![Alarm Control CLI Demo](https://github.com/bitcanon/visonicalarm/blob/master/docs/img/demo-cli-application.gif)
+![Alarm Control CLI Demo](https://github.com/msp/pyvisonicalarm/blob/master/docs/img/demo-cli-application.gif)
 
-Check out the source code to the demo here: [alarm-control-demo.py](https://github.com/bitcanon/visonicalarm/blob/master/examples/alarm-control-demo.py).
+Check out the source code to the demo here: [alarm-control-demo.py](https://github.com/msp/pyvisonicalarm/blob/master/examples/alarm-control-demo.py).
 
 ## API version support
 
-Finally my alarm company has upgraded their PowerManage REST API to version 9.0 so I could upgrade the Visonic Alarm library to support it.
-
-The upgrade from API version 4.0 to 9.0 was a **major upgrade** which broke more or less the entire Visonic Alarm library. I had to rewrite large portions of the code base which means that the latest version (3.x) of Visonic Alarm for Python 3 is **not backwards compatible** with the previous versions. One of the large changes is that the API now require two sets of authentication.
-1. First with **email and password** against the API server.
-2. And then the **panel serial** and **master code** between the API server and your alarm panel.
-
-Some other changes are the way we arm and disarm the alarm system (endpoint changes). The data structures returned by the API server also differs a bit so almost all of the classes (`Status`, `Device`, `Event`, `Trouble`, `...`) have been updated to reflect these changes. See the examples in the rest of this document on how to use them.
-
-Library compatibility:
-- [X] 9.0 - Compatible (this is the version the library is developed against)
-- [ ] 8.0 - Seems to be compatible when testing but needs user feedback
-- [ ] 7.0 - Seems to be compatible when testing but needs user feedback
-- [X] 4.0 - Use the previous version of the library (2.0.1), see below
-
->**Nevertheless**, the library is still really easy getting started with.
-
-## Need support for API 4.0?
-Even though the latest version of the library no longer support API version 4.0 you can still run it, simply install a previous version:
-```
-pip install visonicalarm==2.0.1
-```
-The documentation for this version can be found [here](https://github.com/bitcanon/visonicalarm/blob/master/README_API4.0.md).
+Supports PowerManage REST API to version 9.0.
 
 ## Installation
+
 Install the latest version with `pip`:
-```
-pip install visonicalarm
+
+```text
+pip install pyvisonicalarm
 ```
 
 ## Basics
+
 ### Setup
+
+#TODO - change this!
+
 Use the same settings you are using when logging in to the phone app.
 
 ```python
@@ -499,4 +480,4 @@ alarm.get_status().partitions[0].state  # Output: 'DISARM'
 
 ## Examples
 
-Find more examples here: [/visonicalarm/examples](https://github.com/bitcanon/visonicalarm/tree/master/examples)
+Find more examples here: [/visonicalarm/examples](https://github.com/msp1974/pyvisonicalarm/tree/master/examples)

@@ -12,7 +12,7 @@ from .classes import (
     WakeupSMS,
 )
 from .core import API
-from .device_mapping import DEVICE_SUBTYPES, DEVICE_TYPES
+from .device_definitions import DEVICE_SUBTYPES, DEVICE_TYPES
 from .devices import GenericDevice
 from .exceptions import UnsupportedRestAPIVersionError
 
@@ -23,7 +23,7 @@ class Setup(object):
     def __init__(self, hostname, app_id, api_version="latest"):
         """Initiate the connection to the REST API."""
         self.__api = API(hostname, app_id)
-        self.set_rest_version(api_version)
+        # self.set_rest_version(api_version)
 
     # System properties
     @property
@@ -53,6 +53,7 @@ class Setup(object):
 
     def authenticate(self, email, password):
         """Try to authenticate against the API with an email address and password."""
+        self.set_rest_version("latest")
         return self.__api.authenticate(email, password)
 
     def connected(self):

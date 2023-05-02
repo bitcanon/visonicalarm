@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-
+from .classes import BaseClass, title_case
 from .const import TEXT_CLOSED, TEXT_OPEN, TEXT_UNKNOWN
-from .classes import BaseClass
 
 
 @dataclass
@@ -10,8 +9,8 @@ class Device(BaseClass):
 
     # Device properties
     @property
-    def bypass(self) -> bool:
-        return self._get_nested_key("traits.bypass.enabled", False)
+    def bypass(self) -> bool | None:
+        return self._get_nested_key("traits.bypass.enabled", None)
 
     @property
     def device_number(self) -> int:
@@ -19,19 +18,20 @@ class Device(BaseClass):
 
     @property
     def device_type(self) -> str:
-        return self._data.get("device_type", TEXT_UNKNOWN)
+        return self._data.get("device_type")
 
     @property
     def enrollment_id(self) -> str:
-        return self._data.get("enrollment_id", TEXT_UNKNOWN)
+        return self._data.get("enrollment_id")
 
     @property
     def id(self) -> int:
         return self._data.get("id", 0)
 
     @property
+    @title_case
     def location(self) -> str:
-        return self._get_nested_key("traits.location.name", TEXT_UNKNOWN).capitalize()
+        return self._get_nested_key("traits.location.name")
 
     @property
     def name(self) -> str:

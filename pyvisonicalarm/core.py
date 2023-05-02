@@ -1,6 +1,14 @@
 import json
 import requests
 
+from .const import (
+    TEXT_STATUS_AWAY,
+    TEXT_STATUS_DISARM,
+    TEXT_STATUS_HOME,
+    RequestType,
+    VisonicURL,
+)
+
 from .exceptions import *
 
 
@@ -28,67 +36,12 @@ class API(object):
         self.__hostname = hostname
         self.__app_id = app_id
 
-        self.render_urls()
-
         # Create a new session
         self.__session = requests.session()
-
-    def render_urls(self):
-        """Configure the API endpoints."""
-        self.__url_base = (
-            "https://" + self.__hostname + "/rest_api/" + self.__rest_version
-        )
-        self.__url_version = "https://" + self.__hostname + "/rest_api/version"
-
-        # API endpoints
-        self.__url_access_grant = self.__url_base + "/access/grant"
-        self.__url_access_revoke = self.__url_base + "/access/revoke"
-        self.__url_activate_siren = self.__url_base + "/activate_siren"
-        self.__url_alarms = self.__url_base + "/alarms"
-        self.__url_alerts = self.__url_base + "/alerts"
-        self.__url_auth = self.__url_base + "/auth"
-        self.__url_cameras = self.__url_base + "/cameras"
-        self.__url_devices = self.__url_base + "/devices"
-        self.__url_disable_siren = self.__url_base + "/disable_siren"
-        self.__url_events = self.__url_base + "/events"
-        self.__url_feature_set = self.__url_base + "/feature_set"
-        self.__url_locations = self.__url_base + "/locations"
-        self.__url_notifications_email = self.__url_base + "/notifications/email"
-        self.__url_panel_login = self.__url_base + "/panel/login"
-        self.__url_panel_info = self.__url_base + "/panel_info"
-        self.__url_panel_add = self.__url_base + "/panel/add"
-        self.__url_panel_rename = self.__url_base + "/panel/rename"
-        self.__url_panel_unlink = self.__url_base + "/panel/unlink"
-        self.__url_panels = self.__url_base + "/panels"
-        self.__url_password_reset = self.__url_base + "/password/reset"
-        self.__url_password_reset_complete = (
-            self.__url_base + "/password/reset/complete"
-        )
-        self.__url_process_status = self.__url_base + "/process_status?process_tokens="
-        self.__url_set_bypass_zone = self.__url_base + "/set_bypass_zone"
-        self.__url_set_name = self.__url_base + "/set_name"
-        self.__url_set_state = self.__url_base + "/set_state"
-        self.__url_set_user_code = self.__url_base + "/set_user_code"
-        self.__url_smart_devices = self.__url_base + "/smart_devices"
-        self.__url_smart_devices_settings = self.__url_base + "/smart_devices/settings"
-        self.__url_status = self.__url_base + "/status"
-        self.__url_troubles = self.__url_base + "/troubles"
-        self.__url_users = self.__url_base + "/users"
-        self.__url_wakeup_sms = self.__url_base + "/wakeup_sms"
-
-        # To be implemented
-
-        # Will not be implemented
-        self.__url_apptype = self.__url_base + "/apptype"
-        self.__url_home_automation_devices = (
-            self.__url_base + "/home_automation_devices"
-        )
-        self.__url_make_video = self.__url_base + "/make_video"
 
     def set_rest_version(self, version):
         """Set which version to use when connection to the API."""
         self.__rest_version = version
-        self.render_urls()
 
     def __raise_on_bad_request(self, error):
         """Raise an exception when the API returns a bad request."""
@@ -164,14 +117,20 @@ class API(object):
 
     def __send_request(
         self,
-        url,
+        endpoint,
         with_session_token=True,
         with_user_token=True,
         data_json=None,
-        request_type="GET",
+        request_type=RequestType.GET,
     ):
         """Send a GET or POST request to the server. Includes the Session-Token
         only if with_session_token is True."""
+
+        # Add host and api version to url
+        if endpoint == VisonicURL.VERSION:
+            url = f"{VisonicURL.BASE.format(self.__hostname)}/{endpoint}"
+        else:
+            url = f"{VisonicURL.BASE.format(self.__hostname)}/{self.__rest_version}/{endpoint}"
 
         # Prepare the headers to be sent
         headers = {
@@ -227,7 +186,7 @@ class API(object):
                 # TODO: {'error': 10020, 'error_message': 'Login temporary blocked', 'error_reason_code': 'LoginTemporaryBlocked', 'extras': [{'key': 'timeout', 'value': 44}]} // 44 = seconds to unblocked
                 # print(api)
                 raise LoginTemporaryBlockedError(
-                    f"Login is temporary blocked due to too many failed login attempts ({api['extras'][0]['value']} seconds remaining)."
+                    f"Login is temporary blocked due to too many failed login attempts ({api['extras'][0]['count']} seconds remaining)."
                 )
             elif "440 Client Error: Session token not found" in str(e):
                 raise SessionTokenError()
@@ -274,10 +233,10 @@ class API(object):
     def get_version_info(self):
         """Find out which REST API versions are supported."""
         return self.__send_request(
-            self.__url_version,
+            VisonicURL.VERSION,
             with_session_token=False,
             with_user_token=False,
-            request_type="GET",
+            request_type=RequestType.GET,
         )
 
     def authenticate(self, email, password):
@@ -290,11 +249,11 @@ class API(object):
 
         auth_json = json.dumps(auth_info, separators=(",", ":"))
         res = self.__send_request(
-            self.__url_auth,
+            VisonicURL.AUTH,
             with_session_token=False,
             with_user_token=False,
             data_json=auth_json,
-            request_type="POST",
+            request_type=RequestType.POST,
         )
         if res is not None:
             self.__user_token = res["user_token"]
@@ -315,7 +274,7 @@ class API(object):
         user_data = {"user": user_id, "email": email}
         user_json = json.dumps(user_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_access_grant, data_json=user_json, request_type="POST"
+            VisonicURL.ACCESS_GRANT, data_json=user_json, request_type=RequestType.POST
         )
 
     def access_revoke(self, user_id):
@@ -323,7 +282,7 @@ class API(object):
         user_data = {"user": user_id}
         user_json = json.dumps(user_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_access_revoke, data_json=user_json, request_type="POST"
+            VisonicURL.ACCESS_REVOKE, data_json=user_json, request_type=RequestType.POST
         )
 
     def activate_siren(self):
@@ -331,7 +290,9 @@ class API(object):
         siren_data = {}
         siren_json = json.dumps(siren_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_activate_siren, data_json=siren_json, request_type="POST"
+            VisonicURL.ACTIVATE_SIREN,
+            data_json=siren_json,
+            request_type=RequestType.POST,
         )
 
     def disable_siren(self, mode):
@@ -339,82 +300,83 @@ class API(object):
         siren_data = {"mode": mode}
         siren_json = json.dumps(siren_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_disable_siren, data_json=siren_json, request_type="POST"
+            VisonicURL.DISABLE_SIREN,
+            data_json=siren_json,
+            request_type=RequestType.POST,
         )
 
     def get_alarms(self):
         """Get the current alarms."""
-        return self.__send_request(self.__url_alarms, request_type="GET")
+        return self.__send_request(VisonicURL.ALARMS)
 
     def get_alerts(self):
         """Get the current alerts."""
-        return self.__send_request(self.__url_alerts, request_type="GET")
+        return self.__send_request(VisonicURL.ALERTS)
 
     def get_cameras(self):
         """Get the cameras in the system."""
-        return self.__send_request(self.__url_cameras, request_type="GET")
+        return self.__send_request(VisonicURL.CAMERAS)
 
     def get_devices(self):
         """Get all device specific information."""
-        return self.__send_request(self.__url_devices, request_type="GET")
+        return self.__send_request(VisonicURL.DEVICES)
 
     def get_email_notifications(self):
         """Get settings for the email notifications."""
-        return self.__send_request(self.__url_notifications_email, request_type="GET")
+        return self.__send_request(VisonicURL.NOTIFICATIONS_EMAIL)
 
     def get_events(self):
         """Get the alarm panel events."""
-        return self.__send_request(self.__url_events, request_type="GET")
+        return self.__send_request(VisonicURL.EVENTS)
 
     def get_feature_set(self):
         """Get the alarm panel feature set."""
-        return self.__send_request(self.__url_feature_set, request_type="GET")
+        return self.__send_request(VisonicURL.FEATURE_SET)
 
     def get_locations(self):
         """Get all locations in the alarm system."""
-        return self.__send_request(self.__url_locations, request_type="GET")
+        return self.__send_request(VisonicURL.LOCATIONS)
 
     def get_panel_info(self):
         """The general panel information is only supported in version 4.0."""
-        return self.__send_request(self.__url_panel_info, request_type="GET")
+        return self.__send_request(VisonicURL.PANEL_INFO)
 
     def get_panels(self):
         """Get a list of panels."""
-        return self.__send_request(self.__url_panels, request_type="GET")
+        return self.__send_request(VisonicURL.PANELS)
 
     def get_process_status(self, process_token):
         """Get the current status of a process running on API server."""
-        url = self.__url_process_status + process_token
-        return self.__send_request(url, request_type="GET")
+        return self.__send_request(VisonicURL.PROCESS_STATUS.format(process_token))
 
     def get_smart_devices(self):
         """Get a list of smart devices."""
-        return self.__send_request(self.__url_smart_devices, request_type="GET")
+        return self.__send_request(VisonicURL.SMART_DEVICES)
 
     def get_smart_devices_settings(self):
         """Get a list of smart devices settings."""
-        return self.__send_request(
-            self.__url_smart_devices_settings, request_type="GET"
-        )
+        return self.__send_request(VisonicURL.SMART_DEVICES_SETTINGS)
 
     def get_status(self):
         """Get the current status of the alarm system."""
-        return self.__send_request(self.__url_status, request_type="GET")
+        return self.__send_request(VisonicURL.STATUS)
 
     def get_troubles(self):
         """Get the current troubles."""
-        return self.__send_request(self.__url_troubles, request_type="GET")
+        return self.__send_request(VisonicURL.TROUBLES)
 
     def get_users(self):
         """Get information about the active users.
         Note: Only master users can see the active_user_ids!"""
-        return self.__send_request(self.__url_users, request_type="GET")
+        return self.__send_request(VisonicURL.USERS)
 
     def get_wakeup_sms(self):
         """Get the settings needed to wake up the alarm panel via SMS."""
-        return self.__send_request(self.__url_wakeup_sms, request_type="GET")
+        return self.__send_request(VisonicURL.WAKEUP_SMS)
 
-    def panel_add(self, alias, panel_serial, access_proof, master_user_code):
+    def panel_add(
+        self, alias: str, panel_serial: str, access_proof: str, master_user_code: str
+    ):
         """Add a new alarm panel to the user account. A master user code is required."""
         panel_data = {
             "alias": alias,
@@ -424,10 +386,10 @@ class API(object):
         }
         panel_json = json.dumps(panel_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_panel_add, data_json=panel_json, request_type="POST"
+            VisonicURL.PANEL_ADD, data_json=panel_json, request_type=RequestType.POST
         )
 
-    def panel_login(self, panel_serial, user_code):
+    def panel_login(self, panel_serial: str, user_code: str):
         """Try to login to the alarm panel and get a session token."""
         login_info = {
             "user_code": user_code,
@@ -438,18 +400,18 @@ class API(object):
 
         login_json = json.dumps(login_info, separators=(",", ":"))
         res = self.__send_request(
-            self.__url_panel_login,
+            VisonicURL.PANEL_LOGIN,
             with_session_token=False,
             data_json=login_json,
-            request_type="POST",
+            request_type=RequestType.POST,
         )
-        if res is not None:
+        if res:
             self.__session_token = res["session_token"]
             return True
         else:
             return False
 
-    def panel_rename(self, alias, panel_serial):
+    def panel_rename(self, alias: str, panel_serial: str):
         """Rename an alarm panel."""
         panel_data = {
             "panel_serial": panel_serial,
@@ -457,10 +419,10 @@ class API(object):
         }
         panel_json = json.dumps(panel_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_panel_rename, data_json=panel_json, request_type="POST"
+            VisonicURL.PANEL_RENAME, data_json=panel_json, request_type=RequestType.POST
         )
 
-    def panel_unlink(self, panel_serial, password, app_id):
+    def panel_unlink(self, panel_serial: str, password: str, app_id: str):
         """Unlink an alarm panel from the user account."""
         panel_data = {
             "panel_serial": panel_serial,
@@ -469,18 +431,20 @@ class API(object):
         }
         panel_json = json.dumps(panel_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_panel_unlink, data_json=panel_json, request_type="POST"
+            VisonicURL.PANEL_UNLINK, data_json=panel_json, request_type=RequestType.POST
         )
 
-    def password_reset(self, email):
+    def password_reset(self, email: str):
         """Request a password reset email. An email will be sent to the email address provided."""
         reset_data = {"email": email}
         reset_json = json.dumps(reset_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_password_reset, data_json=reset_json, request_type="POST"
+            VisonicURL.PASSWORD_RESET,
+            data_json=reset_json,
+            request_type=RequestType.POST,
         )
 
-    def password_reset_complete(self, reset_password_code, new_password):
+    def password_reset_complete(self, reset_password_code: str, new_password: str):
         """Complete the password reset request."""
         reset_data = {
             "reset_password_code": reset_password_code,
@@ -489,74 +453,78 @@ class API(object):
         }
         reset_json = json.dumps(reset_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_password_reset_complete,
+            VisonicURL.PASSWORD_RESET_COMPLETE,
             data_json=reset_json,
-            request_type="POST",
+            request_type=RequestType.POST,
         )
 
-    def set_email_notifications(self, mode):
+    def set_email_notifications(self, mode: str):
         """Set settings for the email notifications."""
         notification_data = {"mode": mode}
         notification_json = json.dumps(notification_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_notifications_email,
+            VisonicURL.NOTIFICATIONS_EMAIL,
             data_json=notification_json,
-            request_type="POST",
+            request_type=RequestType.POST,
         )
 
-    def set_bypass_zone(self, zone, set_enabled):
+    def set_bypass_zone(self, zone: int, set_enabled: bool):
         """Enable or disable bypass mode for a zone."""
         bypass_data = {"zone": zone, "set": set_enabled}
         bypass_json = json.dumps(bypass_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_set_bypass_zone, data_json=bypass_json, request_type="POST"
+            VisonicURL.SET_BYPASS_ZONE,
+            data_json=bypass_json,
+            request_type=RequestType.POST,
         )
 
-    def set_name(self, object_class, id, name):
+    def set_name(self, object_class: str, id: int, name: str):
         """Set the name of any type of object in the alarm system."""
         name_data = {"class": object_class, "id": id, "name": name}
         name_json = json.dumps(name_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_set_name, data_json=name_json, request_type="POST"
+            VisonicURL.SET_NAME, data_json=name_json, request_type=RequestType.POST
         )
 
-    def set_user_code(self, user_code, user_id):
+    def set_user_code(self, user_code: str, user_id: str):
         """Set the code of a user in the alarm system."""
         code_data = {"user_code": user_code, "user_id": user_id}
         code_json = json.dumps(code_data, separators=(",", ":"))
         return self.__send_request(
-            self.__url_set_user_code, data_json=code_json, request_type="POST"
+            VisonicURL.SET_USER_CODE, data_json=code_json, request_type=RequestType.POST
         )
 
-    def arm_home(self, partition):
+    def arm_home(self, partition: int):
         """Arm in Home mode."""
-        arm_info = {"partition": partition, "state": "HOME"}
+        arm_info = {"partition": partition, "state": TEXT_STATUS_HOME}
         arm_json = json.dumps(arm_info, separators=(",", ":"))
         return self.__send_request(
-            self.__url_set_state, data_json=arm_json, request_type="POST"
+            VisonicURL.SET_STATE, data_json=arm_json, request_type=RequestType.POST
         )
 
-    def arm_away(self, partition):
+    def arm_away(self, partition: id):
         """Arm in Away mode."""
-        arm_info = {"partition": partition, "state": "AWAY"}
+        arm_info = {"partition": partition, "state": TEXT_STATUS_AWAY}
         arm_json = json.dumps(arm_info, separators=(",", ":"))
         return self.__send_request(
-            self.__url_set_state, data_json=arm_json, request_type="POST"
+            VisonicURL.SET_STATE, data_json=arm_json, request_type=RequestType.POST
         )
 
-    def disarm(self, partition):
+    def disarm(self, partition: id):
         """Disarm the alarm system."""
-        disarm_info = {"partition": partition, "state": "DISARM"}
+        disarm_info = {"partition": partition, "state": TEXT_STATUS_DISARM}
         disarm_json = json.dumps(disarm_info, separators=(",", ":"))
         return self.__send_request(
-            self.__url_set_state, data_json=disarm_json, request_type="POST"
+            VisonicURL.SET_STATE, data_json=disarm_json, request_type=RequestType.POST
         )
 
     def send_get(self, url):
         """Send a custom POST request."""
-        return self.__send_request(url, request_type="GET")
+        return self.__send_request(url)
 
     def send_post(self, url, data):
         """Send a custom POST request."""
         data_json = json.dumps(data, separators=(",", ":"))
-        return self.__send_request(url, data_json=data_json, request_type="POST")
+        return self.__send_request(
+            url, data_json=data_json, request_type=RequestType.POST
+        )
