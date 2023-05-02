@@ -5,12 +5,12 @@ from time import sleep
 from visonic import alarm
 from visonic.exceptions import *
 
-hostname = "visonic.tycomonitor.com"
-user_code = "3180"
-app_id = "a11e5472-def1-11ed-b5ea-0242ac120002"
-panel_id = "2A4CC3"
-user_email = "msparker@sky.com"
-user_password = "Bethanyp99!"
+hostname = "your.alarmcompany.com"
+user_code = None
+app_id = "00000000-0000-0000-0000-000000000000"
+panel_id = "123ABC"
+user_email = "user@example.com"
+user_password = "An.Extremely.Long.Random.and.Secure.Password!"
 
 alarm = alarm.Setup(hostname, app_id)
 
