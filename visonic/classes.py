@@ -12,7 +12,6 @@ class Camera(object):
         self.__zone = zone
         self.__zone_name = zone_name
 
-
     def __str__(self):
         """ Define how the print() method should print the object. """
         object_type = str(type(self))
@@ -20,15 +19,15 @@ class Camera(object):
 
     def __repr__(self):
         """ Define how the object is represented on output to console. """
-        class_name   = type(self).__name__
-        location     = f"location = {self.location}"
-        partitions   = f"partitions = {self.partitions}"
-        preenroll    = f"preenroll = {self.preenroll}"
+        class_name = type(self).__name__
+        location = f"location = {self.location}"
+        partitions = f"partitions = {self.partitions}"
+        preenroll = f"preenroll = {self.preenroll}"
         preview_path = f"preview_path = {self.preview_path}"
-        status       = f"status = {self.status}"
-        timestamp    = f"timestamp = {self.timestamp}"
-        zone         = f"zone = {self.zone}"
-        zone_name    = f"zone_name = {self.zone_name}"
+        status = f"status = {self.status}"
+        timestamp = f"timestamp = {self.timestamp}"
+        zone = f"zone = {self.zone}"
+        zone_name = f"zone_name = {self.zone_name}"
 
         return f"{class_name}({location}, {partitions}, {preenroll}, {preview_path}, {status}, {timestamp}, {zone}, {zone_name})"
 
@@ -82,7 +81,7 @@ class Camera(object):
 class Event(object):
     """ Class definition of an event in the alarm system. """
 
-    def __init__(self, id, type_id, label, description, appointment, datetime, video, device_type, zone, partitions, name):
+    def __init__(self, id, type_id, label, description, appointment, datetime, video, device_type, zone, partitions):
         """ Set the private variable values on instantiation. """
 
         self.__id = id
@@ -95,8 +94,6 @@ class Event(object):
         self.__device_type = device_type
         self.__zone = zone
         self.__partitions = partitions
-        self.__name = name
-
 
     def __str__(self):
         """ Define how the print() method should print the object. """
@@ -107,21 +104,20 @@ class Event(object):
     def __repr__(self):
         """ Define how the object is represented on output to console. """
 
-        class_name  = type(self).__name__
-        id          = f"id = {self.id}"
-        type_id     = f"type_id = {self.type_id}"
-        label       = f"label = '{self.label}'"
+        class_name = type(self).__name__
+        id = f"id = {self.id}"
+        type_id = f"type_id = {self.type_id}"
+        label = f"label = '{self.label}'"
         description = f"description = '{self.description}'"
         appointment = f"appointment = '{self.appointment}'"
-        datetime    = f"datetime = '{self.datetime}'"
-        video       = f"video = {self.video}"
+        datetime = f"datetime = '{self.datetime}'"
+        video = f"video = {self.video}"
         device_type = f"device_type = '{self.device_type}'"
-        zone        = f"zone = {self.zone}"
-        partitions  = f"partitions = {str(self.partitions)}"
-        name        = f"name = {str(self.name)}"
+        zone = f"zone = {self.zone}"
+        partitions = f"partitions = {str(self.partitions)}"
 
         return f"{class_name}({id}, {type_id}, {label}, {description}, {appointment}, \
-            {datetime}, {video}, {device_type}, {zone}, {partitions}, {name})"
+            {datetime}, {video}, {device_type}, {zone}, {partitions})"
 
     def as_dict(self):
         """ Return the object properties in a dictionary. """
@@ -136,10 +132,9 @@ class Event(object):
             'device_type': self.device_type,
             'zone': self.zone,
             'partitions': self.partitions,
-            'name': self.name,
         }
 
-   # Event properties
+    # Event properties
     @property
     def id(self):
         """ User ID. """
@@ -190,11 +185,6 @@ class Event(object):
         """ Event partitions. """
         return self.__partitions
 
-    @property
-    def name(self):
-        """ Event name. """
-        return self.__name
-
 
 class FeatureSet(object):
     """ Class definition of an event in the alarm system. """
@@ -218,7 +208,6 @@ class FeatureSet(object):
         self.__diagnostic_enabled = diagnostic_enabled
         self.__wifi_enabled = wifi_enabled
 
-
     def __str__(self):
         """ Define how the print() method should print the object. """
 
@@ -228,7 +217,7 @@ class FeatureSet(object):
     def __repr__(self):
         """ Define how the object is represented on output to console. """
 
-        class_name  = type(self).__name__
+        class_name = type(self).__name__
         events_enabled = f"events_enabled = {self.events_enabled}"
         datetime_enabled = f"datetime_enabled = {self.datetime_enabled}"
         partitions_enabled = f"partitions_enabled = {self.partitions_enabled}"
@@ -267,7 +256,7 @@ class FeatureSet(object):
             'wifi_enabled': self.wifi_enabled,
         }
 
-   # Event properties
+    # Event properties
     @property
     def events_enabled(self):
         return self.__events_enabled
@@ -347,11 +336,11 @@ class Location(object):
 
     def __repr__(self):
         """ Define how the object is represented on output to console. """
-        
-        class_name   = type(self).__name__
-        id           = f"id = {self.id}"
-        name         = f"name = '{self.name}'"
-        is_editable  = f"is_editable = {self.is_editable}"
+
+        class_name = type(self).__name__
+        id = f"id = {self.id}"
+        name = f"name = '{self.name}'"
+        is_editable = f"is_editable = {self.is_editable}"
 
         return f"{class_name}({id}, {name}, {is_editable})"
 
@@ -363,7 +352,7 @@ class Location(object):
             'is_editable': self.is_editable,
         }
 
-   # Location properties
+    # Location properties
     @property
     def id(self):
         """ Device ID. """
@@ -400,11 +389,11 @@ class PanelInfo(object):
     def __repr__(self):
         """ Define how the object is represented on output to console. """
 
-        class_name             = type(self).__name__
-        current_user           = f"current_user = '{self.current_user}'"
-        manufacturer           = f"manufacturer = '{self.manufacturer}'"
-        model                  = f"model = '{self.model}'"
-        serial                 = f"serial = {self.serial}"
+        class_name = type(self).__name__
+        current_user = f"current_user = '{self.current_user}'"
+        manufacturer = f"manufacturer = '{self.manufacturer}'"
+        model = f"model = '{self.model}'"
+        serial = f"serial = {self.serial}"
 
         return f"{class_name}({current_user}, {manufacturer}, {model}, {serial})"
 
@@ -454,9 +443,9 @@ class Panel(object):
     def __repr__(self):
         """ Define how the object is represented on output to console. """
 
-        class_name   = type(self).__name__
+        class_name = type(self).__name__
         panel_serial = f"panel_serial = '{self.panel_serial}'"
-        alias        = f"alias = '{self.alias}'"
+        alias = f"alias = '{self.alias}'"
 
         return f"{class_name}({panel_serial}, {alias})"
 
@@ -499,11 +488,11 @@ class Partition(object):
         """ Define how the object is represented on output to console. """
 
         class_name = type(self).__name__
-        id         = f"id = {self.id}"
-        state      = f"state = '{self.state}'"
-        status     = f"status = '{self.status}'"
-        ready      = f"ready = {self.ready}"
-        options    = f"options = {self.options}"
+        id = f"id = {self.id}"
+        state = f"state = '{self.state}'"
+        status = f"status = '{self.status}'"
+        ready = f"ready = {self.ready}"
+        options = f"options = {self.options}"
 
         return f"{class_name}({id}, {state}, {status}, {ready}, {options})"
 
@@ -560,10 +549,10 @@ class Process(object):
         """ Define how the object is represented on output to console. """
 
         class_name = type(self).__name__
-        token   = f"token = '{self.token}'"
-        status  = f"status = '{self.status}'"
+        token = f"token = '{self.token}'"
+        status = f"status = '{self.status}'"
         message = f"message = '{self.message}'"
-        error   = f"error = '{self.error}'"
+        error = f"error = '{self.error}'"
 
         return f"{class_name}({token}, {status}, {message}, {error})"
 
@@ -729,14 +718,14 @@ class Trouble(object):
     def __repr__(self):
         """ Define how the object is represented on output to console. """
 
-        class_name   = type(self).__name__
-        device_type  = f"device_type = '{self.device_type}'"
-        location     = f"location = '{self.location}'"
-        partitions   = f"partitions = {str(self.partitions)}"
+        class_name = type(self).__name__
+        device_type = f"device_type = '{self.device_type}'"
+        location = f"location = '{self.location}'"
+        partitions = f"partitions = {str(self.partitions)}"
         trouble_type = f"trouble_type = '{self.trouble_type}'"
-        zone         = f"zone = {self.zone}"
-        zone_name    = f"zone_name = '{self.zone_name}'"
-        zone_type    = f"zone_type = '{self.zone_type}'"
+        zone = f"zone = {self.zone}"
+        zone_name = f"zone_name = '{self.zone_name}'"
+        zone_type = f"zone_type = '{self.zone_type}'"
 
         return f"{class_name}({device_type}, {location}, {partitions}, \
             {trouble_type}, {zone}, {zone_name}, {zone_type})"
@@ -810,11 +799,11 @@ class User(object):
     def __repr__(self):
         """ Define how the object is represented on output to console. """
 
-        class_name  = type(self).__name__
-        id          = f"id = {self.id}"
-        name        = f"name = '{self.name}'"
-        email       = f"email = '{self.name}'"
-        partitions  = f"partitions = {self.is_active}"
+        class_name = type(self).__name__
+        id = f"id = {self.id}"
+        name = f"name = '{self.name}'"
+        email = f"email = '{self.name}'"
+        partitions = f"partitions = {self.partitions}"
 
         return f"{class_name}({id}, {name}, {email}, {partitions})"
 
@@ -827,7 +816,7 @@ class User(object):
             'partitions': self.partitions,
         }
 
-   # User properties
+    # User properties
     @property
     def id(self):
         """ User ID. """
@@ -864,9 +853,9 @@ class WakeupSMS(object):
 
     def __repr__(self):
         """ Define how the object is represented on output to console. """
-        class_name   = type(self).__name__
+        class_name = type(self).__name__
         phone_number = f"phone_number = {self.phone_number}"
-        message      = f"message = {self.message}"
+        message = f"message = {self.message}"
 
         return f"{class_name}({phone_number}, {message})"
 
@@ -877,7 +866,7 @@ class WakeupSMS(object):
             'message': self.message,
         }
 
-   # Wakeup SMS properties
+    # Wakeup SMS properties
     @property
     def phone_number(self):
         return self.__phone_number
@@ -885,4 +874,3 @@ class WakeupSMS(object):
     @property
     def message(self):
         return self.__message
-

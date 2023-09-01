@@ -232,3 +232,11 @@ class UnsupportedRestAPIVersionError(Error):
     def __init__(self, message="Unsupported REST API version."):
         self.message = message
         super().__init__(self.message)
+
+
+class InvalidRequestType(Error):
+    """ Raised when the Panel ID is not found in the server. """
+
+    def __init__(self, message="Invalid request type (Possible types: POST or GET)."):
+        self.message = message
+        super().__init__(self.message)

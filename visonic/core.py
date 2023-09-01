@@ -1,9 +1,7 @@
 import json
 import requests
-
-from datetime import datetime
-
 from visonic.exceptions import *
+
 
 class API(object):
     """ Class used for communication with the Visonic API """
@@ -40,45 +38,45 @@ class API(object):
         self.__url_version = 'https://' + self.__hostname + '/rest_api/version'
 
         # API endpoints
-        self.__url_access_grant             = self.__url_base + '/access/grant'
-        self.__url_access_revoke            = self.__url_base + '/access/revoke'
-        self.__url_activate_siren           = self.__url_base + '/activate_siren'
-        self.__url_alarms                   = self.__url_base + '/alarms'
-        self.__url_alerts                   = self.__url_base + '/alerts'
-        self.__url_auth                     = self.__url_base + '/auth'
-        self.__url_cameras                  = self.__url_base + '/cameras'
-        self.__url_devices                  = self.__url_base + '/devices'
-        self.__url_disable_siren            = self.__url_base + '/disable_siren'
-        self.__url_events                   = self.__url_base + '/events'
-        self.__url_feature_set              = self.__url_base + '/feature_set'
-        self.__url_locations                = self.__url_base + '/locations'
-        self.__url_notifications_email      = self.__url_base + '/notifications/email'
-        self.__url_panel_login              = self.__url_base + '/panel/login'
-        self.__url_panel_info               = self.__url_base + '/panel_info'
-        self.__url_panel_add                = self.__url_base + '/panel/add'
-        self.__url_panel_rename             = self.__url_base + '/panel/rename'
-        self.__url_panel_unlink             = self.__url_base + '/panel/unlink'
-        self.__url_panels                   = self.__url_base + '/panels'
-        self.__url_password_reset           = self.__url_base + '/password/reset'
-        self.__url_password_reset_complete  = self.__url_base + '/password/reset/complete'
-        self.__url_process_status           = self.__url_base + '/process_status?process_tokens='
-        self.__url_set_bypass_zone          = self.__url_base + '/set_bypass_zone'
-        self.__url_set_name                 = self.__url_base + '/set_name'
-        self.__url_set_state                = self.__url_base + '/set_state'
-        self.__url_set_user_code            = self.__url_base + '/set_user_code'
-        self.__url_smart_devices            = self.__url_base + '/smart_devices'
-        self.__url_smart_devices_settings   = self.__url_base + '/smart_devices/settings'
-        self.__url_status                   = self.__url_base + '/status'
-        self.__url_troubles                 = self.__url_base + '/troubles'
-        self.__url_users                    = self.__url_base + '/users'
-        self.__url_wakeup_sms               = self.__url_base + '/wakeup_sms'
+        self.__url_access_grant = self.__url_base + '/access/grant'
+        self.__url_access_revoke = self.__url_base + '/access/revoke'
+        self.__url_activate_siren = self.__url_base + '/activate_siren'
+        self.__url_alarms = self.__url_base + '/alarms'
+        self.__url_alerts = self.__url_base + '/alerts'
+        self.__url_auth = self.__url_base + '/auth'
+        self.__url_cameras = self.__url_base + '/cameras'
+        self.__url_devices = self.__url_base + '/devices'
+        self.__url_disable_siren = self.__url_base + '/disable_siren'
+        self.__url_events = self.__url_base + '/events'
+        self.__url_feature_set = self.__url_base + '/feature_set'
+        self.__url_locations = self.__url_base + '/locations'
+        self.__url_notifications_email = self.__url_base + '/notifications/email'
+        self.__url_panel_login = self.__url_base + '/panel/login'
+        self.__url_panel_info = self.__url_base + '/panel_info'
+        self.__url_panel_add = self.__url_base + '/panel/add'
+        self.__url_panel_rename = self.__url_base + '/panel/rename'
+        self.__url_panel_unlink = self.__url_base + '/panel/unlink'
+        self.__url_panels = self.__url_base + '/panels'
+        self.__url_password_reset = self.__url_base + '/password/reset'
+        self.__url_password_reset_complete = self.__url_base + '/password/reset/complete'
+        self.__url_process_status = self.__url_base + '/process_status?process_tokens='
+        self.__url_set_bypass_zone = self.__url_base + '/set_bypass_zone'
+        self.__url_set_name = self.__url_base + '/set_name'
+        self.__url_set_state = self.__url_base + '/set_state'
+        self.__url_set_user_code = self.__url_base + '/set_user_code'
+        self.__url_smart_devices = self.__url_base + '/smart_devices'
+        self.__url_smart_devices_settings = self.__url_base + '/smart_devices/settings'
+        self.__url_status = self.__url_base + '/status'
+        self.__url_troubles = self.__url_base + '/troubles'
+        self.__url_users = self.__url_base + '/users'
+        self.__url_wakeup_sms = self.__url_base + '/wakeup_sms'
 
         # To be implemented
 
         # Will not be implemented
-        self.__url_apptype                  = self.__url_base + '/apptype'
-        self.__url_home_automation_devices  = self.__url_base + '/home_automation_devices'
-        self.__url_make_video               = self.__url_base + '/make_video'
+        self.__url_apptype = self.__url_base + '/apptype'
+        self.__url_home_automation_devices = self.__url_base + '/home_automation_devices'
+        self.__url_make_video = self.__url_base + '/make_video'
 
     def set_rest_version(self, version):
         """ Set which version to use when connection to the API. """
@@ -88,9 +86,8 @@ class API(object):
     def __raise_on_bad_request(self, error):
         """ Raise an exception when the API returns a bad request. """
         api = json.loads(error.decode('utf-8'))
-        # print(api)
 
-        if api['error'] == 10001: # BadRequestParams
+        if api['error'] == 10001:  # BadRequestParams
             for pair in api['extras']:
                 if pair['value'] == 'incorrect':
                     if pair['key'] == 'panel_serial':
@@ -116,14 +113,14 @@ class API(object):
                     raise AlreadyLinkedError()
                 if pair['key'] == 'new_password':
                     raise NewPasswordStrengthError()
-        elif api['error'] == 10004: # WrongCombination
+        elif api['error'] == 10004:  # WrongCombination
             for pair in api['extras']:
                 if pair['value'] == 'wrong_combination':
                     if pair['key'] == 'email' or pair['key'] == 'password':
                         raise WrongUsernameOrPasswordError()
                     if pair['key'] == 'panel_serial' or pair['key'] == 'master_user_code':
                         raise WrongPanelSerialOrMasterUserCodeError()
-        elif api['error'] == 10021: # WrongUserCode
+        elif api['error'] == 10021:  # WrongUserCode
             raise UserCodeIncorrectError()
         elif api['error'] == 400 and api['error_reason_code'] == 'PanelNotConnected':
             raise PanelNotConnectedError()
@@ -135,11 +132,10 @@ class API(object):
     def __raise_on_forbidden(self, error):
         """ Raise an exception when the API returns a forbidden error. """
         api = json.loads(error.decode('utf-8'))
-        # print(api)
 
-        if api['error'] == 10010: # NotAllowed
+        if api['error'] == 10010:  # NotAllowed
             raise NotAllowedError()
-        elif api['error'] == 10002: # UserAuthRequired
+        elif api['error'] == 10002:  # UserAuthRequired
             raise UserAuthRequiredError()
 
         # Raise a generic error when the library has no
@@ -149,7 +145,6 @@ class API(object):
     def __raise_on_unauthorized(self, error):
         """ Raise an exception when the API returns a unauthorized error. """
         api = json.loads(error.decode('utf-8'))
-        # print(api)
 
         # Raise an exception when we are not authorized to access the endpoint
         raise UnauthorizedError(str(api))
@@ -188,13 +183,13 @@ class API(object):
                 response = self.__session.get(url, headers=headers, timeout=self.__timeout)
             elif request_type == 'POST':
                 response = self.__session.post(url, headers=headers, data=data_json, timeout=self.__timeout)
+            else:
+                raise InvalidRequestType()
             response.raise_for_status()
         except requests.exceptions.ConnectTimeout:
             raise ConnectionTimeoutError(f"Connection to '{self.__hostname}' timed out after {str(self.__timeout)} seconds.")
-            return None
         except requests.exceptions.HTTPError as e:
-            api = json.loads(response.content.decode('utf-8'))
-            if   '400 Client Error: Bad Request' in str(e):
+            if '400 Client Error: Bad Request' in str(e):
                 self.__raise_on_bad_request(response.content)
             elif '401 Client Error: Unauthorized' in str(e):
                 self.__raise_on_unauthorized(response.content)
@@ -202,10 +197,6 @@ class API(object):
                 self.__raise_on_forbidden(response.content)
             elif '404 Client Error: Not Found' in str(e):
                 raise NotFoundError()
-            elif '420 Client Error:' in str(e):
-                # TODO: {'error': 10020, 'error_message': 'Login temporary blocked', 'error_reason_code': 'LoginTemporaryBlocked', 'extras': [{'key': 'timeout', 'value': 44}]} // 44 = seconds to unblocked
-                # print(api)
-                raise LoginTemporaryBlockedError(f"Login is temporary blocked due to too many failed login attempts ({api['extras'][0]['value']} seconds remaining).")
             elif '440 Client Error: Session token not found' in str(e):
                 raise SessionTokenError()
             elif '442 Client Error: Login attempts limit reached' in str(e):
@@ -213,8 +204,7 @@ class API(object):
             elif '444 Client Error: Wrong user code' in str(e):
                 raise InvalidUserCodeError('Authentication failed due to wrong user code.')
             else:
-                print(api)
-                raise
+                raise NotFoundError(f"{str(e)}")
 
         # Check HTTP response code
         if response.status_code == requests.codes.ok:
@@ -248,10 +238,9 @@ class API(object):
 
     def get_version_info(self):
         """ Find out which REST API versions are supported. """
-        return self.__send_request(self.__url_version,
-                                       with_session_token=False,
-                                       with_user_token=False,
-                                       request_type='GET')
+        return self.__send_request(
+            self.__url_version, with_session_token=False, with_user_token=False, request_type='GET'
+        )
 
     def authenticate(self, email, password):
         """ Try to authenticate and get a user auth token. """
@@ -262,11 +251,9 @@ class API(object):
         }
 
         auth_json = json.dumps(auth_info, separators=(',', ':'))
-        res = self.__send_request(self.__url_auth,
-                                       with_session_token=False,
-                                       with_user_token=False,
-                                       data_json=auth_json,
-                                       request_type='POST')
+        res = self.__send_request(
+            self.__url_auth, with_session_token=False, with_user_token=False, data_json=auth_json, request_type='POST'
+        )
         if res is not None:
             self.__user_token = res['user_token']
             return True
@@ -396,10 +383,9 @@ class API(object):
         }
 
         login_json = json.dumps(login_info, separators=(',', ':'))
-        res = self.__send_request(self.__url_panel_login,
-                                       with_session_token=False,
-                                       data_json=login_json,
-                                       request_type='POST')
+        res = self.__send_request(
+            self.__url_panel_login, with_session_token=False, data_json=login_json, request_type='POST'
+        )
         if res is not None:
             self.__session_token = res['session_token']
             return True
@@ -472,6 +458,12 @@ class API(object):
         arm_info = {'partition': partition, 'state': 'AWAY'}
         arm_json = json.dumps(arm_info, separators=(',', ':'))
         return self.__send_request(self.__url_set_state, data_json=arm_json, request_type='POST')
+
+    def arm_night(self, partition):
+        """ Arm in Night mode. """
+        arm_night_info = {'partition': partition, 'state': 'NIGHT'}
+        arm_night_json = json.dumps(arm_night_info, separators=(',', ':'))
+        return self.__send_request(self.__url_set_state, data_json=arm_night_json, request_type='POST')
 
     def disarm(self, partition):
         """ Disarm the alarm system. """

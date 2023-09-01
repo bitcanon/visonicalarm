@@ -1,6 +1,3 @@
-import json
-import requests
-
 from dateutil import parser
 from dateutil.relativedelta import *
 
@@ -46,6 +43,10 @@ class Setup(object):
     def arm_away(self, partition=-1):
         """ Send Arm Away command to the alarm system. """
         return self.__api.arm_away(partition)['process_token']
+
+    def arm_night(self, partition=-1):
+        """ Send Arm Away command to the alarm system. """
+        return self.__api.arm_night(partition)['process_token']
 
     def authenticate(self, email, password):
         """ Try to authenticate against the API with an email address and password. """
@@ -222,6 +223,7 @@ class Setup(object):
                     zone_type=device['zone_type'],
                 )
                 device_list.append(generic_device)
+
         return device_list
 
     def get_events(self, timestamp_hour_offset=2):
@@ -248,7 +250,6 @@ class Setup(object):
                 device_type=event['device_type'],
                 zone=event['zone'],
                 partitions=event['partitions'],
-                name=event['name'],
             )
 
             event_list.append(new_event)
@@ -444,4 +445,3 @@ class Setup(object):
     def set_user_code(self, user_id, user_code):
         """ Set the code of a user by user ID. """
         return self.__api.set_user_code(user_code, user_id)['process_token']
-
