@@ -5,6 +5,6 @@ dateutils==0.6.12
 idna==3.4
 python-dateutil==2.8.2
 pytz==2022.6
-requests==2.28.1
+requests==2.31.0
 six==1.16.0
 urllib3==1.26.13
